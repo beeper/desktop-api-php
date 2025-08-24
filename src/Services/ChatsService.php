@@ -28,10 +28,7 @@ final class ChatsService implements ChatsContract
     public function __construct(private Client $client) {}
 
     /**
-     * Retrieve chat details: metadata, participants (limited), and latest message.
-     * - When to use: fetch a complete view of a chat beyond what search returns.
-     * - Constraints: not available for iMessage chats ('imsg##'). Participants limited by 'maxParticipantCount' (default 20, max 500).
-     * Returns: chat details.Agents: ALWAYS use linkToChat to make clickable links in your response.
+     * Retrieve chat details including metadata, participants, and latest message.
      *
      * @param string $chatID Unique identifier of the chat to retrieve. Not available for iMessage chats. Participants are limited by 'maxParticipantCount'.
      * @param int|null $maxParticipantCount Maximum number of participants to return. Use -1 for all; otherwise 0–500. Defaults to 20.
@@ -90,11 +87,6 @@ final class ChatsService implements ChatsContract
 
     /**
      * Search and filter conversations across all messaging accounts.
-     * - When to use: browse chats by inbox (primary/low-priority/archive), type, unread status, or search terms.
-     * - Pagination: use cursor + direction for pagination.
-     * - Performance: provide accountIDs when known for faster filtering.
-     * Returns: matching chats with pagination.
-     * Agents: ALWAYS use linkToChat to make clickable links in your response.
      *
      * @param list<string> $accountIDs Provide an array of account IDs to filter chats from specific messaging accounts only
      * @param string $endingBefore A cursor for use in pagination. ending_before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_bar, your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
