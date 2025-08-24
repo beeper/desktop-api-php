@@ -10,10 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Retrieve chat details: metadata, participants (limited), and latest message.
- * - When to use: fetch a complete view of a chat beyond what search returns.
- * - Constraints: not available for iMessage chats ('imsg##'). Participants limited by 'maxParticipantCount' (default 20, max 500).
- * Returns: chat details.Agents: ALWAYS use linkToChat to make clickable links in your response.
+ * Retrieve chat details including metadata, participants, and latest message.
  */
 final class ChatRetrieveParams implements BaseModel
 {

@@ -19,9 +19,6 @@ final class AccountsService implements AccountsContract
 
     /**
      * List connected Beeper accounts available on this device.
-     * - When to use: select account context before account-scoped operations.
-     * - Scope: only accounts currently Connected on this device are included.
-     * Returns: connected accounts.
      */
     public function list(
         ?RequestOptions $requestOptions = null

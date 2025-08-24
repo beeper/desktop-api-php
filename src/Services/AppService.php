@@ -20,11 +20,7 @@ final class AppService implements AppContract
     public function __construct(private Client $client) {}
 
     /**
-     * Bring Beeper Desktop to the foreground on this device. Optionally focuses a specific chat if chatID is provided.
-     * - When to use: open Beeper, or jump to a specific chat.
-     * - Constraints: requires Beeper Desktop running locally; no-op in headless environments.
-     * - Idempotent: safe to call repeatedly. Returns an error if chatID is not found.
-     * Returns: success.
+     * Bring Beeper Desktop to the foreground on this device.
      *
      * @param string $chatID Optional Beeper chat ID to focus after bringing the app to foreground. If omitted, only foregrounds the app. Required if messageSortKey is present. No-op in headless environments.
      * @param string $messageSortKey Optional message sort key. Jumps to that message in the chat when foregrounding.

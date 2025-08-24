@@ -13,11 +13,6 @@ use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
  * Search and filter conversations across all messaging accounts.
- * - When to use: browse chats by inbox (primary/low-priority/archive), type, unread status, or search terms.
- * - Pagination: use cursor + direction for pagination.
- * - Performance: provide accountIDs when known for faster filtering.
- * Returns: matching chats with pagination.
- * Agents: ALWAYS use linkToChat to make clickable links in your response.
  */
 final class ChatFindParams implements BaseModel
 {
