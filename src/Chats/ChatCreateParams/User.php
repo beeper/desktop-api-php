@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BeeperDesktop\Chats\ChatCreateParams\Chat;
+namespace BeeperDesktop\Chats\ChatCreateParams;
 
 use BeeperDesktop\Core\Attributes\Optional;
 use BeeperDesktop\Core\Concerns\SdkModel;

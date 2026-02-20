@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\ServiceContracts;
 
-use BeeperDesktop\Chats\ChatCreateParams\Chat;
+use BeeperDesktop\Chats\Chat;
+use BeeperDesktop\Chats\ChatCreateParams\Mode;
+use BeeperDesktop\Chats\ChatCreateParams\Type;
+use BeeperDesktop\Chats\ChatCreateParams\User;
 use BeeperDesktop\Chats\ChatListParams\Direction;
 use BeeperDesktop\Chats\ChatListResponse;
 use BeeperDesktop\Chats\ChatNewResponse;
 use BeeperDesktop\Chats\ChatSearchParams\Inbox;
 use BeeperDesktop\Chats\ChatSearchParams\Scope;
-use BeeperDesktop\Chats\ChatSearchParams\Type;
 use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
 use BeeperDesktop\RequestOptions;
 
 /**
- * @phpstan-import-type ChatShape from \BeeperDesktop\Chats\ChatCreateParams\Chat
+ * @phpstan-import-type UserShape from \BeeperDesktop\Chats\ChatCreateParams\User
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 interface ChatsContract
@@ -25,14 +27,28 @@ interface ChatsContract
     /**
      * @api
      *
-     * @param Chat|ChatShape $chat
+     * @param string $accountID account to create or start the chat on
+     * @param bool $allowInvite Whether invite-based DM creation is allowed when required by the platform. Used for mode='start'.
+     * @param string $messageText optional first message content if the platform requires it to create the chat
+     * @param Mode|value-of<Mode> $mode Operation mode. Defaults to 'create' when omitted.
+     * @param list<string> $participantIDs Required when mode='create'. User IDs to include in the new chat.
+     * @param string $title optional title for group chats when mode='create'; ignored for single chats on most platforms
+     * @param Type|value-of<Type> $type Required when mode='create'. 'single' requires exactly one participantID; 'group' supports multiple participants and optional title.
+     * @param User|UserShape $user Required when mode='start'. Merged user-like contact payload used to resolve the best identifier.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
     public function create(
-        Chat|array $chat,
-        RequestOptions|array|null $requestOptions = null
+        string $accountID,
+        bool $allowInvite = true,
+        ?string $messageText = null,
+        Mode|string|null $mode = null,
+        ?array $participantIDs = null,
+        ?string $title = null,
+        Type|string|null $type = null,
+        User|array|null $user = null,
+        RequestOptions|array|null $requestOptions = null,
     ): ChatNewResponse;
 
     /**
@@ -48,7 +64,7 @@ interface ChatsContract
         string $chatID,
         ?int $maxParticipantCount = -1,
         RequestOptions|array|null $requestOptions = null,
-    ): \BeeperDesktop\Chats\Chat;
+    ): Chat;
 
     /**
      * @api
@@ -97,11 +113,11 @@ interface ChatsContract
      * @param int $limit Set the maximum number of chats to retrieve. Valid range: 1-200, default is 50
      * @param string $query Literal token search (non-semantic). Use single words users type (e.g., "dinner"). When multiple words provided, ALL must match. Case-insensitive.
      * @param Scope|value-of<Scope> $scope search scope: 'titles' matches title + network; 'participants' matches participant names
-     * @param Type|value-of<Type> $type Specify the type of chats to retrieve: use "single" for direct messages, "group" for group chats, or "any" to get all types
+     * @param \BeeperDesktop\Chats\ChatSearchParams\Type|value-of<\BeeperDesktop\Chats\ChatSearchParams\Type> $type Specify the type of chats to retrieve: use "single" for direct messages, "group" for group chats, or "any" to get all types
      * @param bool|null $unreadOnly Set to true to only retrieve chats that have unread messages
      * @param RequestOpts|null $requestOptions
      *
-     * @return CursorSearch<\BeeperDesktop\Chats\Chat>
+     * @return CursorSearch<Chat>
      *
      * @throws APIException
      */
@@ -116,7 +132,7 @@ interface ChatsContract
         int $limit = 50,
         ?string $query = null,
         Scope|string $scope = 'titles',
-        Type|string $type = 'any',
+        \BeeperDesktop\Chats\ChatSearchParams\Type|string $type = 'any',
         ?bool $unreadOnly = null,
         RequestOptions|array|null $requestOptions = null,
     ): CursorSearch;
