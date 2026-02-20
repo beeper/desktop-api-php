@@ -4,50 +4,60 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\Core;
 
-use BeeperDesktop\Errors\APIStatusError;
+use BeeperDesktop\Core\Contracts\BasePage;
+use BeeperDesktop\Core\Contracts\BaseResponse;
+use BeeperDesktop\Core\Contracts\BaseStream;
+use BeeperDesktop\Core\Conversion\Contracts\Converter;
+use BeeperDesktop\Core\Conversion\Contracts\ConverterSource;
+use BeeperDesktop\Core\Exceptions\APIConnectionException;
+use BeeperDesktop\Core\Exceptions\APIStatusException;
+use BeeperDesktop\Core\Implementation\RawResponse;
 use BeeperDesktop\RequestOptions;
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Discovery\Psr18ClientDiscovery;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
-class BaseClient
+/**
+ * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
+ *
+ * @phpstan-type NormalizedRequest = array{
+ *   method: string,
+ *   path: string,
+ *   query: array<string,mixed>,
+ *   headers: array<string,string|null|list<string>>,
+ *   body: mixed,
+ * }
+ */
+abstract class BaseClient
 {
     protected UriInterface $baseUrl;
 
-    protected UriFactoryInterface $uriFactory;
-
-    protected StreamFactoryInterface $streamFactory;
-
-    protected RequestFactoryInterface $requestFactory;
-
-    protected ClientInterface $transporter;
-
     /**
-     * @param array<string, string|int|list<string|int>|null> $headers
+     * @internal
+     *
+     * @param array<string,string|int|list<string|int>|null> $headers
      */
     public function __construct(
         protected array $headers,
         string $baseUrl,
+        protected ?string $idempotencyHeader = null,
         protected RequestOptions $options = new RequestOptions,
     ) {
-        $this->uriFactory = Psr17FactoryDiscovery::findUriFactory();
-        $this->streamFactory = Psr17FactoryDiscovery::findStreamFactory();
-        $this->requestFactory = Psr17FactoryDiscovery::findRequestFactory();
-
-        $this->baseUrl = $this->uriFactory->createUri($baseUrl);
-        $this->transporter = Psr18ClientDiscovery::find();
+        assert(!is_null($this->options->uriFactory));
+        $this->baseUrl = $this->options->uriFactory->createUri($baseUrl);
     }
 
     /**
      * @param string|list<mixed> $path
-     * @param array<string, mixed> $query
-     * @param array<string, mixed> $headers
+     * @param array<string,mixed> $query
+     * @param array<string,mixed> $headers
+     * @param string|int|list<string|int>|null $unwrap
+     * @param class-string<BasePage<mixed>>|null $page
+     * @param class-string<BaseStream<mixed>>|null $stream
+     * @param RequestOptions|array<string,mixed>|null $options
+     *
+     * @return BaseResponse<mixed>
      */
     public function request(
         string $method,
@@ -55,89 +65,108 @@ class BaseClient
         array $query = [],
         array $headers = [],
         mixed $body = null,
-        mixed $options = [],
-    ): mixed {
-        // @phpstan-ignore-next-line
-        [$req, $opts] = $this->buildRequest(method: $method, path: $path, query: $query, headers: $headers, opts: $options);
+        string|int|array|null $unwrap = null,
+        string|Converter|ConverterSource|null $convert = null,
+        ?string $page = null,
+        ?string $stream = null,
+        RequestOptions|array|null $options = [],
+    ): BaseResponse {
+        [$req, $opts] = $this->buildRequest(
+            method: $method,
+            // @phpstan-ignore argument.type
+            path: $path,
+            query: $query,
+            // @phpstan-ignore argument.type
+            headers: $headers,
+            body: $body,
+            // @phpstan-ignore argument.type
+            opts: $options,
+        );
+        ['method' => $method, 'path' => $uri, 'headers' => $headers, 'body' => $data] = $req;
+        assert(!is_null($opts->requestFactory));
 
-        // @phpstan-ignore-next-line
-        $rsp = $this->sendRequest($req, data: $body, opts: $opts, redirectCount: 0, retryCount: 0);
-        if (204 == $rsp->getStatusCode()) {
-            return null; // Handle 204 No Content
-        }
+        $request = $opts->requestFactory->createRequest($method, uri: $uri);
+        $request = Util::withSetHeaders($request, headers: $headers);
+        $request = $this->transformRequest($request);
 
-        return Util::decodeContent($rsp);
+        // @phpstan-ignore-next-line argument.type
+        $rsp = $this->sendRequest($opts, req: $request, data: $data, redirectCount: 0, retryCount: 0);
+
+        // @phpstan-ignore-next-line argument.type
+        return new RawResponse(client: $this, request: $request, response: $rsp, options: $opts, requestInfo: $req, unwrap: $unwrap, stream: $stream, page: $page, convert: $convert ?? 'null');
     }
 
     /**
-     * @template Item
-     * @template T of Pagination\AbstractPage<Item>
-     *
-     * @param T $page
+     * @internal
      */
-    public function requestApiList(object $page, RequestOptions $options): ResponseInterface
+    protected function generateIdempotencyKey(): string
     {
-        // @phpstan-ignore-next-line
-        return null;
-    }
+        $hex = bin2hex(random_bytes(32));
 
-    /** @return array<string, string> */
-    protected function authHeaders(): array
-    {
-        return [];
+        return "stainless-php-retry-{$hex}";
     }
 
     /**
-     * @param string|list<string> $path
-     * @param array<string, mixed> $query
-     * @param array<string, string|int|list<string|int>|null> $headers
-     * @param array{
-     *   timeout?: float|null,
-     *   maxRetries?: int|null,
-     *   initialRetryDelay?: float|null,
-     *   maxRetryDelay?: float|null,
-     *   extraHeaders?: list<string>|null,
-     *   extraQueryParams?: list<string>|null,
-     *   extraBodyParams?: list<string>|null,
-     * }|RequestOptions|null $opts
+     * @internal
      *
-     * @return array{RequestInterface, RequestOptions}
+     * @param string|list<string> $path
+     * @param array<string,mixed> $query
+     * @param array<string,string|int|list<string|int>|null> $headers
+     * @param RequestOpts|null $opts
+     *
+     * @return array{NormalizedRequest, RequestOptions}
      */
     protected function buildRequest(
         string $method,
         string|array $path,
         array $query,
         array $headers,
-        array|RequestOptions|null $opts,
+        mixed $body,
+        RequestOptions|array|null $opts,
     ): array {
-        $opts = [...$this->options->__serialize(), ...RequestOptions::parse($opts)->__serialize()];
-        $options = new RequestOptions(...$opts);
+        $options = RequestOptions::parse($this->options, $opts);
 
         $parsedPath = Util::parsePath($path);
 
-        /** @var array<string, mixed> $mergedQuery */
-        $mergedQuery = array_merge_recursive($query, $options->extraQueryParams);
-        $uri = Util::joinUri($this->baseUrl, path: $parsedPath, query: $mergedQuery);
+        /** @var array<string,mixed> $mergedQuery */
+        $mergedQuery = array_merge_recursive(
+            $query,
+            $options->extraQueryParams ?? []
+        );
+        $uri = Util::joinUri($this->baseUrl, path: $parsedPath, query: $mergedQuery)->__toString();
+        $idempotencyHeaders = $this->idempotencyHeader && !array_key_exists($this->idempotencyHeader, array: $headers)
+            ? [$this->idempotencyHeader => $this->generateIdempotencyKey()]
+            : [];
 
-        /** @var array<string, string | list<string>> $mergedHeaders */
-        $mergedHeaders = [...$this->headers,
-            ...$this->authHeaders(),
+        /** @var array<string,string|list<string>|null> $mergedHeaders */
+        $mergedHeaders = [
+            ...$this->headers,
             ...$headers,
-            ...$options->extraHeaders, ];
+            ...($options->extraHeaders ?? []),
+            ...$idempotencyHeaders,
+        ];
 
-        $req = $this->requestFactory->createRequest(strtoupper($method), uri: $uri);
-        $req = Util::withSetHeaders($req, headers: $mergedHeaders);
+        $req = ['method' => strtoupper($method), 'path' => $uri, 'query' => $mergedQuery, 'headers' => $mergedHeaders, 'body' => $body];
 
         return [$req, $options];
     }
 
+    protected function transformRequest(
+        RequestInterface $request
+    ): RequestInterface {
+        return $request;
+    }
+
+    /**
+     * @internal
+     */
     protected function followRedirect(
         ResponseInterface $rsp,
         RequestInterface $req
     ): RequestInterface {
         $location = $rsp->getHeaderLine('Location');
         if (!$location) {
-            throw new \RuntimeException('Redirection without Location header');
+            throw new APIConnectionException($req, message: 'Redirection without Location header');
         }
 
         $uri = Util::joinUri($req->getUri(), path: $location);
@@ -146,38 +175,107 @@ class BaseClient
     }
 
     /**
-     * @param bool|int|float|string|resource|\Traversable<mixed>|array<string,
-     * mixed,>|null $data
+     * @internal
+     */
+    protected function shouldRetry(
+        RequestOptions $opts,
+        int $retryCount,
+        ?ResponseInterface $rsp
+    ): bool {
+        if ($retryCount >= $opts->maxRetries) {
+            return false;
+        }
+
+        $code = $rsp?->getStatusCode();
+        if (408 == $code || 409 == $code || 429 == $code || $code >= 500) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @internal
+     */
+    protected function retryDelay(
+        RequestOptions $opts,
+        int $retryCount,
+        ?ResponseInterface $rsp
+    ): float {
+        if (!empty($header = $rsp?->getHeaderLine('retry-after'))) {
+            if (is_numeric($header)) {
+                return floatval($header);
+            }
+
+            try {
+                $date = new \DateTimeImmutable($header);
+                $span = time() - $date->getTimestamp();
+
+                return max(0.0, $span);
+            } catch (\DateMalformedStringException) {
+            }
+        }
+
+        $scale = $retryCount ** 2;
+        $jitter = 1 - (0.25 * mt_rand() / mt_getrandmax());
+        $naive = $opts->initialRetryDelay * $scale * $jitter;
+
+        return max(0.0, min($naive, $opts->maxRetryDelay));
+    }
+
+    /**
+     * @internal
+     *
+     * @param bool|int|float|string|resource|\Traversable<mixed,>|array<string,mixed>|null $data
      */
     protected function sendRequest(
+        RequestOptions $opts,
         RequestInterface $req,
         mixed $data,
-        RequestOptions $opts,
         int $retryCount,
         int $redirectCount,
     ): ResponseInterface {
-        $req = Util::withSetBody($this->streamFactory, req: $req, body: $data);
-        $rsp = $this->transporter->sendRequest($req);
-        $code = $rsp->getStatusCode();
+        assert(null !== $opts->streamFactory && null !== $opts->transporter);
+
+        /** @var RequestInterface */
+        $req = $req->withHeader('X-Stainless-Retry-Count', strval($retryCount));
+        $req = Util::withSetBody($opts->streamFactory, req: $req, body: $data);
+
+        $rsp = null;
+        $err = null;
+
+        try {
+            $rsp = $opts->transporter->sendRequest($req);
+        } catch (ClientExceptionInterface $e) {
+            $err = $e;
+        }
+
+        $code = $rsp?->getStatusCode();
 
         if ($code >= 300 && $code < 400) {
+            assert(!is_null($rsp));
+
             if ($redirectCount >= 20) {
-                throw new \RuntimeException('Maximum redirects exceeded');
+                throw new APIConnectionException($req, message: 'Maximum redirects exceeded');
             }
 
             $req = $this->followRedirect($rsp, req: $req);
 
-            return $this->sendRequest($req, data: $data, opts: $opts, retryCount: $retryCount, redirectCount: ++$redirectCount);
+            return $this->sendRequest($opts, req: $req, data: $data, retryCount: $retryCount, redirectCount: ++$redirectCount);
         }
 
-        if ($code >= 400 && $code < 500) {
-            throw APIStatusError::from(request: $req, response: $rsp);
-        }
+        if ($code >= 400 || is_null($rsp)) {
+            if (!$this->shouldRetry($opts, retryCount: $retryCount, rsp: $rsp)) {
+                $exn = is_null($rsp) ? new APIConnectionException($req, previous: $err) : APIStatusException::from(request: $req, response: $rsp);
 
-        if ($code >= 500 && $retryCount < $opts->maxRetries) {
-            usleep((int) $opts->initialRetryDelay);
+                throw $exn;
+            }
 
-            return $this->sendRequest($req, data: $data, opts: $opts, retryCount: ++$retryCount, redirectCount: $redirectCount);
+            $seconds = $this->retryDelay($opts, retryCount: $retryCount, rsp: $rsp);
+            $floor = floor($seconds);
+            time_nanosleep((int) $floor, nanoseconds: (int) ($seconds - $floor) * 10 ** 9);
+
+            return $this->sendRequest($opts, req: $req, data: $data, retryCount: ++$retryCount, redirectCount: $redirectCount);
         }
 
         return $rsp;

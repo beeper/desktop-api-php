@@ -1,11 +1,13 @@
-*.swo
-*.swp
+docs/
 .idea/
 .php-cs-fixer.cache
 .php-cs-fixer.php
-.phpdoc/
 .phpunit.cache
-composer.lock
 phpunit.xml
 playground/
+*.swo
+*.swp
 vendor/
+
+# do not edit! excludes generated files used internally
+.artifacts/

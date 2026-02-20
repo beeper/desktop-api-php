@@ -4,75 +4,194 @@ declare(strict_types=1);
 
 namespace BeeperDesktop;
 
+use BeeperDesktop\BeeperDesktopClientService\BeeperDesktopClientServiceFocusResponse;
+use BeeperDesktop\BeeperDesktopClientService\BeeperDesktopClientServiceSearchResponse;
 use BeeperDesktop\Core\BaseClient;
+use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\Core\Util;
 use BeeperDesktop\Services\AccountsService;
-use BeeperDesktop\Services\AppService;
+use BeeperDesktop\Services\AssetsService;
+use BeeperDesktop\Services\BeeperDesktopClientRawService;
+use BeeperDesktop\Services\BeeperDesktopClientService;
 use BeeperDesktop\Services\ChatsService;
+use BeeperDesktop\Services\InfoService;
 use BeeperDesktop\Services\MessagesService;
-use BeeperDesktop\Services\OAuthService;
-use BeeperDesktop\Services\RemindersService;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
 
+/**
+ * @phpstan-import-type NormalizedRequest from \BeeperDesktop\Core\BaseClient
+ * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
+ */
 class Client extends BaseClient
 {
     public string $accessToken;
 
+    /**
+     * @api
+     */
     public AccountsService $accounts;
 
-    public AppService $app;
-
-    public MessagesService $messages;
-
+    /**
+     * @api
+     */
     public ChatsService $chats;
 
-    public RemindersService $reminders;
+    /**
+     * @api
+     */
+    public MessagesService $messages;
 
-    public OAuthService $oauth;
+    /**
+     * @api
+     */
+    public AssetsService $assets;
 
-    public function __construct(?string $accessToken = null, ?string $baseUrl = null)
-    {
-        $this->accessToken = (string) (
-            $accessToken ?? getenv('BEEPER_ACCESS_TOKEN')
+    /**
+     * @api
+     */
+    public InfoService $info;
+
+    /**
+     * @api
+     */
+    public BeeperDesktopClientRawService $raw;
+
+    /**
+     * @api
+     */
+    private BeeperDesktopClientService $beeperDesktopClientService;
+
+    /**
+     * @param RequestOpts|null $requestOptions
+     */
+    public function __construct(
+        ?string $accessToken = null,
+        ?string $baseUrl = null,
+        RequestOptions|array|null $requestOptions = null,
+    ) {
+        $this->accessToken = (string) ($accessToken ?? Util::getenv(
+            'BEEPER_ACCESS_TOKEN'
+        ));
+
+        $baseUrl ??= Util::getenv(
+            'BEEPER_DESKTOP_BASE_URL'
+        ) ?: 'http://localhost:23373';
+
+        $options = RequestOptions::parse(
+            RequestOptions::with(
+                uriFactory: Psr17FactoryDiscovery::findUriFactory(),
+                streamFactory: Psr17FactoryDiscovery::findStreamFactory(),
+                requestFactory: Psr17FactoryDiscovery::findRequestFactory(),
+                transporter: Psr18ClientDiscovery::find(),
+            ),
+            $requestOptions,
         );
-
-        $base = $baseUrl ?? getenv(
-            'BEEPER-DESKTOP_BASE_URL'
-        ) ?: 'http://localhost:23374';
 
         parent::__construct(
             headers: [
-                'Content-Type' => 'application/json', 'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'User-Agent' => sprintf('beeperdesktop/PHP %s', VERSION),
+                'X-Stainless-Lang' => 'php',
+                'X-Stainless-Package-Version' => '0.0.1',
+                'X-Stainless-Arch' => Util::machtype(),
+                'X-Stainless-OS' => Util::ostype(),
+                'X-Stainless-Runtime' => php_sapi_name(),
+                'X-Stainless-Runtime-Version' => phpversion(),
             ],
-            baseUrl: $base,
-            options: new RequestOptions,
+            baseUrl: $baseUrl,
+            options: $options
         );
 
         $this->accounts = new AccountsService($this);
-        $this->app = new AppService($this);
-        $this->messages = new MessagesService($this);
         $this->chats = new ChatsService($this);
-        $this->reminders = new RemindersService($this);
-        $this->oauth = new OAuthService($this);
+        $this->messages = new MessagesService($this);
+        $this->assets = new AssetsService($this);
+        $this->info = new InfoService($this);
+        $this->raw = new BeeperDesktopClientRawService($this);
+        $this->beeperDesktopClientService = new BeeperDesktopClientService($this);
     }
 
-    /** @return array<string, string> */
+    /**
+     * @api
+     *
+     * Focus Beeper Desktop and optionally navigate to a specific chat, message, or pre-fill draft text and attachment.
+     *
+     * @param string $chatID Optional Beeper chat ID (or local chat ID) to focus after opening the app. If omitted, only opens/focuses the app.
+     * @param string $draftAttachmentPath optional draft attachment path to populate in the message input field
+     * @param string $draftText optional draft text to populate in the message input field
+     * @param string $messageID Optional message ID. Jumps to that message in the chat when opening.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function focus(
+        ?string $chatID = null,
+        ?string $draftAttachmentPath = null,
+        ?string $draftText = null,
+        ?string $messageID = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): BeeperDesktopClientServiceFocusResponse {
+        return $this->beeperDesktopClientService->focus(
+            $chatID,
+            $draftAttachmentPath,
+            $draftText,
+            $messageID,
+            $requestOptions
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Returns matching chats, participant name matches in groups, and the first page of messages in one call. Paginate messages via search-messages. Paginate chats via search-chats.
+     *
+     * @param string $query User-typed search text. Literal word matching (non-semantic).
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function search(
+        string $query,
+        RequestOptions|array|null $requestOptions = null
+    ): BeeperDesktopClientServiceSearchResponse {
+        return $this->beeperDesktopClientService->search($query, $requestOptions);
+    }
+
+    /** @return array<string,string> */
     protected function authHeaders(): array
     {
-        return [...$this->bearerAuth(), ...$this->oauth2()];
+        return $this->accessToken ? [
+            'Authorization' => "Bearer {$this->accessToken}",
+        ] : [];
     }
 
-    /** @return array<string, string> */
-    protected function bearerAuth(): array
-    {
-        if (!$this->accessToken) {
-            return [];
-        }
-
-        return ['Authorization' => "Bearer {$this->accessToken}"];
-    }
-
-    /** @return array<string, string> */
-    protected function oauth2(): array
-    {
-        throw new \BadMethodCallException;
+    /**
+     * @internal
+     *
+     * @param string|list<string> $path
+     * @param array<string,mixed> $query
+     * @param array<string,string|int|list<string|int>|null> $headers
+     * @param RequestOpts|null $opts
+     *
+     * @return array{NormalizedRequest, RequestOptions}
+     */
+    protected function buildRequest(
+        string $method,
+        string|array $path,
+        array $query,
+        array $headers,
+        mixed $body,
+        RequestOptions|array|null $opts,
+    ): array {
+        return parent::buildRequest(
+            method: $method,
+            path: $path,
+            query: $query,
+            headers: [...$this->authHeaders(), ...$headers],
+            body: $body,
+            opts: $opts,
+        );
     }
 }

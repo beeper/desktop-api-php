@@ -4,135 +4,135 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\Messages;
 
-use BeeperDesktop\Core\Attributes\Api;
+use BeeperDesktop\Core\Attributes\Optional;
 use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 use BeeperDesktop\Messages\MessageSearchParams\ChatType;
+use BeeperDesktop\Messages\MessageSearchParams\Direction;
+use BeeperDesktop\Messages\MessageSearchParams\MediaType;
 use BeeperDesktop\Messages\MessageSearchParams\Sender;
 
 /**
  * Search messages across chats using Beeper's message index.
+ *
+ * @see BeeperDesktop\Services\MessagesService::search()
+ *
+ * @phpstan-type MessageSearchParamsShape = array{
+ *   accountIDs?: list<string>|null,
+ *   chatIDs?: list<string>|null,
+ *   chatType?: null|ChatType|value-of<ChatType>,
+ *   cursor?: string|null,
+ *   dateAfter?: \DateTimeInterface|null,
+ *   dateBefore?: \DateTimeInterface|null,
+ *   direction?: null|Direction|value-of<Direction>,
+ *   excludeLowPriority?: bool|null,
+ *   includeMuted?: bool|null,
+ *   limit?: int|null,
+ *   mediaTypes?: list<MediaType|value-of<MediaType>>|null,
+ *   query?: string|null,
+ *   sender?: string|null|Sender|value-of<Sender>,
+ * }
  */
 final class MessageSearchParams implements BaseModel
 {
+    /** @use SdkModel<MessageSearchParamsShape> */
     use SdkModel;
     use SdkParams;
 
     /**
-     * Limit search to specific Beeper account IDs (bridge instances).
+     * Limit search to specific account IDs.
      *
      * @var list<string>|null $accountIDs
      */
-    #[Api(list: 'string', optional: true)]
+    #[Optional(list: 'string')]
     public ?array $accountIDs;
 
     /**
-     * Limit search to specific Beeper chat IDs.
+     * Limit search to specific chat IDs.
      *
      * @var list<string>|null $chatIDs
      */
-    #[Api(list: 'string', optional: true)]
+    #[Optional(list: 'string')]
     public ?array $chatIDs;
 
     /**
      * Filter by chat type: 'group' for group chats, 'single' for 1:1 chats.
      *
-     * @var ChatType::*|null $chatType
+     * @var value-of<ChatType>|null $chatType
      */
-    #[Api(enum: ChatType::class, optional: true)]
+    #[Optional(enum: ChatType::class)]
     public ?string $chatType;
+
+    /**
+     * Opaque pagination cursor; do not inspect. Use together with 'direction'.
+     */
+    #[Optional]
+    public ?string $cursor;
 
     /**
      * Only include messages with timestamp strictly after this ISO 8601 datetime (e.g., '2024-07-01T00:00:00Z' or '2024-07-01T00:00:00+02:00').
      */
-    #[Api(optional: true)]
+    #[Optional]
     public ?\DateTimeInterface $dateAfter;
 
     /**
      * Only include messages with timestamp strictly before this ISO 8601 datetime (e.g., '2024-07-31T23:59:59Z' or '2024-07-31T23:59:59+02:00').
      */
-    #[Api(optional: true)]
+    #[Optional]
     public ?\DateTimeInterface $dateBefore;
 
     /**
-     * A cursor for use in pagination. ending_before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_bar, your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
+     * Pagination direction used with 'cursor': 'before' fetches older results, 'after' fetches newer results. Defaults to 'before' when only 'cursor' is provided.
+     *
+     * @var value-of<Direction>|null $direction
      */
-    #[Api(optional: true)]
-    public ?string $endingBefore;
+    #[Optional(enum: Direction::class)]
+    public ?string $direction;
 
     /**
      * Exclude messages marked Low Priority by the user. Default: true. Set to false to include all.
      */
-    #[Api(optional: true)]
+    #[Optional(nullable: true)]
     public ?bool $excludeLowPriority;
 
     /**
      * Include messages in chats marked as Muted by the user, which are usually less important. Default: true. Set to false if the user wants a more refined search.
      */
-    #[Api(optional: true)]
+    #[Optional(nullable: true)]
     public ?bool $includeMuted;
 
     /**
-     * Maximum number of messages to return (1–500). Defaults to 50.
+     * Maximum number of messages to return.
      */
-    #[Api(optional: true)]
+    #[Optional]
     public ?int $limit;
 
     /**
-     * Only return messages that contain file attachments.
+     * Filter messages by media types. Use ['any'] for any media type, or specify exact types like ['video', 'image']. Omit for no media filtering.
+     *
+     * @var list<value-of<MediaType>>|null $mediaTypes
      */
-    #[Api(optional: true)]
-    public ?bool $onlyWithFile;
+    #[Optional(list: MediaType::class)]
+    public ?array $mediaTypes;
 
     /**
-     * Only return messages that contain image attachments.
+     * Literal word search (non-semantic). Finds messages containing these EXACT words in any order. Use single words users actually type, not concepts or phrases. Example: use "dinner" not "dinner plans", use "sick" not "health issues". If omitted, returns results filtered only by other parameters.
      */
-    #[Api(optional: true)]
-    public ?bool $onlyWithImage;
-
-    /**
-     * Only return messages that contain link attachments.
-     */
-    #[Api(optional: true)]
-    public ?bool $onlyWithLink;
-
-    /**
-     * Only return messages that contain any type of media attachment.
-     */
-    #[Api(optional: true)]
-    public ?bool $onlyWithMedia;
-
-    /**
-     * Only return messages that contain video attachments.
-     */
-    #[Api(optional: true)]
-    public ?bool $onlyWithVideo;
-
-    /**
-     * Literal word search (NOT semantic). Finds messages containing these EXACT words in any order. Use single words users actually type, not concepts or phrases. Example: use "dinner" not "dinner plans", use "sick" not "health issues". If omitted, returns results filtered only by other parameters.
-     */
-    #[Api(optional: true)]
+    #[Optional]
     public ?string $query;
 
     /**
      * Filter by sender: 'me' (messages sent by the authenticated user), 'others' (messages sent by others), or a specific user ID string (user.id).
      *
-     * @var Sender::*|string|null $sender
+     * @var string|value-of<Sender>|null $sender
      */
-    #[Api(union: Sender::class, optional: true)]
+    #[Optional(enum: Sender::class)]
     public ?string $sender;
-
-    /**
-     * A cursor for use in pagination. starting_after is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list.
-     */
-    #[Api(optional: true)]
-    public ?string $startingAfter;
 
     public function __construct()
     {
-        self::introspect();
-        $this->unsetOptionalProperties();
+        $this->initialize();
     }
 
     /**
@@ -140,90 +140,95 @@ final class MessageSearchParams implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
-     * @param list<string> $accountIDs
-     * @param list<string> $chatIDs
-     * @param ChatType::* $chatType
-     * @param Sender::*|string $sender
+     * @param list<string>|null $accountIDs
+     * @param list<string>|null $chatIDs
+     * @param ChatType|value-of<ChatType>|null $chatType
+     * @param Direction|value-of<Direction>|null $direction
+     * @param list<MediaType|value-of<MediaType>>|null $mediaTypes
+     * @param string|Sender|value-of<Sender>|null $sender
      */
     public static function with(
         ?array $accountIDs = null,
         ?array $chatIDs = null,
-        ?string $chatType = null,
+        ChatType|string|null $chatType = null,
+        ?string $cursor = null,
         ?\DateTimeInterface $dateAfter = null,
         ?\DateTimeInterface $dateBefore = null,
-        ?string $endingBefore = null,
+        Direction|string|null $direction = null,
         ?bool $excludeLowPriority = null,
         ?bool $includeMuted = null,
         ?int $limit = null,
-        ?bool $onlyWithFile = null,
-        ?bool $onlyWithImage = null,
-        ?bool $onlyWithLink = null,
-        ?bool $onlyWithMedia = null,
-        ?bool $onlyWithVideo = null,
+        ?array $mediaTypes = null,
         ?string $query = null,
-        ?string $sender = null,
-        ?string $startingAfter = null,
+        Sender|string|null $sender = null,
     ): self {
-        $obj = new self;
+        $self = new self;
 
-        null !== $accountIDs && $obj->accountIDs = $accountIDs;
-        null !== $chatIDs && $obj->chatIDs = $chatIDs;
-        null !== $chatType && $obj->chatType = $chatType;
-        null !== $dateAfter && $obj->dateAfter = $dateAfter;
-        null !== $dateBefore && $obj->dateBefore = $dateBefore;
-        null !== $endingBefore && $obj->endingBefore = $endingBefore;
-        null !== $excludeLowPriority && $obj->excludeLowPriority = $excludeLowPriority;
-        null !== $includeMuted && $obj->includeMuted = $includeMuted;
-        null !== $limit && $obj->limit = $limit;
-        null !== $onlyWithFile && $obj->onlyWithFile = $onlyWithFile;
-        null !== $onlyWithImage && $obj->onlyWithImage = $onlyWithImage;
-        null !== $onlyWithLink && $obj->onlyWithLink = $onlyWithLink;
-        null !== $onlyWithMedia && $obj->onlyWithMedia = $onlyWithMedia;
-        null !== $onlyWithVideo && $obj->onlyWithVideo = $onlyWithVideo;
-        null !== $query && $obj->query = $query;
-        null !== $sender && $obj->sender = $sender;
-        null !== $startingAfter && $obj->startingAfter = $startingAfter;
+        null !== $accountIDs && $self['accountIDs'] = $accountIDs;
+        null !== $chatIDs && $self['chatIDs'] = $chatIDs;
+        null !== $chatType && $self['chatType'] = $chatType;
+        null !== $cursor && $self['cursor'] = $cursor;
+        null !== $dateAfter && $self['dateAfter'] = $dateAfter;
+        null !== $dateBefore && $self['dateBefore'] = $dateBefore;
+        null !== $direction && $self['direction'] = $direction;
+        null !== $excludeLowPriority && $self['excludeLowPriority'] = $excludeLowPriority;
+        null !== $includeMuted && $self['includeMuted'] = $includeMuted;
+        null !== $limit && $self['limit'] = $limit;
+        null !== $mediaTypes && $self['mediaTypes'] = $mediaTypes;
+        null !== $query && $self['query'] = $query;
+        null !== $sender && $self['sender'] = $sender;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Limit search to specific Beeper account IDs (bridge instances).
+     * Limit search to specific account IDs.
      *
      * @param list<string> $accountIDs
      */
     public function withAccountIDs(array $accountIDs): self
     {
-        $obj = clone $this;
-        $obj->accountIDs = $accountIDs;
+        $self = clone $this;
+        $self['accountIDs'] = $accountIDs;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Limit search to specific Beeper chat IDs.
+     * Limit search to specific chat IDs.
      *
      * @param list<string> $chatIDs
      */
     public function withChatIDs(array $chatIDs): self
     {
-        $obj = clone $this;
-        $obj->chatIDs = $chatIDs;
+        $self = clone $this;
+        $self['chatIDs'] = $chatIDs;
 
-        return $obj;
+        return $self;
     }
 
     /**
      * Filter by chat type: 'group' for group chats, 'single' for 1:1 chats.
      *
-     * @param ChatType::* $chatType
+     * @param ChatType|value-of<ChatType> $chatType
      */
-    public function withChatType(string $chatType): self
+    public function withChatType(ChatType|string $chatType): self
     {
-        $obj = clone $this;
-        $obj->chatType = $chatType;
+        $self = clone $this;
+        $self['chatType'] = $chatType;
 
-        return $obj;
+        return $self;
+    }
+
+    /**
+     * Opaque pagination cursor; do not inspect. Use together with 'direction'.
+     */
+    public function withCursor(string $cursor): self
+    {
+        $self = clone $this;
+        $self['cursor'] = $cursor;
+
+        return $self;
     }
 
     /**
@@ -231,10 +236,10 @@ final class MessageSearchParams implements BaseModel
      */
     public function withDateAfter(\DateTimeInterface $dateAfter): self
     {
-        $obj = clone $this;
-        $obj->dateAfter = $dateAfter;
+        $self = clone $this;
+        $self['dateAfter'] = $dateAfter;
 
-        return $obj;
+        return $self;
     }
 
     /**
@@ -242,143 +247,92 @@ final class MessageSearchParams implements BaseModel
      */
     public function withDateBefore(\DateTimeInterface $dateBefore): self
     {
-        $obj = clone $this;
-        $obj->dateBefore = $dateBefore;
+        $self = clone $this;
+        $self['dateBefore'] = $dateBefore;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * A cursor for use in pagination. ending_before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_bar, your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
+     * Pagination direction used with 'cursor': 'before' fetches older results, 'after' fetches newer results. Defaults to 'before' when only 'cursor' is provided.
+     *
+     * @param Direction|value-of<Direction> $direction
      */
-    public function withEndingBefore(string $endingBefore): self
+    public function withDirection(Direction|string $direction): self
     {
-        $obj = clone $this;
-        $obj->endingBefore = $endingBefore;
+        $self = clone $this;
+        $self['direction'] = $direction;
 
-        return $obj;
+        return $self;
     }
 
     /**
      * Exclude messages marked Low Priority by the user. Default: true. Set to false to include all.
      */
-    public function withExcludeLowPriority(bool $excludeLowPriority): self
+    public function withExcludeLowPriority(?bool $excludeLowPriority): self
     {
-        $obj = clone $this;
-        $obj->excludeLowPriority = $excludeLowPriority;
+        $self = clone $this;
+        $self['excludeLowPriority'] = $excludeLowPriority;
 
-        return $obj;
+        return $self;
     }
 
     /**
      * Include messages in chats marked as Muted by the user, which are usually less important. Default: true. Set to false if the user wants a more refined search.
      */
-    public function withIncludeMuted(bool $includeMuted): self
+    public function withIncludeMuted(?bool $includeMuted): self
     {
-        $obj = clone $this;
-        $obj->includeMuted = $includeMuted;
+        $self = clone $this;
+        $self['includeMuted'] = $includeMuted;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Maximum number of messages to return (1–500). Defaults to 50.
+     * Maximum number of messages to return.
      */
     public function withLimit(int $limit): self
     {
-        $obj = clone $this;
-        $obj->limit = $limit;
+        $self = clone $this;
+        $self['limit'] = $limit;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Only return messages that contain file attachments.
+     * Filter messages by media types. Use ['any'] for any media type, or specify exact types like ['video', 'image']. Omit for no media filtering.
+     *
+     * @param list<MediaType|value-of<MediaType>> $mediaTypes
      */
-    public function withOnlyWithFile(bool $onlyWithFile): self
+    public function withMediaTypes(array $mediaTypes): self
     {
-        $obj = clone $this;
-        $obj->onlyWithFile = $onlyWithFile;
+        $self = clone $this;
+        $self['mediaTypes'] = $mediaTypes;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Only return messages that contain image attachments.
-     */
-    public function withOnlyWithImage(bool $onlyWithImage): self
-    {
-        $obj = clone $this;
-        $obj->onlyWithImage = $onlyWithImage;
-
-        return $obj;
-    }
-
-    /**
-     * Only return messages that contain link attachments.
-     */
-    public function withOnlyWithLink(bool $onlyWithLink): self
-    {
-        $obj = clone $this;
-        $obj->onlyWithLink = $onlyWithLink;
-
-        return $obj;
-    }
-
-    /**
-     * Only return messages that contain any type of media attachment.
-     */
-    public function withOnlyWithMedia(bool $onlyWithMedia): self
-    {
-        $obj = clone $this;
-        $obj->onlyWithMedia = $onlyWithMedia;
-
-        return $obj;
-    }
-
-    /**
-     * Only return messages that contain video attachments.
-     */
-    public function withOnlyWithVideo(bool $onlyWithVideo): self
-    {
-        $obj = clone $this;
-        $obj->onlyWithVideo = $onlyWithVideo;
-
-        return $obj;
-    }
-
-    /**
-     * Literal word search (NOT semantic). Finds messages containing these EXACT words in any order. Use single words users actually type, not concepts or phrases. Example: use "dinner" not "dinner plans", use "sick" not "health issues". If omitted, returns results filtered only by other parameters.
+     * Literal word search (non-semantic). Finds messages containing these EXACT words in any order. Use single words users actually type, not concepts or phrases. Example: use "dinner" not "dinner plans", use "sick" not "health issues". If omitted, returns results filtered only by other parameters.
      */
     public function withQuery(string $query): self
     {
-        $obj = clone $this;
-        $obj->query = $query;
+        $self = clone $this;
+        $self['query'] = $query;
 
-        return $obj;
+        return $self;
     }
 
     /**
      * Filter by sender: 'me' (messages sent by the authenticated user), 'others' (messages sent by others), or a specific user ID string (user.id).
      *
-     * @param Sender::*|string $sender
+     * @param string|Sender|value-of<Sender> $sender
      */
-    public function withSender(string $sender): self
+    public function withSender(Sender|string $sender): self
     {
-        $obj = clone $this;
-        $obj->sender = $sender;
+        $self = clone $this;
+        $self['sender'] = $sender;
 
-        return $obj;
-    }
-
-    /**
-     * A cursor for use in pagination. starting_after is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list.
-     */
-    public function withStartingAfter(string $startingAfter): self
-    {
-        $obj = clone $this;
-        $obj->startingAfter = $startingAfter;
-
-        return $obj;
+        return $self;
     }
 }

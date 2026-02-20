@@ -4,86 +4,86 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\Messages;
 
-use BeeperDesktop\Core\Attributes\Api;
+use BeeperDesktop\Core\Attributes\Optional;
 use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
+use BeeperDesktop\Messages\MessageSendParams\Attachment;
 
 /**
- * Send a text message to a specific chat. Supports replying to existing messages. Returns the sent message ID and a deeplink to the chat.
+ * Send a text message to a specific chat. Supports replying to existing messages. Returns a pending message ID.
+ *
+ * @see BeeperDesktop\Services\MessagesService::send()
+ *
+ * @phpstan-import-type AttachmentShape from \BeeperDesktop\Messages\MessageSendParams\Attachment
+ *
+ * @phpstan-type MessageSendParamsShape = array{
+ *   attachment?: null|Attachment|AttachmentShape,
+ *   replyToMessageID?: string|null,
+ *   text?: string|null,
+ * }
  */
 final class MessageSendParams implements BaseModel
 {
+    /** @use SdkModel<MessageSendParamsShape> */
     use SdkModel;
     use SdkParams;
 
     /**
-     * The identifier of the chat where the message will send.
+     * Single attachment to send with the message.
      */
-    #[Api]
-    public string $chatID;
+    #[Optional]
+    public ?Attachment $attachment;
 
     /**
      * Provide a message ID to send this as a reply to an existing message.
      */
-    #[Api(optional: true)]
+    #[Optional]
     public ?string $replyToMessageID;
 
     /**
      * Text content of the message you want to send. You may use markdown.
      */
-    #[Api(optional: true)]
+    #[Optional]
     public ?string $text;
 
-    /**
-     * `new MessageSendParams()` is missing required properties by the API.
-     *
-     * To enforce required parameters use
-     * ```
-     * MessageSendParams::with(chatID: ...)
-     * ```
-     *
-     * Otherwise ensure the following setters are called
-     *
-     * ```
-     * (new MessageSendParams)->withChatID(...)
-     * ```
-     */
     public function __construct()
     {
-        self::introspect();
-        $this->unsetOptionalProperties();
+        $this->initialize();
     }
 
     /**
      * Construct an instance from the required parameters.
      *
      * You must use named parameters to construct any parameters with a default value.
+     *
+     * @param Attachment|AttachmentShape|null $attachment
      */
     public static function with(
-        string $chatID,
+        Attachment|array|null $attachment = null,
         ?string $replyToMessageID = null,
-        ?string $text = null
+        ?string $text = null,
     ): self {
-        $obj = new self;
+        $self = new self;
 
-        $obj->chatID = $chatID;
+        null !== $attachment && $self['attachment'] = $attachment;
+        null !== $replyToMessageID && $self['replyToMessageID'] = $replyToMessageID;
+        null !== $text && $self['text'] = $text;
 
-        null !== $replyToMessageID && $obj->replyToMessageID = $replyToMessageID;
-        null !== $text && $obj->text = $text;
-
-        return $obj;
+        return $self;
     }
 
     /**
-     * The identifier of the chat where the message will send.
+     * Single attachment to send with the message.
+     *
+     * @param Attachment|AttachmentShape $attachment
      */
-    public function withChatID(string $chatID): self
+    public function withAttachment(Attachment|array $attachment): self
     {
-        $obj = clone $this;
-        $obj->chatID = $chatID;
+        $self = clone $this;
+        $self['attachment'] = $attachment;
 
-        return $obj;
+        return $self;
     }
 
     /**
@@ -91,10 +91,10 @@ final class MessageSendParams implements BaseModel
      */
     public function withReplyToMessageID(string $replyToMessageID): self
     {
-        $obj = clone $this;
-        $obj->replyToMessageID = $replyToMessageID;
+        $self = clone $this;
+        $self['replyToMessageID'] = $replyToMessageID;
 
-        return $obj;
+        return $self;
     }
 
     /**
@@ -102,9 +102,9 @@ final class MessageSendParams implements BaseModel
      */
     public function withText(string $text): self
     {
-        $obj = clone $this;
-        $obj->text = $text;
+        $self = clone $this;
+        $self['text'] = $text;
 
-        return $obj;
+        return $self;
     }
 }

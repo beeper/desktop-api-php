@@ -4,19 +4,31 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\Core\Contracts;
 
-use BeeperDesktop\Core\BaseClient;
-use BeeperDesktop\Core\Pagination\PageRequestOptions;
-use Psr\Http\Message\ResponseInterface;
-
 /**
+ * @phpstan-import-type NormalizedRequest from \BeeperDesktop\Core\BaseClient
+ *
  * @internal
+ *
+ * @template Item
+ *
+ * @extends \IteratorAggregate<int, static>
  */
-interface BasePage
+interface BasePage extends \IteratorAggregate
 {
-    public function __construct(
-        BaseClient $client,
-        PageRequestOptions $options,
-        ResponseInterface $response,
-        mixed $body,
-    );
+    public function hasNextPage(): bool;
+
+    /**
+     * @return list<Item>
+     */
+    public function getItems(): array;
+
+    /**
+     * @return static<Item>
+     */
+    public function getNextPage(): static;
+
+    /**
+     * @return \Generator<Item>
+     */
+    public function pagingEachItem(): \Generator;
 }

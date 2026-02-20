@@ -1,8 +1,9 @@
 {
   "$schema": "https://getcomposer.org/schema.json",
+  "license": "MIT",
   "autoload": {
     "files": [
-      "src/Client.php"
+      "src/Version.php"
     ],
     "psr-4": {
       "BeeperDesktop\\": "src/"
@@ -25,13 +26,11 @@
     "preferred-install": "dist",
     "sort-packages": true
   },
-  "license": "APACHE-2.0",
   "description": "Beeper Desktop PHP SDK",
-  "name": "beeper/beeper-desktop-api",
+  "name": "beeper/desktop-api-php",
   "require": {
     "php": "^8.1",
     "php-http/discovery": "^1",
-    "php-http/multipart-stream-builder": "^1",
     "psr/http-client": "^1",
     "psr/http-client-implementation": "^1",
     "psr/http-factory-implementation": "^1",
@@ -41,6 +40,7 @@
     "friendsofphp/php-cs-fixer": "^3",
     "nyholm/psr7": "^1",
     "pestphp/pest": "^3",
+    "php-http/mock-client": "^1",
     "phpstan/extension-installer": "^1",
     "phpstan/phpstan": "^2",
     "phpstan/phpstan-phpunit": "^2",
@@ -48,6 +48,7 @@
     "symfony/http-client": "^7"
   },
   "scripts": {
+    "build:docs": "curl --etag-save ./vendor/ag.etags --etag-compare ./vendor/ag.etags --create-dirs --remote-name --output-dir ./vendor/bin --no-progress-meter -- https://github.com/ApiGen/ApiGen/releases/latest/download/apigen.phar && php ./vendor/bin/apigen.phar --output docs -- src",
     "lint": "./scripts/lint",
     "test": "./scripts/test"
   }
