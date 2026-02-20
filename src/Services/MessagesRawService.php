@@ -15,7 +15,6 @@ use BeeperDesktop\Messages\MessageListParams\Direction;
 use BeeperDesktop\Messages\MessageSearchParams;
 use BeeperDesktop\Messages\MessageSearchParams\ChatType;
 use BeeperDesktop\Messages\MessageSearchParams\MediaType;
-use BeeperDesktop\Messages\MessageSearchParams\Sender;
 use BeeperDesktop\Messages\MessageSendParams;
 use BeeperDesktop\Messages\MessageSendParams\Attachment;
 use BeeperDesktop\Messages\MessageSendResponse;
@@ -127,7 +126,7 @@ final class MessagesRawService implements MessagesRawContract
      *   limit?: int,
      *   mediaTypes?: list<MediaType|value-of<MediaType>>,
      *   query?: string,
-     *   sender?: string|Sender|value-of<Sender>,
+     *   sender?: string,
      * }|MessageSearchParams $params
      * @param RequestOpts|null $requestOptions
      *

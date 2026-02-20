@@ -11,7 +11,6 @@ use BeeperDesktop\Message;
 use BeeperDesktop\Messages\MessageListParams\Direction;
 use BeeperDesktop\Messages\MessageSearchParams\ChatType;
 use BeeperDesktop\Messages\MessageSearchParams\MediaType;
-use BeeperDesktop\Messages\MessageSearchParams\Sender;
 use BeeperDesktop\Messages\MessageSendParams\Attachment;
 use BeeperDesktop\Messages\MessageSendResponse;
 use BeeperDesktop\Messages\MessageUpdateResponse;
@@ -74,7 +73,7 @@ interface MessagesContract
      * @param int $limit maximum number of messages to return
      * @param list<MediaType|value-of<MediaType>> $mediaTypes Filter messages by media types. Use ['any'] for any media type, or specify exact types like ['video', 'image']. Omit for no media filtering.
      * @param string $query Literal word search (non-semantic). Finds messages containing these EXACT words in any order. Use single words users actually type, not concepts or phrases. Example: use "dinner" not "dinner plans", use "sick" not "health issues". If omitted, returns results filtered only by other parameters.
-     * @param string|Sender|value-of<Sender> $sender Filter by sender: 'me' (messages sent by the authenticated user), 'others' (messages sent by others), or a specific user ID string (user.id).
+     * @param string $sender Filter by sender: 'me' (messages sent by the authenticated user), 'others' (messages sent by others), or a specific user ID string (user.id).
      * @param RequestOpts|null $requestOptions
      *
      * @return CursorSearch<Message>
@@ -94,7 +93,7 @@ interface MessagesContract
         int $limit = 20,
         ?array $mediaTypes = null,
         ?string $query = null,
-        Sender|string|null $sender = null,
+        ?string $sender = null,
         RequestOptions|array|null $requestOptions = null,
     ): CursorSearch;
 
