@@ -4,186 +4,220 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\Services;
 
-use BeeperDesktop\Chats\Chat;
-use BeeperDesktop\Chats\ChatArchiveParams;
-use BeeperDesktop\Chats\ChatFindParams;
-use BeeperDesktop\Chats\ChatFindParams\Inbox;
-use BeeperDesktop\Chats\ChatFindParams\Type;
-use BeeperDesktop\Chats\ChatGetLinkParams;
-use BeeperDesktop\Chats\ChatRetrieveParams;
-use BeeperDesktop\Chats\GetChatResponse;
-use BeeperDesktop\Chats\LinkResponse;
+use BeeperDesktop\Chats\ChatCreateParams\Chat;
+use BeeperDesktop\Chats\ChatListParams\Direction;
+use BeeperDesktop\Chats\ChatListResponse;
+use BeeperDesktop\Chats\ChatNewResponse;
+use BeeperDesktop\Chats\ChatSearchParams\Inbox;
+use BeeperDesktop\Chats\ChatSearchParams\Scope;
+use BeeperDesktop\Chats\ChatSearchParams\Type;
 use BeeperDesktop\Client;
-use BeeperDesktop\Contracts\ChatsContract;
-use BeeperDesktop\Core\Conversion;
+use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\Core\Util;
+use BeeperDesktop\CursorNoLimit;
+use BeeperDesktop\CursorSearch;
 use BeeperDesktop\RequestOptions;
-use BeeperDesktop\Shared\BaseResponse;
+use BeeperDesktop\ServiceContracts\ChatsContract;
+use BeeperDesktop\Services\Chats\MessagesService;
+use BeeperDesktop\Services\Chats\RemindersService;
 
 /**
- * Manage chats, conversations, and threads.
+ * Manage chats.
+ *
+ * @phpstan-import-type ChatShape from \BeeperDesktop\Chats\ChatCreateParams\Chat
+ * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class ChatsService implements ChatsContract
 {
-    public function __construct(private Client $client) {}
+    /**
+     * @api
+     */
+    public ChatsRawService $raw;
 
     /**
-     * Retrieve chat details including metadata, participants, and latest message.
+     * @api
+     */
+    public RemindersService $reminders;
+
+    /**
+     * @api
+     */
+    public MessagesService $messages;
+
+    /**
+     * @internal
+     */
+    public function __construct(private Client $client)
+    {
+        $this->raw = new ChatsRawService($client);
+        $this->reminders = new RemindersService($client);
+        $this->messages = new MessagesService($client);
+    }
+
+    /**
+     * @api
      *
-     * @param string $chatID Unique identifier of the chat to retrieve. Not available for iMessage chats. Participants are limited by 'maxParticipantCount'.
-     * @param int|null $maxParticipantCount Maximum number of participants to return. Use -1 for all; otherwise 0–500. Defaults to 20.
+     * Create a single/group chat (mode='create') or start a direct chat from merged user data (mode='start').
+     *
+     * @param Chat|ChatShape $chat
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function create(
+        Chat|array $chat,
+        RequestOptions|array|null $requestOptions = null
+    ): ChatNewResponse {
+        $params = Util::removeNulls(['chat' => $chat]);
+
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->create(params: $params, requestOptions: $requestOptions);
+
+        return $response->parse();
+    }
+
+    /**
+     * @api
+     *
+     * Retrieve chat details including metadata, participants, and latest message
+     *
+     * @param string $chatID unique identifier of the chat
+     * @param int|null $maxParticipantCount Maximum number of participants to return. Use -1 for all; otherwise 0–500. Defaults to all (-1).
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
      */
     public function retrieve(
-        $chatID,
-        $maxParticipantCount = null,
-        ?RequestOptions $requestOptions = null
-    ): ?GetChatResponse {
-        $args = [
-            'chatID' => $chatID, 'maxParticipantCount' => $maxParticipantCount,
-        ];
-        $args = Util::array_filter_null($args, ['maxParticipantCount']);
-        [$parsed, $options] = ChatRetrieveParams::parseRequest(
-            $args,
-            $requestOptions
-        );
-        $resp = $this->client->request(
-            method: 'get',
-            path: 'v0/get-chat',
-            query: $parsed,
-            options: $options
+        string $chatID,
+        ?int $maxParticipantCount = -1,
+        RequestOptions|array|null $requestOptions = null,
+    ): \BeeperDesktop\Chats\Chat {
+        $params = Util::removeNulls(
+            ['maxParticipantCount' => $maxParticipantCount]
         );
 
-        // @phpstan-ignore-next-line;
-        return Conversion::coerce(GetChatResponse::class, value: $resp);
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->retrieve($chatID, params: $params, requestOptions: $requestOptions);
+
+        return $response->parse();
     }
 
     /**
-     * Archive or unarchive a chat. Set archived=true to move to archive, archived=false to move back to inbox.
+     * @api
      *
-     * @param string $chatID The identifier of the chat to archive or unarchive
+     * List all chats sorted by last activity (most recent first). Combines all accounts into a single paginated list.
+     *
+     * @param list<string> $accountIDs Limit to specific account IDs. If omitted, fetches from all accounts.
+     * @param string $cursor Opaque pagination cursor; do not inspect. Use together with 'direction'.
+     * @param Direction|value-of<Direction> $direction Pagination direction used with 'cursor': 'before' fetches older results, 'after' fetches newer results. Defaults to 'before' when only 'cursor' is provided.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return CursorNoLimit<ChatListResponse>
+     *
+     * @throws APIException
+     */
+    public function list(
+        ?array $accountIDs = null,
+        ?string $cursor = null,
+        Direction|string|null $direction = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): CursorNoLimit {
+        $params = Util::removeNulls(
+            [
+                'accountIDs' => $accountIDs,
+                'cursor' => $cursor,
+                'direction' => $direction,
+            ],
+        );
+
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->list(params: $params, requestOptions: $requestOptions);
+
+        return $response->parse();
+    }
+
+    /**
+     * @api
+     *
+     * Archive or unarchive a chat. Set archived=true to move to archive, archived=false to move back to inbox
+     *
+     * @param string $chatID unique identifier of the chat
      * @param bool $archived True to archive, false to unarchive
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
      */
     public function archive(
-        $chatID,
-        $archived = null,
-        ?RequestOptions $requestOptions = null
-    ): BaseResponse {
-        $args = ['chatID' => $chatID, 'archived' => $archived];
-        $args = Util::array_filter_null($args, ['archived']);
-        [$parsed, $options] = ChatArchiveParams::parseRequest(
-            $args,
-            $requestOptions
-        );
-        $resp = $this->client->request(
-            method: 'post',
-            path: 'v0/archive-chat',
-            body: (object) $parsed,
-            options: $options,
-        );
+        string $chatID,
+        bool $archived = true,
+        RequestOptions|array|null $requestOptions = null,
+    ): mixed {
+        $params = Util::removeNulls(['archived' => $archived]);
 
-        // @phpstan-ignore-next-line;
-        return Conversion::coerce(BaseResponse::class, value: $resp);
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->archive($chatID, params: $params, requestOptions: $requestOptions);
+
+        return $response->parse();
     }
 
     /**
-     * Search and filter conversations across all messaging accounts.
+     * @api
+     *
+     * Search chats by title/network or participants using Beeper Desktop's renderer algorithm.
      *
      * @param list<string> $accountIDs Provide an array of account IDs to filter chats from specific messaging accounts only
-     * @param string $endingBefore A cursor for use in pagination. ending_before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_bar, your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
-     * @param Inbox::* $inbox Filter by inbox type: "primary" (non-archived, non-low-priority), "low-priority", or "archive". If not specified, shows all chats.
-     * @param bool $includeMuted Include chats marked as Muted by the user, which are usually less important. Default: true. Set to false if the user wants a more refined search.
+     * @param string $cursor Opaque pagination cursor; do not inspect. Use together with 'direction'.
+     * @param \BeeperDesktop\Chats\ChatSearchParams\Direction|value-of<\BeeperDesktop\Chats\ChatSearchParams\Direction> $direction Pagination direction used with 'cursor': 'before' fetches older results, 'after' fetches newer results. Defaults to 'before' when only 'cursor' is provided.
+     * @param Inbox|value-of<Inbox> $inbox Filter by inbox type: "primary" (non-archived, non-low-priority), "low-priority", or "archive". If not specified, shows all chats.
+     * @param bool|null $includeMuted Include chats marked as Muted by the user, which are usually less important. Default: true. Set to false if the user wants a more refined search.
      * @param \DateTimeInterface $lastActivityAfter Provide an ISO datetime string to only retrieve chats with last activity after this time
      * @param \DateTimeInterface $lastActivityBefore Provide an ISO datetime string to only retrieve chats with last activity before this time
      * @param int $limit Set the maximum number of chats to retrieve. Valid range: 1-200, default is 50
-     * @param string $participantQuery Search string to filter chats by participant names. When multiple words provided, ALL words must match. Searches in username, displayName, and fullName fields.
-     * @param string $query Search string to filter chats by title. When multiple words provided, ALL words must match. Matches are case-insensitive substrings.
-     * @param string $startingAfter A cursor for use in pagination. starting_after is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list.
-     * @param Type::* $type Specify the type of chats to retrieve: use "single" for direct messages, "group" for group chats, "channel" for channels, or "any" to get all types
-     * @param bool $unreadOnly Set to true to only retrieve chats that have unread messages
+     * @param string $query Literal token search (non-semantic). Use single words users type (e.g., "dinner"). When multiple words provided, ALL must match. Case-insensitive.
+     * @param Scope|value-of<Scope> $scope search scope: 'titles' matches title + network; 'participants' matches participant names
+     * @param Type|value-of<Type> $type Specify the type of chats to retrieve: use "single" for direct messages, "group" for group chats, or "any" to get all types
+     * @param bool|null $unreadOnly Set to true to only retrieve chats that have unread messages
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return CursorSearch<\BeeperDesktop\Chats\Chat>
+     *
+     * @throws APIException
      */
-    public function find(
-        $accountIDs = null,
-        $endingBefore = null,
-        $inbox = null,
-        $includeMuted = null,
-        $lastActivityAfter = null,
-        $lastActivityBefore = null,
-        $limit = null,
-        $participantQuery = null,
-        $query = null,
-        $startingAfter = null,
-        $type = null,
-        $unreadOnly = null,
-        ?RequestOptions $requestOptions = null,
-    ): Chat {
-        $args = [
-            'accountIDs' => $accountIDs,
-            'endingBefore' => $endingBefore,
-            'inbox' => $inbox,
-            'includeMuted' => $includeMuted,
-            'lastActivityAfter' => $lastActivityAfter,
-            'lastActivityBefore' => $lastActivityBefore,
-            'limit' => $limit,
-            'participantQuery' => $participantQuery,
-            'query' => $query,
-            'startingAfter' => $startingAfter,
-            'type' => $type,
-            'unreadOnly' => $unreadOnly,
-        ];
-        $args = Util::array_filter_null(
-            $args,
+    public function search(
+        ?array $accountIDs = null,
+        ?string $cursor = null,
+        \BeeperDesktop\Chats\ChatSearchParams\Direction|string|null $direction = null,
+        Inbox|string|null $inbox = null,
+        ?bool $includeMuted = true,
+        ?\DateTimeInterface $lastActivityAfter = null,
+        ?\DateTimeInterface $lastActivityBefore = null,
+        int $limit = 50,
+        ?string $query = null,
+        Scope|string $scope = 'titles',
+        Type|string $type = 'any',
+        ?bool $unreadOnly = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): CursorSearch {
+        $params = Util::removeNulls(
             [
-                'accountIDs',
-                'endingBefore',
-                'inbox',
-                'includeMuted',
-                'lastActivityAfter',
-                'lastActivityBefore',
-                'limit',
-                'participantQuery',
-                'query',
-                'startingAfter',
-                'type',
-                'unreadOnly',
+                'accountIDs' => $accountIDs,
+                'cursor' => $cursor,
+                'direction' => $direction,
+                'inbox' => $inbox,
+                'includeMuted' => $includeMuted,
+                'lastActivityAfter' => $lastActivityAfter,
+                'lastActivityBefore' => $lastActivityBefore,
+                'limit' => $limit,
+                'query' => $query,
+                'scope' => $scope,
+                'type' => $type,
+                'unreadOnly' => $unreadOnly,
             ],
         );
-        [$parsed, $options] = ChatFindParams::parseRequest($args, $requestOptions);
-        $resp = $this->client->request(
-            method: 'get',
-            path: 'v0/find-chats',
-            query: $parsed,
-            options: $options
-        );
 
-        // @phpstan-ignore-next-line;
-        return Conversion::coerce(Chat::class, value: $resp);
-    }
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->search(params: $params, requestOptions: $requestOptions);
 
-    /**
-     * Generate a deep link to a specific chat or message. This link can be used to open the chat directly in the Beeper app.
-     *
-     * @param string $chatID the ID of the chat to link to
-     * @param string $messageSortKey Optional message sort key. Jumps to that message in the chat.
-     */
-    public function getLink(
-        $chatID,
-        $messageSortKey = null,
-        ?RequestOptions $requestOptions = null
-    ): LinkResponse {
-        $args = ['chatID' => $chatID, 'messageSortKey' => $messageSortKey];
-        $args = Util::array_filter_null($args, ['messageSortKey']);
-        [$parsed, $options] = ChatGetLinkParams::parseRequest(
-            $args,
-            $requestOptions
-        );
-        $resp = $this->client->request(
-            method: 'post',
-            path: 'v0/get-link-to-chat',
-            body: (object) $parsed,
-            options: $options,
-        );
-
-        // @phpstan-ignore-next-line;
-        return Conversion::coerce(LinkResponse::class, value: $resp);
+        return $response->parse();
     }
 }

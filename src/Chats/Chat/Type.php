@@ -4,21 +4,12 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\Chats\Chat;
 
-use BeeperDesktop\Core\Concerns\SdkEnum;
-use BeeperDesktop\Core\Conversion\Contracts\ConverterSource;
-
 /**
- * Chat type: 'single' for direct messages, 'group' for group chats, 'channel' for channels, 'broadcast' for broadcasts.
+ * Chat type: 'single' for direct messages, 'group' for group chats.
  */
-final class Type implements ConverterSource
+enum Type: string
 {
-    use SdkEnum;
+    case SINGLE = 'single';
 
-    public const SINGLE = 'single';
-
-    public const GROUP = 'group';
-
-    public const CHANNEL = 'channel';
-
-    public const BROADCAST = 'broadcast';
+    case GROUP = 'group';
 }

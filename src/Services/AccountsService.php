@@ -4,32 +4,56 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\Services;
 
-use BeeperDesktop\Accounts\AccountsResponse;
+use BeeperDesktop\Accounts\Account;
 use BeeperDesktop\Client;
-use BeeperDesktop\Contracts\AccountsContract;
-use BeeperDesktop\Core\Conversion;
+use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\RequestOptions;
+use BeeperDesktop\ServiceContracts\AccountsContract;
+use BeeperDesktop\Services\Accounts\ContactsService;
 
 /**
- * Manage and list connected messaging accounts.
+ * Manage connected chat accounts.
+ *
+ * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class AccountsService implements AccountsContract
 {
-    public function __construct(private Client $client) {}
+    /**
+     * @api
+     */
+    public AccountsRawService $raw;
 
     /**
-     * List connected Beeper accounts available on this device.
+     * @api
+     */
+    public ContactsService $contacts;
+
+    /**
+     * @internal
+     */
+    public function __construct(private Client $client)
+    {
+        $this->raw = new AccountsRawService($client);
+        $this->contacts = new ContactsService($client);
+    }
+
+    /**
+     * @api
+     *
+     * Lists chat accounts across networks (WhatsApp, Telegram, Twitter/X, etc.) actively connected to this Beeper Desktop instance
+     *
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return list<Account>
+     *
+     * @throws APIException
      */
     public function list(
-        ?RequestOptions $requestOptions = null
-    ): AccountsResponse {
-        $resp = $this->client->request(
-            method: 'get',
-            path: 'v0/get-accounts',
-            options: $requestOptions
-        );
+        RequestOptions|array|null $requestOptions = null
+    ): array {
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->list(requestOptions: $requestOptions);
 
-        // @phpstan-ignore-next-line;
-        return Conversion::coerce(AccountsResponse::class, value: $resp);
+        return $response->parse();
     }
 }

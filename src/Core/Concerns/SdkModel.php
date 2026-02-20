@@ -13,6 +13,8 @@ use BeeperDesktop\Core\Util;
 
 /**
  * @internal
+ *
+ * @template-covariant Shape of array<string, mixed>
  */
 trait SdkModel
 {
@@ -30,24 +32,27 @@ trait SdkModel
      */
     public function __serialize(): array
     {
-        $rows = [...Util::get_object_vars($this), ...$this->_data]; // @phpstan-ignore-line
+        $properties = $this->toProperties();
 
-        return array_map(static fn ($v) => self::serialize($v), array: $rows);
+        return array_map(static fn ($v) => self::serialize($v), array: $properties);
     }
 
     /**
      * @internal
      *
-     * @param array<mixed> $data
+     * @param array<string, mixed> $data
      */
     public function __unserialize(array $data): void
     {
         foreach ($data as $key => $value) {
+            // @phpstan-ignore-next-line argument.type
             $this->offsetSet($key, value: $value);
         }
     }
 
     /**
+     * @internal
+     *
      * @return array<string, mixed>
      */
     public function __debugInfo(): array
@@ -60,22 +65,22 @@ trait SdkModel
      */
     public function __toString(): string
     {
-        return json_encode($this->__debugInfo(), flags: JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) ?: '';
+        return Util::prettyEncodeJson($this->__debugInfo());
     }
 
     /**
+     * @internal
+     *
      * Magic get is intended to occur when we have manually unset
      * a native class property, indicating an omitted value,
-     * or a property overridden with an incongruent type.
+     * or a property overridden with an incongruent type
      *
      * @throws \Exception
-     *
-     * @internal
      */
     public function __get(string $key): mixed
     {
         if (!array_key_exists($key, array: self::$converter->properties)) {
-            throw new \Exception("Property '{$key}' does not exist in {$this}::class");
+            throw new \RuntimeException("Property '{$key}' does not exist in {$this}::class");
         }
 
         // The unset property was overridden by a value with an incongruent type.
@@ -88,21 +93,30 @@ trait SdkModel
 
         // An optional property which was unset to be omitted from serialized is being accessed.
         // Return null to match user's expectations.
+        // @phpstan-ignore-next-line return.type
         return null;
-    }
-
-    /** @return array<string, mixed> */
-    public function toArray(): array
-    {
-        return $this->__serialize();
     }
 
     /**
      * @internal
+     *
+     * @return Shape
+     */
+    public function toProperties(): array
+    {
+        // @phpstan-ignore-next-line return.type
+        return [...Util::get_object_vars($this), ...$this->_data];
+    }
+
+    /**
+     * @internal
+     *
+     * @param key-of<Shape> $offset
      */
     public function offsetExists(mixed $offset): bool
     {
-        if (!is_string($offset)) { // @phpstan-ignore-line
+        // @phpstan-ignore-next-line function.alreadyNarrowedType
+        if (!is_string($offset)) {
             throw new \InvalidArgumentException;
         }
 
@@ -115,7 +129,7 @@ trait SdkModel
                 return true;
             }
 
-            $property = self::$converter->properties[$offset]->property ?? new \ReflectionProperty($this, property: $offset);
+            $property = self::$converter->properties[$offset]->property;
 
             return $property->isInitialized($this);
         }
@@ -125,30 +139,40 @@ trait SdkModel
 
     /**
      * @internal
+     *
+     * @param key-of<Shape> $offset
      */
     public function &offsetGet(mixed $offset): mixed
     {
-        if (!is_string($offset)) { // @phpstan-ignore-line
+        // @phpstan-ignore-next-line function.alreadyNarrowedType
+        if (!is_string($offset)) {
             throw new \InvalidArgumentException;
         }
 
+        // @phpstan-ignore-next-line function.alreadyNarrowedType
         if (!$this->offsetExists($offset)) {
+            // @phpstan-ignore-next-line return.type
             return null;
         }
 
         if (array_key_exists($offset, array: $this->_data)) {
+            // @phpstan-ignore-next-line return.type
             return $this->_data[$offset];
         }
 
+        // @phpstan-ignore-next-line return.type
         return $this->{$offset};
     }
 
     /**
      * @internal
+     *
+     * @param key-of<Shape> $offset
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        if (!is_string($offset)) { // @phpstan-ignore-line
+        // @phpstan-ignore-next-line function.alreadyNarrowedType
+        if (!is_string($offset)) {
             throw new \InvalidArgumentException;
         }
 
@@ -158,13 +182,16 @@ trait SdkModel
 
         $coerced = Conversion::coerce($type, value: $value, state: new CoerceState(translateNames: false));
 
+        // @phpstan-ignore-next-line function.alreadyNarrowedType
         if (property_exists($this, property: $offset)) {
             try {
+                // @phpstan-ignore-next-line assign.propertyType
                 $this->{$offset} = $coerced;
                 unset($this->_data[$offset]);
 
                 return;
-            } catch (\TypeError) { // @phpstan-ignore-line
+                // @phpstan-ignore-next-line catch.neverThrown
+            } catch (\TypeError) {
                 unset($this->{$offset});
             }
         }
@@ -174,13 +201,17 @@ trait SdkModel
 
     /**
      * @internal
+     *
+     * @param key-of<Shape> $offset
      */
     public function offsetUnset(mixed $offset): void
     {
-        if (!is_string($offset)) { // @phpstan-ignore-line
+        // @phpstan-ignore-next-line function.alreadyNarrowedType
+        if (!is_string($offset)) {
             throw new \InvalidArgumentException;
         }
 
+        // @phpstan-ignore-next-line function.alreadyNarrowedType
         if (property_exists($this, property: $offset)) {
             unset($this->{$offset});
         }
@@ -189,20 +220,23 @@ trait SdkModel
     }
 
     /**
+     * @internal
+     *
      * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore-next-line argument.type
         return Conversion::dump(self::converter(), value: $this->__serialize());
     }
 
     /**
-     * @internal
+     * @param array<string, mixed> $data
      */
-    public static function fromArray(mixed $data): self
+    public static function fromArray(array $data): static
     {
-        return self::converter()->from($data); // @phpstan-ignore-line
+        // @phpstan-ignore-next-line argument.type
+        return self::converter()->from($data);
     }
 
     /**
@@ -222,16 +256,10 @@ trait SdkModel
     /**
      * @internal
      */
-    public static function introspect(): void
+    private function initialize(): void
     {
         static::converter();
-    }
 
-    /**
-     * @internal
-     */
-    private function unsetOptionalProperties(): void
-    {
         foreach (self::$converter->properties as $name => $info) {
             if ($info->optional) {
                 unset($this->{$name});
@@ -245,7 +273,7 @@ trait SdkModel
     private static function serialize(mixed $value): mixed
     {
         if ($value instanceof BaseModel) {
-            return $value->toArray();
+            return $value->toProperties();
         }
 
         if (is_array($value)) {

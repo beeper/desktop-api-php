@@ -1,26 +1,29 @@
 # Beeper Desktop PHP API library
 
-> [!NOTE]
-> The Beeper Desktop PHP API Library is currently in **beta** and we're excited for you to experiment with it!
->
-> This library has not yet been exhaustively tested in production environments and may be missing some features you'd expect in a stable release. As we continue development, there may be breaking changes that require updates to your code.
->
-> **We'd love your feedback!** Please share any suggestions, bug reports, feature requests, or general thoughts by [filing an issue](https://www.github.com/beeper/beeper-desktop-api-php/issues/new).
-
 The Beeper Desktop PHP library provides convenient access to the Beeper Desktop REST API from any PHP 8.1.0+ application.
-
-It is generated with [Stainless](https://www.stainless.com/).
 
 ## Documentation
 
-The REST API documentation can be found on [www.beeper.com](https://www.beeper.com/desktop-api).
+The REST API documentation can be found on [developers.beeper.com](https://developers.beeper.com/desktop-api/).
 
 ## Installation
 
+To use this package, install via Composer by adding the following to your application's `composer.json`:
+
 <!-- x-release-please-start-version -->
 
-```
-composer require "beeper/beeper-desktop-api 0.0.1"
+```json
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:beeper/desktop-api-php.git"
+    }
+  ],
+  "require": {
+    "beeper/desktop-api-php": "dev-main"
+  }
+}
 ```
 
 <!-- x-release-please-end -->
@@ -36,10 +39,11 @@ Parameters with a default value must be set by name.
 use BeeperDesktop\Client;
 
 $client = new Client(
-  accessToken: getenv("BEEPER_ACCESS_TOKEN") ?: "My Access Token"
+  accessToken: getenv('BEEPER_ACCESS_TOKEN') ?: 'My Access Token'
 );
 
-$page = $client->chats->find();
+$page = $client->chats->search(includeMuted: true, limit: 3, type: 'single');
+
 var_dump($page->id);
 ```
 
@@ -50,23 +54,58 @@ and named parameters to initialize value objects.
 
 However, builders are also provided `(new Dog)->withName("Joey")`.
 
-### Handling errors
+### Pagination
 
-When the library is unable to connect to the API, or if the API returns a non-success status code (i.e., 4xx or 5xx response), a subclass of `BeeperDesktop\Errors\APIError` will be thrown:
+List methods in the Beeper Desktop API are paginated.
+
+This library provides auto-paginating iterators with each list response, so you do not have to request successive pages manually:
 
 ```php
 <?php
 
-use BeeperDesktop\Errors\APIConnectionError;
+use BeeperDesktop\Client;
+
+$client = new Client(
+  accessToken: getenv('BEEPER_ACCESS_TOKEN') ?: 'My Access Token'
+);
+
+$page = $client->messages->search(
+  accountIDs: ['local-telegram_ba_QFrb5lrLPhO3OT5MFBeTWv0x4BI'],
+  limit: 10,
+  query: 'deployment',
+);
+
+var_dump($page);
+
+// fetch items from the current page
+foreach ($page->getItems() as $item) {
+  var_dump($item->id);
+}
+// make additional network requests to fetch items from all pages, including and after the current page
+foreach ($page->pagingEachItem() as $item) {
+  var_dump($item->id);
+}
+```
+
+### Handling errors
+
+When the library is unable to connect to the API, or if the API returns a non-success status code (i.e., 4xx or 5xx response), a subclass of `BeeperDesktop\Core\Exceptions\APIException` will be thrown:
+
+```php
+<?php
+
+use BeeperDesktop\Core\Exceptions\APIConnectionException;
+use BeeperDesktop\Core\Exceptions\RateLimitException;
+use BeeperDesktop\Core\Exceptions\APIStatusException;
 
 try {
-  $sendResponse = $client->messages->send(chatID: "!invalid-chat-id");
-} catch (APIConnectionError $e) {
+  $accounts = $client->accounts->list();
+} catch (APIConnectionException $e) {
   echo "The server could not be reached", PHP_EOL;
   var_dump($e->getPrevious());
-} catch (RateLimitError $_) {
+} catch (RateLimitException $e) {
   echo "A 429 status code was received; we should back off a bit.", PHP_EOL;
-} catch (APIStatusError $e) {
+} catch (APIStatusException $e) {
   echo "Another non-200-range status code was received", PHP_EOL;
   echo $e->getMessage();
 }
@@ -74,39 +113,38 @@ try {
 
 Error codes are as follows:
 
-| Cause            | Error Type                 |
-| ---------------- | -------------------------- |
-| HTTP 400         | `BadRequestError`          |
-| HTTP 401         | `AuthenticationError`      |
-| HTTP 403         | `PermissionDeniedError`    |
-| HTTP 404         | `NotFoundError`            |
-| HTTP 409         | `ConflictError`            |
-| HTTP 422         | `UnprocessableEntityError` |
-| HTTP 429         | `RateLimitError`           |
-| HTTP >= 500      | `InternalServerError`      |
-| Other HTTP error | `APIStatusError`           |
-| Timeout          | `APITimeoutError`          |
-| Network error    | `APIConnectionError`       |
+| Cause            | Error Type                     |
+| ---------------- | ------------------------------ |
+| HTTP 400         | `BadRequestException`          |
+| HTTP 401         | `AuthenticationException`      |
+| HTTP 403         | `PermissionDeniedException`    |
+| HTTP 404         | `NotFoundException`            |
+| HTTP 409         | `ConflictException`            |
+| HTTP 422         | `UnprocessableEntityException` |
+| HTTP 429         | `RateLimitException`           |
+| HTTP >= 500      | `InternalServerException`      |
+| Other HTTP error | `APIStatusException`           |
+| Timeout          | `APITimeoutException`          |
+| Network error    | `APIConnectionException`       |
 
 ### Retries
 
-Certain errors will be automatically retried 3 times by default, with a short exponential backoff.
+Certain errors will be automatically retried 2 times by default, with a short exponential backoff.
 
 Connection errors (for example, due to a network connectivity problem), 408 Request Timeout, 409 Conflict, 429 Rate Limit, >=500 Internal errors, and timeouts will all be retried by default.
 
-You can use the `max_retries` option to configure or disable this:
+You can use the `maxRetries` option to configure or disable this:
 
 ```php
 <?php
 
 use BeeperDesktop\Client;
-use BeeperDesktop\RequestOptions;
 
 // Configure the default for all requests:
-$client = new Client(maxRetries: 0);
+$client = new Client(requestOptions: ['maxRetries' => 0]);
 
 // Or, configure per-request:
-$result = $client->accounts->list(new RequestOptions(maxRetries: 5));
+$result = $client->accounts->list(requestOptions: ['maxRetries' => 5]);
 ```
 
 ## Advanced concepts
@@ -117,22 +155,18 @@ $result = $client->accounts->list(new RequestOptions(maxRetries: 5));
 
 You can send undocumented parameters to any endpoint, and read undocumented response properties, like so:
 
-Note: the `extra_` parameters of the same name overrides the documented parameters.
+Note: the `extra*` parameters of the same name overrides the documented parameters.
 
 ```php
 <?php
 
-use BeeperDesktop\RequestOptions;
-
-$accountsResponse = $client->accounts->list(
-  new RequestOptions(
-    extraQueryParams: ["my_query_parameter" => "value"],
-    extraBodyParams: ["my_body_parameter" => "value"],
-    extraHeaders: ["my-header" => "value"],
-  ),
+$accounts = $client->accounts->list(
+  requestOptions: [
+    'extraQueryParams' => ['my_query_parameter' => 'value'],
+    'extraBodyParams' => ['my_body_parameter' => 'value'],
+    'extraHeaders' => ['my-header' => 'value'],
+  ],
 );
-
-var_dump($accountsResponse["my_undocumented_property"]);
 ```
 
 #### Undocumented request params
@@ -167,4 +201,4 @@ PHP 8.1.0 or higher.
 
 ## Contributing
 
-See [the contributing documentation](https://github.com/beeper/beeper-desktop-api-php/tree/main/CONTRIBUTING.md).
+See [the contributing documentation](https://github.com/beeper/desktop-api-php/tree/main/CONTRIBUTING.md).

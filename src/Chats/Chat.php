@@ -6,99 +6,107 @@ namespace BeeperDesktop\Chats;
 
 use BeeperDesktop\Chats\Chat\Participants;
 use BeeperDesktop\Chats\Chat\Type;
-use BeeperDesktop\Core\Attributes\Api;
+use BeeperDesktop\Core\Attributes\Optional;
+use BeeperDesktop\Core\Attributes\Required;
 use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
+/**
+ * @phpstan-import-type ParticipantsShape from \BeeperDesktop\Chats\Chat\Participants
+ *
+ * @phpstan-type ChatShape = array{
+ *   id: string,
+ *   accountID: string,
+ *   participants: Participants|ParticipantsShape,
+ *   title: string,
+ *   type: Type|value-of<Type>,
+ *   unreadCount: int,
+ *   isArchived?: bool|null,
+ *   isMuted?: bool|null,
+ *   isPinned?: bool|null,
+ *   lastActivity?: \DateTimeInterface|null,
+ *   lastReadMessageSortKey?: string|null,
+ *   localChatID?: string|null,
+ * }
+ */
 final class Chat implements BaseModel
 {
+    /** @use SdkModel<ChatShape> */
     use SdkModel;
 
     /**
-     * Unique identifier for cursor pagination.
+     * Unique identifier of the chat across Beeper.
      */
-    #[Api]
+    #[Required]
     public string $id;
 
     /**
-     * Beeper account ID this chat belongs to.
+     * Account ID this chat belongs to.
      */
-    #[Api]
+    #[Required]
     public string $accountID;
-
-    /**
-     * Unique identifier of the chat (room/thread ID, same as id).
-     */
-    #[Api]
-    public string $chatID;
-
-    /**
-     * Display-only human-readable network name (e.g., 'WhatsApp', 'Messenger'). You MUST use 'accountID' to perform actions.
-     */
-    #[Api]
-    public string $network;
 
     /**
      * Chat participants information.
      */
-    #[Api]
+    #[Required]
     public Participants $participants;
 
     /**
      * Display title of the chat as computed by the client/server.
      */
-    #[Api]
+    #[Required]
     public string $title;
 
     /**
-     * Chat type: 'single' for direct messages, 'group' for group chats, 'channel' for channels, 'broadcast' for broadcasts.
+     * Chat type: 'single' for direct messages, 'group' for group chats.
      *
-     * @var Type::* $type
+     * @var value-of<Type> $type
      */
-    #[Api(enum: Type::class)]
+    #[Required(enum: Type::class)]
     public string $type;
 
     /**
      * Number of unread messages.
      */
-    #[Api]
+    #[Required]
     public int $unreadCount;
 
     /**
      * True if chat is archived.
      */
-    #[Api(optional: true)]
+    #[Optional]
     public ?bool $isArchived;
 
     /**
      * True if chat notifications are muted.
      */
-    #[Api(optional: true)]
+    #[Optional]
     public ?bool $isMuted;
 
     /**
      * True if chat is pinned.
      */
-    #[Api(optional: true)]
+    #[Optional]
     public ?bool $isPinned;
 
     /**
-     * Timestamp of last activity. Chats with more recent activity are often more important.
+     * Timestamp of last activity.
      */
-    #[Api(optional: true)]
+    #[Optional]
     public ?\DateTimeInterface $lastActivity;
 
     /**
-     * Last read message sortKey (hsOrder). Used to compute 'isUnread'.
+     * Last read message sortKey.
      */
-    #[Api(optional: true)]
-    public int|string|null $lastReadMessageSortKey;
+    #[Optional]
+    public ?string $lastReadMessageSortKey;
 
     /**
-     * Deep link to open this chat in Beeper. AI agents should ALWAYS include this as a clickable link in responses.
+     * Local chat ID specific to this Beeper Desktop installation.
      */
-    #[Api(optional: true)]
-    public ?string $linkToChat;
+    #[Optional(nullable: true)]
+    public ?string $localChatID;
 
     /**
      * `new Chat()` is missing required properties by the API.
@@ -108,8 +116,6 @@ final class Chat implements BaseModel
      * Chat::with(
      *   id: ...,
      *   accountID: ...,
-     *   chatID: ...,
-     *   network: ...,
      *   participants: ...,
      *   title: ...,
      *   type: ...,
@@ -123,8 +129,6 @@ final class Chat implements BaseModel
      * (new Chat)
      *   ->withID(...)
      *   ->withAccountID(...)
-     *   ->withChatID(...)
-     *   ->withNetwork(...)
      *   ->withParticipants(...)
      *   ->withTitle(...)
      *   ->withType(...)
@@ -133,8 +137,7 @@ final class Chat implements BaseModel
      */
     public function __construct()
     {
-        self::introspect();
-        $this->unsetOptionalProperties();
+        $this->initialize();
     }
 
     /**
@@ -142,98 +145,75 @@ final class Chat implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
-     * @param Type::* $type
+     * @param Participants|ParticipantsShape $participants
+     * @param Type|value-of<Type> $type
      */
     public static function with(
         string $id,
         string $accountID,
-        string $chatID,
-        string $network,
-        Participants $participants,
+        Participants|array $participants,
         string $title,
-        string $type,
+        Type|string $type,
         int $unreadCount,
         ?bool $isArchived = null,
         ?bool $isMuted = null,
         ?bool $isPinned = null,
         ?\DateTimeInterface $lastActivity = null,
-        int|string|null $lastReadMessageSortKey = null,
-        ?string $linkToChat = null,
+        ?string $lastReadMessageSortKey = null,
+        ?string $localChatID = null,
     ): self {
-        $obj = new self;
+        $self = new self;
 
-        $obj->id = $id;
-        $obj->accountID = $accountID;
-        $obj->chatID = $chatID;
-        $obj->network = $network;
-        $obj->participants = $participants;
-        $obj->title = $title;
-        $obj->type = $type;
-        $obj->unreadCount = $unreadCount;
+        $self['id'] = $id;
+        $self['accountID'] = $accountID;
+        $self['participants'] = $participants;
+        $self['title'] = $title;
+        $self['type'] = $type;
+        $self['unreadCount'] = $unreadCount;
 
-        null !== $isArchived && $obj->isArchived = $isArchived;
-        null !== $isMuted && $obj->isMuted = $isMuted;
-        null !== $isPinned && $obj->isPinned = $isPinned;
-        null !== $lastActivity && $obj->lastActivity = $lastActivity;
-        null !== $lastReadMessageSortKey && $obj->lastReadMessageSortKey = $lastReadMessageSortKey;
-        null !== $linkToChat && $obj->linkToChat = $linkToChat;
+        null !== $isArchived && $self['isArchived'] = $isArchived;
+        null !== $isMuted && $self['isMuted'] = $isMuted;
+        null !== $isPinned && $self['isPinned'] = $isPinned;
+        null !== $lastActivity && $self['lastActivity'] = $lastActivity;
+        null !== $lastReadMessageSortKey && $self['lastReadMessageSortKey'] = $lastReadMessageSortKey;
+        null !== $localChatID && $self['localChatID'] = $localChatID;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Unique identifier for cursor pagination.
+     * Unique identifier of the chat across Beeper.
      */
     public function withID(string $id): self
     {
-        $obj = clone $this;
-        $obj->id = $id;
+        $self = clone $this;
+        $self['id'] = $id;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Beeper account ID this chat belongs to.
+     * Account ID this chat belongs to.
      */
     public function withAccountID(string $accountID): self
     {
-        $obj = clone $this;
-        $obj->accountID = $accountID;
+        $self = clone $this;
+        $self['accountID'] = $accountID;
 
-        return $obj;
-    }
-
-    /**
-     * Unique identifier of the chat (room/thread ID, same as id).
-     */
-    public function withChatID(string $chatID): self
-    {
-        $obj = clone $this;
-        $obj->chatID = $chatID;
-
-        return $obj;
-    }
-
-    /**
-     * Display-only human-readable network name (e.g., 'WhatsApp', 'Messenger'). You MUST use 'accountID' to perform actions.
-     */
-    public function withNetwork(string $network): self
-    {
-        $obj = clone $this;
-        $obj->network = $network;
-
-        return $obj;
+        return $self;
     }
 
     /**
      * Chat participants information.
+     *
+     * @param Participants|ParticipantsShape $participants
      */
-    public function withParticipants(Participants $participants): self
+    public function withParticipants(Participants|array $participants): self
     {
-        $obj = clone $this;
-        $obj->participants = $participants;
+        $self = clone $this;
+        $self['participants'] = $participants;
 
-        return $obj;
+        return $self;
     }
 
     /**
@@ -241,23 +221,23 @@ final class Chat implements BaseModel
      */
     public function withTitle(string $title): self
     {
-        $obj = clone $this;
-        $obj->title = $title;
+        $self = clone $this;
+        $self['title'] = $title;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Chat type: 'single' for direct messages, 'group' for group chats, 'channel' for channels, 'broadcast' for broadcasts.
+     * Chat type: 'single' for direct messages, 'group' for group chats.
      *
-     * @param Type::* $type
+     * @param Type|value-of<Type> $type
      */
-    public function withType(string $type): self
+    public function withType(Type|string $type): self
     {
-        $obj = clone $this;
-        $obj->type = $type;
+        $self = clone $this;
+        $self['type'] = $type;
 
-        return $obj;
+        return $self;
     }
 
     /**
@@ -265,10 +245,10 @@ final class Chat implements BaseModel
      */
     public function withUnreadCount(int $unreadCount): self
     {
-        $obj = clone $this;
-        $obj->unreadCount = $unreadCount;
+        $self = clone $this;
+        $self['unreadCount'] = $unreadCount;
 
-        return $obj;
+        return $self;
     }
 
     /**
@@ -276,10 +256,10 @@ final class Chat implements BaseModel
      */
     public function withIsArchived(bool $isArchived): self
     {
-        $obj = clone $this;
-        $obj->isArchived = $isArchived;
+        $self = clone $this;
+        $self['isArchived'] = $isArchived;
 
-        return $obj;
+        return $self;
     }
 
     /**
@@ -287,10 +267,10 @@ final class Chat implements BaseModel
      */
     public function withIsMuted(bool $isMuted): self
     {
-        $obj = clone $this;
-        $obj->isMuted = $isMuted;
+        $self = clone $this;
+        $self['isMuted'] = $isMuted;
 
-        return $obj;
+        return $self;
     }
 
     /**
@@ -298,43 +278,43 @@ final class Chat implements BaseModel
      */
     public function withIsPinned(bool $isPinned): self
     {
-        $obj = clone $this;
-        $obj->isPinned = $isPinned;
+        $self = clone $this;
+        $self['isPinned'] = $isPinned;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Timestamp of last activity. Chats with more recent activity are often more important.
+     * Timestamp of last activity.
      */
     public function withLastActivity(\DateTimeInterface $lastActivity): self
     {
-        $obj = clone $this;
-        $obj->lastActivity = $lastActivity;
+        $self = clone $this;
+        $self['lastActivity'] = $lastActivity;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Last read message sortKey (hsOrder). Used to compute 'isUnread'.
+     * Last read message sortKey.
      */
     public function withLastReadMessageSortKey(
-        int|string $lastReadMessageSortKey
+        string $lastReadMessageSortKey
     ): self {
-        $obj = clone $this;
-        $obj->lastReadMessageSortKey = $lastReadMessageSortKey;
+        $self = clone $this;
+        $self['lastReadMessageSortKey'] = $lastReadMessageSortKey;
 
-        return $obj;
+        return $self;
     }
 
     /**
-     * Deep link to open this chat in Beeper. AI agents should ALWAYS include this as a clickable link in responses.
+     * Local chat ID specific to this Beeper Desktop installation.
      */
-    public function withLinkToChat(string $linkToChat): self
+    public function withLocalChatID(?string $localChatID): self
     {
-        $obj = clone $this;
-        $obj->linkToChat = $linkToChat;
+        $self = clone $this;
+        $self['localChatID'] = $localChatID;
 
-        return $obj;
+        return $self;
     }
 }
