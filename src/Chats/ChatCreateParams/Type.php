@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BeeperDesktop\Chats\ChatCreateParams\Chat;
+namespace BeeperDesktop\Chats\ChatCreateParams;
 
 /**
  * Required when mode='create'. 'single' requires exactly one participantID; 'group' supports multiple participants and optional title.
