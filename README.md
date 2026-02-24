@@ -38,9 +38,7 @@ Parameters with a default value must be set by name.
 
 use BeeperDesktop\Client;
 
-$client = new Client(
-  accessToken: getenv('BEEPER_ACCESS_TOKEN') ?: 'My Access Token'
-);
+$client = new Client();
 
 $page = $client->chats->search(includeMuted: true, limit: 3, type: 'single');
 
@@ -65,9 +63,7 @@ This library provides auto-paginating iterators with each list response, so you 
 
 use BeeperDesktop\Client;
 
-$client = new Client(
-  accessToken: getenv('BEEPER_ACCESS_TOKEN') ?: 'My Access Token'
-);
+$client = new Client();
 
 $page = $client->messages->search(
   accountIDs: ['local-telegram_ba_QFrb5lrLPhO3OT5MFBeTWv0x4BI'],
