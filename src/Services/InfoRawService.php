@@ -12,6 +12,8 @@ use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\InfoRawContract;
 
 /**
+ * Control the Beeper Desktop application.
+ *
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class InfoRawService implements InfoRawContract

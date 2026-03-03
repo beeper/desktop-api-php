@@ -13,6 +13,8 @@ use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\BeeperDesktopClientContract;
 
 /**
+ * Control the Beeper Desktop application.
+ *
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class BeeperDesktopClientService implements BeeperDesktopClientContract
