@@ -15,6 +15,8 @@ use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\BeeperDesktopClientRawContract;
 
 /**
+ * Control the Beeper Desktop application.
+ *
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class BeeperDesktopClientRawService implements BeeperDesktopClientRawContract
