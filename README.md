@@ -2,6 +2,8 @@
 
 The Beeper Desktop PHP library provides convenient access to the Beeper Desktop REST API from any PHP 8.1.0+ application.
 
+It is generated with [Stainless](https://www.stainless.com/).
+
 ## Documentation
 
 The REST API documentation can be found on [developers.beeper.com](https://developers.beeper.com/desktop-api/).
