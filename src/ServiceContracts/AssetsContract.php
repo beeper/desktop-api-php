@@ -8,6 +8,7 @@ use BeeperDesktop\Assets\AssetDownloadResponse;
 use BeeperDesktop\Assets\AssetUploadBase64Response;
 use BeeperDesktop\Assets\AssetUploadResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\Core\FileParam;
 use BeeperDesktop\RequestOptions;
 
 /**
@@ -44,7 +45,7 @@ interface AssetsContract
     /**
      * @api
      *
-     * @param string $file the file to upload (max 500 MB)
+     * @param string|FileParam $file the file to upload (max 500 MB)
      * @param string $fileName Original filename. Defaults to the uploaded file name if omitted
      * @param string $mimeType MIME type. Auto-detected from magic bytes if omitted
      * @param RequestOpts|null $requestOptions
@@ -52,7 +53,7 @@ interface AssetsContract
      * @throws APIException
      */
     public function upload(
-        string $file,
+        string|FileParam $file,
         ?string $fileName = null,
         ?string $mimeType = null,
         RequestOptions|array|null $requestOptions = null,

@@ -9,6 +9,7 @@ use BeeperDesktop\Assets\AssetUploadBase64Response;
 use BeeperDesktop\Assets\AssetUploadResponse;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\Core\FileParam;
 use BeeperDesktop\Core\Util;
 use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\AssetsContract;
@@ -82,7 +83,7 @@ final class AssetsService implements AssetsContract
      *
      * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending messages with attachments.
      *
-     * @param string $file the file to upload (max 500 MB)
+     * @param string|FileParam $file the file to upload (max 500 MB)
      * @param string $fileName Original filename. Defaults to the uploaded file name if omitted
      * @param string $mimeType MIME type. Auto-detected from magic bytes if omitted
      * @param RequestOpts|null $requestOptions
@@ -90,7 +91,7 @@ final class AssetsService implements AssetsContract
      * @throws APIException
      */
     public function upload(
-        string $file,
+        string|FileParam $file,
         ?string $fileName = null,
         ?string $mimeType = null,
         RequestOptions|array|null $requestOptions = null,

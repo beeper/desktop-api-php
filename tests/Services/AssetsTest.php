@@ -6,6 +6,7 @@ use BeeperDesktop\Assets\AssetDownloadResponse;
 use BeeperDesktop\Assets\AssetUploadBase64Response;
 use BeeperDesktop\Assets\AssetUploadResponse;
 use BeeperDesktop\Client;
+use BeeperDesktop\Core\FileParam;
 use BeeperDesktop\Core\Util;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
@@ -72,7 +73,9 @@ final class AssetsTest extends TestCase
     #[Test]
     public function testUpload(): void
     {
-        $result = $this->client->assets->upload(file: 'file');
+        $result = $this->client->assets->upload(
+            file: FileParam::fromString('Example data', filename: uniqid('file-upload-', true)),
+        );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(AssetUploadResponse::class, $result);
@@ -82,9 +85,9 @@ final class AssetsTest extends TestCase
     public function testUploadWithOptionalParams(): void
     {
         $result = $this->client->assets->upload(
-            file: 'file',
+            file: FileParam::fromString('Example data', filename: uniqid('file-upload-', true)),
             fileName: 'fileName',
-            mimeType: 'mimeType'
+            mimeType: 'mimeType',
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
