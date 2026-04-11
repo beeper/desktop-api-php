@@ -14,6 +14,7 @@ use BeeperDesktop\Assets\AssetUploadResponse;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Contracts\BaseResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\Core\FileParam;
 use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\AssetsRawContract;
 
@@ -98,7 +99,7 @@ final class AssetsRawService implements AssetsRawContract
      * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending messages with attachments.
      *
      * @param array{
-     *   file: string, fileName?: string, mimeType?: string
+     *   file: string|FileParam, fileName?: string, mimeType?: string
      * }|AssetUploadParams $params
      * @param RequestOpts|null $requestOptions
      *
