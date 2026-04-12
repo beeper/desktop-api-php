@@ -7,9 +7,6 @@ namespace BeeperDesktop\Services;
 use BeeperDesktop\Chats\Chat;
 use BeeperDesktop\Chats\ChatArchiveParams;
 use BeeperDesktop\Chats\ChatCreateParams;
-use BeeperDesktop\Chats\ChatCreateParams\Mode;
-use BeeperDesktop\Chats\ChatCreateParams\Type;
-use BeeperDesktop\Chats\ChatCreateParams\User;
 use BeeperDesktop\Chats\ChatListParams;
 use BeeperDesktop\Chats\ChatListParams\Direction;
 use BeeperDesktop\Chats\ChatListResponse;
@@ -18,6 +15,7 @@ use BeeperDesktop\Chats\ChatRetrieveParams;
 use BeeperDesktop\Chats\ChatSearchParams;
 use BeeperDesktop\Chats\ChatSearchParams\Inbox;
 use BeeperDesktop\Chats\ChatSearchParams\Scope;
+use BeeperDesktop\Chats\ChatSearchParams\Type;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Contracts\BaseResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
@@ -29,7 +27,7 @@ use BeeperDesktop\ServiceContracts\ChatsRawContract;
 /**
  * Manage chats.
  *
- * @phpstan-import-type UserShape from \BeeperDesktop\Chats\ChatCreateParams\User
+ * @phpstan-import-type ParamsShape from \BeeperDesktop\Chats\ChatCreateParams\Params
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class ChatsRawService implements ChatsRawContract
@@ -45,16 +43,7 @@ final class ChatsRawService implements ChatsRawContract
      *
      * Create a single/group chat (mode='create') or start a direct chat from merged user data (mode='start').
      *
-     * @param array{
-     *   accountID: string,
-     *   allowInvite?: bool,
-     *   messageText?: string,
-     *   mode?: Mode|value-of<Mode>,
-     *   participantIDs?: list<string>,
-     *   title?: string,
-     *   type?: Type|value-of<Type>,
-     *   user?: User|UserShape,
-     * }|ChatCreateParams $params
+     * @param array{params?: ParamsShape}|ChatCreateParams $params
      * @param RequestOpts|null $requestOptions
      *
      * @return BaseResponse<ChatNewResponse>
@@ -74,7 +63,7 @@ final class ChatsRawService implements ChatsRawContract
         return $this->client->request(
             method: 'post',
             path: 'v1/chats',
-            body: (object) $parsed,
+            body: (object) $parsed['params'],
             options: $options,
             convert: ChatNewResponse::class,
         );
@@ -198,7 +187,7 @@ final class ChatsRawService implements ChatsRawContract
      *   limit?: int,
      *   query?: string,
      *   scope?: Scope|value-of<Scope>,
-     *   type?: ChatSearchParams\Type|value-of<ChatSearchParams\Type>,
+     *   type?: Type|value-of<Type>,
      *   unreadOnly?: bool|null,
      * }|ChatSearchParams $params
      * @param RequestOpts|null $requestOptions
