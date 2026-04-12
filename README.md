@@ -2,8 +2,6 @@
 
 The Beeper Desktop PHP library provides convenient access to the Beeper Desktop REST API from any PHP 8.1.0+ application.
 
-It is generated with [Stainless](https://www.stainless.com/).
-
 ## Documentation
 
 The REST API documentation can be found on [developers.beeper.com](https://developers.beeper.com/desktop-api/).
@@ -40,7 +38,9 @@ Parameters with a default value must be set by name.
 
 use BeeperDesktop\Client;
 
-$client = new Client();
+$client = new Client(
+  accessToken: getenv('BEEPER_ACCESS_TOKEN') ?: 'My Access Token'
+);
 
 $page = $client->chats->search(includeMuted: true, limit: 3, type: 'single');
 
@@ -65,7 +65,9 @@ This library provides auto-paginating iterators with each list response, so you 
 
 use BeeperDesktop\Client;
 
-$client = new Client();
+$client = new Client(
+  accessToken: getenv('BEEPER_ACCESS_TOKEN') ?: 'My Access Token'
+);
 
 $page = $client->messages->search(
   accountIDs: ['local-telegram_ba_QFrb5lrLPhO3OT5MFBeTWv0x4BI'],
