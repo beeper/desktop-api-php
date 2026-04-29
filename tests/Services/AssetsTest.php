@@ -58,7 +58,7 @@ final class AssetsTest extends TestCase
         $result = $this->client->assets->serve(url: 'x');
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
-        $this->assertIsString($result);
+        $this->assertNull($result);
     }
 
     #[Test]
@@ -67,7 +67,7 @@ final class AssetsTest extends TestCase
         $result = $this->client->assets->serve(url: 'x');
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
-        $this->assertIsString($result);
+        $this->assertNull($result);
     }
 
     #[Test]

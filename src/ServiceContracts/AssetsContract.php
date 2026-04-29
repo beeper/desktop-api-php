@@ -40,7 +40,7 @@ interface AssetsContract
     public function serve(
         string $url,
         RequestOptions|array|null $requestOptions = null
-    ): string;
+    ): mixed;
 
     /**
      * @api
