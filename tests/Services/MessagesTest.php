@@ -4,8 +4,8 @@ namespace Tests\Services;
 
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Util;
+use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
-use BeeperDesktop\CursorSortKey;
 use BeeperDesktop\Message;
 use BeeperDesktop\Messages\MessageSendResponse;
 use BeeperDesktop\Messages\MessageUpdateResponse;
@@ -63,7 +63,7 @@ final class MessagesTest extends TestCase
         $page = $this->client->messages->list('!NCdzlIaMjZUmvmvyHU:beeper.com');
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
-        $this->assertInstanceOf(CursorSortKey::class, $page);
+        $this->assertInstanceOf(CursorNoLimit::class, $page);
 
         if ($item = $page->getItems()[0] ?? null) {
             // @phpstan-ignore-next-line method.alreadyNarrowedType

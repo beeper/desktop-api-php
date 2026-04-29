@@ -35,7 +35,7 @@ final class ReactionsService implements ReactionsContract
     /**
      * @api
      *
-     * Remove the authenticated user's reaction from an existing message.
+     * Remove the reaction added by the authenticated user from an existing message.
      *
      * @param string $messageID Path param: ID of the message to remove a reaction from
      * @param string $chatID path param: Unique identifier of the chat

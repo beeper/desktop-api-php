@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace BeeperDesktop\ServiceContracts;
 
 use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
-use BeeperDesktop\CursorSortKey;
 use BeeperDesktop\Message;
 use BeeperDesktop\Messages\MessageListParams\Direction;
 use BeeperDesktop\Messages\MessageSearchParams\ChatType;
@@ -47,7 +47,7 @@ interface MessagesContract
      * @param Direction|value-of<Direction> $direction Pagination direction used with 'cursor': 'before' fetches older results, 'after' fetches newer results. Defaults to 'before' when only 'cursor' is provided.
      * @param RequestOpts|null $requestOptions
      *
-     * @return CursorSortKey<Message>
+     * @return CursorNoLimit<Message>
      *
      * @throws APIException
      */
@@ -56,7 +56,7 @@ interface MessagesContract
         ?string $cursor = null,
         Direction|string|null $direction = null,
         RequestOptions|array|null $requestOptions = null,
-    ): CursorSortKey;
+    ): CursorNoLimit;
 
     /**
      * @api

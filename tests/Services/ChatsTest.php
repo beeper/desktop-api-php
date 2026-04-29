@@ -34,7 +34,31 @@ final class ChatsTest extends TestCase
     #[Test]
     public function testCreate(): void
     {
-        $result = $this->client->chats->create();
+        $result = $this->client->chats->create(accountID: 'accountID');
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ChatNewResponse::class, $result);
+    }
+
+    #[Test]
+    public function testCreateWithOptionalParams(): void
+    {
+        $result = $this->client->chats->create(
+            accountID: 'accountID',
+            allowInvite: true,
+            messageText: 'messageText',
+            mode: 'start',
+            participantIDs: ['string'],
+            title: 'title',
+            type: 'single',
+            user: [
+                'id' => 'id',
+                'email' => 'email',
+                'fullName' => 'fullName',
+                'phoneNumber' => 'phoneNumber',
+                'username' => 'username',
+            ],
+        );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(ChatNewResponse::class, $result);

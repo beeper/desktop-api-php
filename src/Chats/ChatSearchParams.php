@@ -14,7 +14,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Search chats by title/network or participants using Beeper Desktop's renderer algorithm.
+ * Search chats by title, network, or participant names.
  *
  * @see BeeperDesktop\Services\ChatsService::search()
  *

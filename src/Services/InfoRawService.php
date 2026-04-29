@@ -44,6 +44,7 @@ final class InfoRawService implements InfoRawContract
             path: 'v1/info',
             options: $requestOptions,
             convert: InfoGetResponse::class,
+            security: [],
         );
     }
 }

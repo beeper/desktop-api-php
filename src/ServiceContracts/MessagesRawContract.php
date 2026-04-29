@@ -6,8 +6,8 @@ namespace BeeperDesktop\ServiceContracts;
 
 use BeeperDesktop\Core\Contracts\BaseResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
-use BeeperDesktop\CursorSortKey;
 use BeeperDesktop\Message;
 use BeeperDesktop\Messages\MessageListParams;
 use BeeperDesktop\Messages\MessageSearchParams;
@@ -46,7 +46,7 @@ interface MessagesRawContract
      * @param array<string,mixed>|MessageListParams $params
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<CursorSortKey<Message>>
+     * @return BaseResponse<CursorNoLimit<Message>>
      *
      * @throws APIException
      */

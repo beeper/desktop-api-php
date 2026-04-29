@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Bridge metadata for the account. Available from Beeper Desktop v.4.2.719+.
+ * Bridge metadata for the account. Available in Beeper Desktop v4.2.789+.
  *
  * @phpstan-type BridgeShape = array{
  *   id: string, provider: Provider|value-of<Provider>, type: string
@@ -22,13 +22,13 @@ final class Bridge implements BaseModel
     use SdkModel;
 
     /**
-     * Bridge instance identifier.
+     * Bridge instance identifier. Available in Beeper Desktop v4.2.789+.
      */
     #[Required]
     public string $id;
 
     /**
-     * Bridge provider for the account.
+     * Bridge provider for the account. Available in Beeper Desktop v4.2.789+.
      *
      * @var value-of<Provider> $provider
      */
@@ -36,7 +36,7 @@ final class Bridge implements BaseModel
     public string $provider;
 
     /**
-     * Bridge type.
+     * Bridge type. Available in Beeper Desktop v4.2.789+.
      */
     #[Required]
     public string $type;
@@ -82,7 +82,7 @@ final class Bridge implements BaseModel
     }
 
     /**
-     * Bridge instance identifier.
+     * Bridge instance identifier. Available in Beeper Desktop v4.2.789+.
      */
     public function withID(string $id): self
     {
@@ -93,7 +93,7 @@ final class Bridge implements BaseModel
     }
 
     /**
-     * Bridge provider for the account.
+     * Bridge provider for the account. Available in Beeper Desktop v4.2.789+.
      *
      * @param Provider|value-of<Provider> $provider
      */
@@ -106,7 +106,7 @@ final class Bridge implements BaseModel
     }
 
     /**
-     * Bridge type.
+     * Bridge type. Available in Beeper Desktop v4.2.789+.
      */
     public function withType(string $type): self
     {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BeeperDesktop\Accounts;
 
 use BeeperDesktop\Accounts\Account\Bridge;
+use BeeperDesktop\Core\Attributes\Optional;
 use BeeperDesktop\Core\Attributes\Required;
 use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Contracts\BaseModel;
@@ -19,8 +20,8 @@ use BeeperDesktop\User;
  * @phpstan-type AccountShape = array{
  *   accountID: string,
  *   bridge: Bridge|BridgeShape,
- *   network: string,
  *   user: User|UserShape,
+ *   network?: string|null,
  * }
  */
 final class Account implements BaseModel
@@ -35,16 +36,10 @@ final class Account implements BaseModel
     public string $accountID;
 
     /**
-     * Bridge metadata for the account. Available from Beeper Desktop v.4.2.719+.
+     * Bridge metadata for the account. Available in Beeper Desktop v4.2.789+.
      */
     #[Required]
     public Bridge $bridge;
-
-    /**
-     * Human-friendly network name for the account.
-     */
-    #[Required]
-    public string $network;
 
     /**
      * User the account belongs to.
@@ -53,21 +48,23 @@ final class Account implements BaseModel
     public User $user;
 
     /**
+     * Human-friendly network name for the account. Omitted when the network is unknown.
+     */
+    #[Optional]
+    public ?string $network;
+
+    /**
      * `new Account()` is missing required properties by the API.
      *
      * To enforce required parameters use
      * ```
-     * Account::with(accountID: ..., bridge: ..., network: ..., user: ...)
+     * Account::with(accountID: ..., bridge: ..., user: ...)
      * ```
      *
      * Otherwise ensure the following setters are called
      *
      * ```
-     * (new Account)
-     *   ->withAccountID(...)
-     *   ->withBridge(...)
-     *   ->withNetwork(...)
-     *   ->withUser(...)
+     * (new Account)->withAccountID(...)->withBridge(...)->withUser(...)
      * ```
      */
     public function __construct()
@@ -86,15 +83,16 @@ final class Account implements BaseModel
     public static function with(
         string $accountID,
         Bridge|array $bridge,
-        string $network,
-        User|array $user
+        User|array $user,
+        ?string $network = null,
     ): self {
         $self = new self;
 
         $self['accountID'] = $accountID;
         $self['bridge'] = $bridge;
-        $self['network'] = $network;
         $self['user'] = $user;
+
+        null !== $network && $self['network'] = $network;
 
         return $self;
     }
@@ -111,7 +109,7 @@ final class Account implements BaseModel
     }
 
     /**
-     * Bridge metadata for the account. Available from Beeper Desktop v.4.2.719+.
+     * Bridge metadata for the account. Available in Beeper Desktop v4.2.789+.
      *
      * @param Bridge|BridgeShape $bridge
      */
@@ -119,17 +117,6 @@ final class Account implements BaseModel
     {
         $self = clone $this;
         $self['bridge'] = $bridge;
-
-        return $self;
-    }
-
-    /**
-     * Human-friendly network name for the account.
-     */
-    public function withNetwork(string $network): self
-    {
-        $self = clone $this;
-        $self['network'] = $network;
 
         return $self;
     }
@@ -143,6 +130,17 @@ final class Account implements BaseModel
     {
         $self = clone $this;
         $self['user'] = $user;
+
+        return $self;
+    }
+
+    /**
+     * Human-friendly network name for the account. Omitted when the network is unknown.
+     */
+    public function withNetwork(string $network): self
+    {
+        $self = clone $this;
+        $self['network'] = $network;
 
         return $self;
     }

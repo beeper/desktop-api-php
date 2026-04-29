@@ -13,7 +13,7 @@ use BeeperDesktop\Messages\MessageSearchParams\Direction;
 use BeeperDesktop\Messages\MessageSearchParams\MediaType;
 
 /**
- * Search messages across chats using Beeper's message index.
+ * Search messages across chats.
  *
  * @see BeeperDesktop\Services\MessagesService::search()
  *

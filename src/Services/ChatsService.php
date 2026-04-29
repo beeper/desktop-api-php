@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace BeeperDesktop\Services;
 
 use BeeperDesktop\Chats\Chat;
-use BeeperDesktop\Chats\ChatCreateParams\Params\UnionMember0;
-use BeeperDesktop\Chats\ChatCreateParams\Params\UnionMember1;
+use BeeperDesktop\Chats\ChatCreateParams\Mode;
+use BeeperDesktop\Chats\ChatCreateParams\Type;
+use BeeperDesktop\Chats\ChatCreateParams\User;
 use BeeperDesktop\Chats\ChatListParams\Direction;
 use BeeperDesktop\Chats\ChatListResponse;
 use BeeperDesktop\Chats\ChatNewResponse;
 use BeeperDesktop\Chats\ChatSearchParams\Inbox;
 use BeeperDesktop\Chats\ChatSearchParams\Scope;
-use BeeperDesktop\Chats\ChatSearchParams\Type;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\Core\Util;
@@ -26,7 +26,7 @@ use BeeperDesktop\Services\Chats\RemindersService;
 /**
  * Manage chats.
  *
- * @phpstan-import-type ParamsShape from \BeeperDesktop\Chats\ChatCreateParams\Params
+ * @phpstan-import-type UserShape from \BeeperDesktop\Chats\ChatCreateParams\User
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class ChatsService implements ChatsContract
@@ -59,21 +59,46 @@ final class ChatsService implements ChatsContract
     /**
      * @api
      *
-     * Create a single/group chat (mode='create') or start a direct chat from merged user data (mode='start').
+     * Create a direct or group chat with mode="create", or use mode="start" to resolve a contact and open a direct chat.
      *
-     * @param ParamsShape $params
+     * @param string $accountID account to create or start the chat on
+     * @param bool $allowInvite Only used for mode='start'. Whether invite-based DM creation is allowed when required by the platform.
+     * @param string $messageText optional first message content if the platform requires it to create the chat
+     * @param Mode|value-of<Mode> $mode Operation mode. Use 'start' to resolve a user/contact and start a direct chat. Omit or set 'create' to create a chat directly.
+     * @param list<string> $participantIDs Required for create mode. Provide exactly one user ID for 'single' chats and one or more for 'group' chats.
+     * @param string $title optional title for group chats; ignored for single chats on most networks
+     * @param Type|value-of<Type> $type Required for create mode. 'single' creates a direct message chat; 'group' creates a group chat.
+     * @param User|UserShape $user Required for mode='start'. Merged user-like contact payload used to resolve the best identifier.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
     public function create(
-        UnionMember0|array|UnionMember1|null $params = null,
+        string $accountID,
+        bool $allowInvite = true,
+        ?string $messageText = null,
+        Mode|string|null $mode = null,
+        ?array $participantIDs = null,
+        ?string $title = null,
+        Type|string|null $type = null,
+        User|array|null $user = null,
         RequestOptions|array|null $requestOptions = null,
     ): ChatNewResponse {
-        $params1 = Util::removeNulls(['params' => $params]);
+        $params = Util::removeNulls(
+            [
+                'accountID' => $accountID,
+                'allowInvite' => $allowInvite,
+                'messageText' => $messageText,
+                'mode' => $mode,
+                'participantIDs' => $participantIDs,
+                'title' => $title,
+                'type' => $type,
+                'user' => $user,
+            ],
+        );
 
         // @phpstan-ignore-next-line argument.type
-        $response = $this->raw->create(params: $params1, requestOptions: $requestOptions);
+        $response = $this->raw->create(params: $params, requestOptions: $requestOptions);
 
         return $response->parse();
     }
@@ -165,7 +190,7 @@ final class ChatsService implements ChatsContract
     /**
      * @api
      *
-     * Search chats by title/network or participants using Beeper Desktop's renderer algorithm.
+     * Search chats by title, network, or participant names.
      *
      * @param list<string> $accountIDs Provide an array of account IDs to filter chats from specific messaging accounts only
      * @param string $cursor Opaque pagination cursor; do not inspect. Use together with 'direction'.
@@ -177,7 +202,7 @@ final class ChatsService implements ChatsContract
      * @param int $limit Set the maximum number of chats to retrieve. Valid range: 1-200, default is 50
      * @param string $query Literal token search (non-semantic). Use single words users type (e.g., "dinner"). When multiple words provided, ALL must match. Case-insensitive.
      * @param Scope|value-of<Scope> $scope search scope: 'titles' matches title + network; 'participants' matches participant names
-     * @param Type|value-of<Type> $type Specify the type of chats to retrieve: use "single" for direct messages, "group" for group chats, or "any" to get all types
+     * @param \BeeperDesktop\Chats\ChatSearchParams\Type|value-of<\BeeperDesktop\Chats\ChatSearchParams\Type> $type Specify the type of chats to retrieve: use "single" for direct messages, "group" for group chats, or "any" to get all types
      * @param bool|null $unreadOnly Set to true to only retrieve chats that have unread messages
      * @param RequestOpts|null $requestOptions
      *
@@ -196,7 +221,7 @@ final class ChatsService implements ChatsContract
         int $limit = 50,
         ?string $query = null,
         Scope|string $scope = 'titles',
-        Type|string $type = 'any',
+        \BeeperDesktop\Chats\ChatSearchParams\Type|string $type = 'any',
         ?bool $unreadOnly = null,
         RequestOptions|array|null $requestOptions = null,
     ): CursorSearch {
