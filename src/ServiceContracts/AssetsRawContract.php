@@ -41,7 +41,7 @@ interface AssetsRawContract
      * @param array<string,mixed>|AssetServeParams $params
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<string>
+     * @return BaseResponse<mixed>
      *
      * @throws APIException
      */
