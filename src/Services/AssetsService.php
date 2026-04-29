@@ -69,7 +69,7 @@ final class AssetsService implements AssetsContract
     public function serve(
         string $url,
         RequestOptions|array|null $requestOptions = null
-    ): mixed {
+    ): string {
         $params = Util::removeNulls(['url' => $url]);
 
         // @phpstan-ignore-next-line argument.type
