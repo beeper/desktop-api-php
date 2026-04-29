@@ -70,7 +70,7 @@ final class AssetsRawService implements AssetsRawContract
      * @param array{url: string}|AssetServeParams $params
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<mixed>
+     * @return BaseResponse<string>
      *
      * @throws APIException
      */
@@ -88,8 +88,9 @@ final class AssetsRawService implements AssetsRawContract
             method: 'get',
             path: 'v1/assets/serve',
             query: $parsed,
+            headers: ['Accept' => 'application/octet-stream'],
             options: $options,
-            convert: null,
+            convert: 'string',
         );
     }
 
