@@ -7,6 +7,9 @@ namespace BeeperDesktop\Services;
 use BeeperDesktop\Chats\Chat;
 use BeeperDesktop\Chats\ChatArchiveParams;
 use BeeperDesktop\Chats\ChatCreateParams;
+use BeeperDesktop\Chats\ChatCreateParams\Mode;
+use BeeperDesktop\Chats\ChatCreateParams\Type;
+use BeeperDesktop\Chats\ChatCreateParams\User;
 use BeeperDesktop\Chats\ChatListParams;
 use BeeperDesktop\Chats\ChatListParams\Direction;
 use BeeperDesktop\Chats\ChatListResponse;
@@ -15,7 +18,6 @@ use BeeperDesktop\Chats\ChatRetrieveParams;
 use BeeperDesktop\Chats\ChatSearchParams;
 use BeeperDesktop\Chats\ChatSearchParams\Inbox;
 use BeeperDesktop\Chats\ChatSearchParams\Scope;
-use BeeperDesktop\Chats\ChatSearchParams\Type;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Contracts\BaseResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
@@ -27,7 +29,7 @@ use BeeperDesktop\ServiceContracts\ChatsRawContract;
 /**
  * Manage chats.
  *
- * @phpstan-import-type ParamsShape from \BeeperDesktop\Chats\ChatCreateParams\Params
+ * @phpstan-import-type UserShape from \BeeperDesktop\Chats\ChatCreateParams\User
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class ChatsRawService implements ChatsRawContract
@@ -41,9 +43,18 @@ final class ChatsRawService implements ChatsRawContract
     /**
      * @api
      *
-     * Create a single/group chat (mode='create') or start a direct chat from merged user data (mode='start').
+     * Create a direct or group chat with mode="create", or use mode="start" to resolve a contact and open a direct chat.
      *
-     * @param array{params?: ParamsShape}|ChatCreateParams $params
+     * @param array{
+     *   accountID: string,
+     *   allowInvite?: bool,
+     *   messageText?: string,
+     *   mode?: Mode|value-of<Mode>,
+     *   participantIDs?: list<string>,
+     *   title?: string,
+     *   type?: Type|value-of<Type>,
+     *   user?: User|UserShape,
+     * }|ChatCreateParams $params
      * @param RequestOpts|null $requestOptions
      *
      * @return BaseResponse<ChatNewResponse>
@@ -63,7 +74,7 @@ final class ChatsRawService implements ChatsRawContract
         return $this->client->request(
             method: 'post',
             path: 'v1/chats',
-            body: (object) $parsed['params'],
+            body: (object) $parsed,
             options: $options,
             convert: ChatNewResponse::class,
         );
@@ -174,7 +185,7 @@ final class ChatsRawService implements ChatsRawContract
     /**
      * @api
      *
-     * Search chats by title/network or participants using Beeper Desktop's renderer algorithm.
+     * Search chats by title, network, or participant names.
      *
      * @param array{
      *   accountIDs?: list<string>,
@@ -187,7 +198,7 @@ final class ChatsRawService implements ChatsRawContract
      *   limit?: int,
      *   query?: string,
      *   scope?: Scope|value-of<Scope>,
-     *   type?: Type|value-of<Type>,
+     *   type?: ChatSearchParams\Type|value-of<ChatSearchParams\Type>,
      *   unreadOnly?: bool|null,
      * }|ChatSearchParams $params
      * @param RequestOpts|null $requestOptions

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace BeeperDesktop\Chats\ChatCreateParams\Params\UnionMember0;
+namespace BeeperDesktop\Chats\ChatCreateParams;
 
 use BeeperDesktop\Core\Attributes\Optional;
 use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Merged user-like contact payload used to resolve the best identifier.
+ * Required for mode='start'. Merged user-like contact payload used to resolve the best identifier.
  *
  * @phpstan-type UserShape = array{
  *   id?: string|null,

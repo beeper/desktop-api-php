@@ -7,8 +7,8 @@ namespace BeeperDesktop\Services;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Contracts\BaseResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
-use BeeperDesktop\CursorSortKey;
 use BeeperDesktop\Message;
 use BeeperDesktop\Messages\MessageListParams;
 use BeeperDesktop\Messages\MessageListParams\Direction;
@@ -83,7 +83,7 @@ final class MessagesRawService implements MessagesRawContract
      * }|MessageListParams $params
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<CursorSortKey<Message>>
+     * @return BaseResponse<CursorNoLimit<Message>>
      *
      * @throws APIException
      */
@@ -104,14 +104,14 @@ final class MessagesRawService implements MessagesRawContract
             query: $parsed,
             options: $options,
             convert: Message::class,
-            page: CursorSortKey::class,
+            page: CursorNoLimit::class,
         );
     }
 
     /**
      * @api
      *
-     * Search messages across chats using Beeper's message index
+     * Search messages across chats.
      *
      * @param array{
      *   accountIDs?: list<string>,

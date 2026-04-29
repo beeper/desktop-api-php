@@ -7,8 +7,8 @@ namespace BeeperDesktop\Services;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\Core\Util;
+use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
-use BeeperDesktop\CursorSortKey;
 use BeeperDesktop\Message;
 use BeeperDesktop\Messages\MessageListParams\Direction;
 use BeeperDesktop\Messages\MessageSearchParams\ChatType;
@@ -76,7 +76,7 @@ final class MessagesService implements MessagesContract
      * @param Direction|value-of<Direction> $direction Pagination direction used with 'cursor': 'before' fetches older results, 'after' fetches newer results. Defaults to 'before' when only 'cursor' is provided.
      * @param RequestOpts|null $requestOptions
      *
-     * @return CursorSortKey<Message>
+     * @return CursorNoLimit<Message>
      *
      * @throws APIException
      */
@@ -85,7 +85,7 @@ final class MessagesService implements MessagesContract
         ?string $cursor = null,
         Direction|string|null $direction = null,
         RequestOptions|array|null $requestOptions = null,
-    ): CursorSortKey {
+    ): CursorNoLimit {
         $params = Util::removeNulls(
             ['cursor' => $cursor, 'direction' => $direction]
         );
@@ -99,7 +99,7 @@ final class MessagesService implements MessagesContract
     /**
      * @api
      *
-     * Search messages across chats using Beeper's message index
+     * Search messages across chats.
      *
      * @param list<string> $accountIDs limit search to specific account IDs
      * @param list<string> $chatIDs limit search to specific chat IDs

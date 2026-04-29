@@ -74,9 +74,7 @@ class Client extends BaseClient
             'BEEPER_ACCESS_TOKEN'
         ));
 
-        $baseUrl ??= Util::getenv(
-            'BEEPER_DESKTOP_BASE_URL'
-        ) ?: 'http://localhost:23373';
+        $baseUrl ??= Util::getenv('BEEPER_BASE_URL') ?: 'http://localhost:23373';
 
         $options = RequestOptions::parse(
             RequestOptions::with(
@@ -101,7 +99,7 @@ class Client extends BaseClient
             'X-Stainless-Runtime-Version' => phpversion(),
         ];
 
-        $customHeadersEnv = Util::getenv('BEEPER_DESKTOP_CUSTOM_HEADERS');
+        $customHeadersEnv = Util::getenv('BEEPER_CUSTOM_HEADERS');
         if (null !== $customHeadersEnv) {
             foreach (explode("\n", $customHeadersEnv) as $line) {
                 $colon = strpos($line, ':');
@@ -172,8 +170,18 @@ class Client extends BaseClient
         return $this->beeperDesktopClientService->search($query, $requestOptions);
     }
 
+    /**
+     * @param array{bearerAuth?: bool} $security
+     *
+     * @return array<string,string>
+     */
+    protected function authHeaders(array $security): array
+    {
+        return [...($security['bearerAuth'] ?? false) ? $this->bearerAuth() : []];
+    }
+
     /** @return array<string,string> */
-    protected function authHeaders(): array
+    protected function bearerAuth(): array
     {
         return $this->accessToken ? [
             'Authorization' => "Bearer {$this->accessToken}",
@@ -187,6 +195,7 @@ class Client extends BaseClient
      * @param array<string,mixed> $query
      * @param array<string,string|int|list<string|int>|null> $headers
      * @param RequestOpts|null $opts
+     * @param array{bearerAuth?: bool}|null $security
      *
      * @return array{NormalizedRequest, RequestOptions}
      */
@@ -197,14 +206,19 @@ class Client extends BaseClient
         array $headers,
         mixed $body,
         RequestOptions|array|null $opts,
+        ?array $security = null,
     ): array {
         return parent::buildRequest(
             method: $method,
             path: $path,
             query: $query,
-            headers: [...$this->authHeaders(), ...$headers],
+            headers: [
+                ...$this->authHeaders(security: ($security ?? ['bearerAuth' => true])),
+                ...$headers,
+            ],
             body: $body,
             opts: $opts,
+            security: $security,
         );
     }
 }

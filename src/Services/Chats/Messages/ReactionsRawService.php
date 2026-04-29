@@ -30,7 +30,7 @@ final class ReactionsRawService implements ReactionsRawContract
     /**
      * @api
      *
-     * Remove the authenticated user's reaction from an existing message.
+     * Remove the reaction added by the authenticated user from an existing message.
      *
      * @param string $messageID Path param: ID of the message to remove a reaction from
      * @param array{chatID: string, reactionKey: string}|ReactionDeleteParams $params

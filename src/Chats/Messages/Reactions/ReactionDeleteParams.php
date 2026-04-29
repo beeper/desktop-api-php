@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Remove the authenticated user's reaction from an existing message.
+ * Remove the reaction added by the authenticated user from an existing message.
  *
  * @see BeeperDesktop\Services\Chats\Messages\ReactionsService::delete()
  *
