@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace BeeperDesktop\Chats\ChatCreateParams;
 
 /**
- * Required for create mode. 'single' creates a direct message chat; 'group' creates a group chat.
+ * 'single' requires exactly one participantID; 'group' supports multiple participants and optional title.
  */
 enum Type: string
 {

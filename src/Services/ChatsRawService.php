@@ -7,9 +7,7 @@ namespace BeeperDesktop\Services;
 use BeeperDesktop\Chats\Chat;
 use BeeperDesktop\Chats\ChatArchiveParams;
 use BeeperDesktop\Chats\ChatCreateParams;
-use BeeperDesktop\Chats\ChatCreateParams\Mode;
 use BeeperDesktop\Chats\ChatCreateParams\Type;
-use BeeperDesktop\Chats\ChatCreateParams\User;
 use BeeperDesktop\Chats\ChatListParams;
 use BeeperDesktop\Chats\ChatListParams\Direction;
 use BeeperDesktop\Chats\ChatListResponse;
@@ -18,6 +16,9 @@ use BeeperDesktop\Chats\ChatRetrieveParams;
 use BeeperDesktop\Chats\ChatSearchParams;
 use BeeperDesktop\Chats\ChatSearchParams\Inbox;
 use BeeperDesktop\Chats\ChatSearchParams\Scope;
+use BeeperDesktop\Chats\ChatStartParams;
+use BeeperDesktop\Chats\ChatStartParams\User;
+use BeeperDesktop\Chats\ChatStartResponse;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Contracts\BaseResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
@@ -29,7 +30,7 @@ use BeeperDesktop\ServiceContracts\ChatsRawContract;
 /**
  * Manage chats.
  *
- * @phpstan-import-type UserShape from \BeeperDesktop\Chats\ChatCreateParams\User
+ * @phpstan-import-type UserShape from \BeeperDesktop\Chats\ChatStartParams\User
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class ChatsRawService implements ChatsRawContract
@@ -43,17 +44,14 @@ final class ChatsRawService implements ChatsRawContract
     /**
      * @api
      *
-     * Create a direct or group chat with mode="create", or use mode="start" to resolve a contact and open a direct chat.
+     * Create a direct or group chat from participant IDs.
      *
      * @param array{
      *   accountID: string,
-     *   allowInvite?: bool,
+     *   participantIDs: list<string>,
+     *   type: Type|value-of<Type>,
      *   messageText?: string,
-     *   mode?: Mode|value-of<Mode>,
-     *   participantIDs?: list<string>,
      *   title?: string,
-     *   type?: Type|value-of<Type>,
-     *   user?: User|UserShape,
      * }|ChatCreateParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -224,6 +222,42 @@ final class ChatsRawService implements ChatsRawContract
             options: $options,
             convert: Chat::class,
             page: CursorSearch::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Resolve a user/contact and open a direct chat. Reuses an existing direct chat when one is found. Available in Beeper Desktop v4.2.799+.
+     *
+     * @param array{
+     *   accountID: string,
+     *   user: User|UserShape,
+     *   allowInvite?: bool,
+     *   messageText?: string,
+     * }|ChatStartParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ChatStartResponse>
+     *
+     * @throws APIException
+     */
+    public function start(
+        array|ChatStartParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = ChatStartParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'post',
+            path: 'v1/chats.start',
+            body: (object) $parsed,
+            options: $options,
+            convert: ChatStartResponse::class,
         );
     }
 }

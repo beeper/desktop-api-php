@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\Chats;
 
-use BeeperDesktop\Chats\ChatCreateParams\Mode;
 use BeeperDesktop\Chats\ChatCreateParams\Type;
-use BeeperDesktop\Chats\ChatCreateParams\User;
 use BeeperDesktop\Core\Attributes\Optional;
 use BeeperDesktop\Core\Attributes\Required;
 use BeeperDesktop\Core\Concerns\SdkModel;
@@ -14,21 +12,16 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Create a direct or group chat with mode="create", or use mode="start" to resolve a contact and open a direct chat.
+ * Create a direct or group chat from participant IDs.
  *
  * @see BeeperDesktop\Services\ChatsService::create()
  *
- * @phpstan-import-type UserShape from \BeeperDesktop\Chats\ChatCreateParams\User
- *
  * @phpstan-type ChatCreateParamsShape = array{
  *   accountID: string,
- *   allowInvite?: bool|null,
+ *   participantIDs: list<string>,
+ *   type: Type|value-of<Type>,
  *   messageText?: string|null,
- *   mode?: null|Mode|value-of<Mode>,
- *   participantIDs?: list<string>|null,
  *   title?: string|null,
- *   type?: null|Type|value-of<Type>,
- *   user?: null|User|UserShape,
  * }
  */
 final class ChatCreateParams implements BaseModel
@@ -44,10 +37,20 @@ final class ChatCreateParams implements BaseModel
     public string $accountID;
 
     /**
-     * Only used for mode='start'. Whether invite-based DM creation is allowed when required by the platform.
+     * User IDs to include in the new chat.
+     *
+     * @var list<string> $participantIDs
      */
-    #[Optional]
-    public ?bool $allowInvite;
+    #[Required(list: 'string')]
+    public array $participantIDs;
+
+    /**
+     * 'single' requires exactly one participantID; 'group' supports multiple participants and optional title.
+     *
+     * @var value-of<Type> $type
+     */
+    #[Required(enum: Type::class)]
+    public string $type;
 
     /**
      * Optional first message content if the platform requires it to create the chat.
@@ -56,53 +59,26 @@ final class ChatCreateParams implements BaseModel
     public ?string $messageText;
 
     /**
-     * Operation mode. Use 'start' to resolve a user/contact and start a direct chat. Omit or set 'create' to create a chat directly.
-     *
-     * @var value-of<Mode>|null $mode
-     */
-    #[Optional(enum: Mode::class)]
-    public ?string $mode;
-
-    /**
-     * Required for create mode. Provide exactly one user ID for 'single' chats and one or more for 'group' chats.
-     *
-     * @var list<string>|null $participantIDs
-     */
-    #[Optional(list: 'string')]
-    public ?array $participantIDs;
-
-    /**
      * Optional title for group chats; ignored for single chats on most networks.
      */
     #[Optional]
     public ?string $title;
 
     /**
-     * Required for create mode. 'single' creates a direct message chat; 'group' creates a group chat.
-     *
-     * @var value-of<Type>|null $type
-     */
-    #[Optional(enum: Type::class)]
-    public ?string $type;
-
-    /**
-     * Required for mode='start'. Merged user-like contact payload used to resolve the best identifier.
-     */
-    #[Optional]
-    public ?User $user;
-
-    /**
      * `new ChatCreateParams()` is missing required properties by the API.
      *
      * To enforce required parameters use
      * ```
-     * ChatCreateParams::with(accountID: ...)
+     * ChatCreateParams::with(accountID: ..., participantIDs: ..., type: ...)
      * ```
      *
      * Otherwise ensure the following setters are called
      *
      * ```
-     * (new ChatCreateParams)->withAccountID(...)
+     * (new ChatCreateParams)
+     *   ->withAccountID(...)
+     *   ->withParticipantIDs(...)
+     *   ->withType(...)
      * ```
      */
     public function __construct()
@@ -115,32 +91,24 @@ final class ChatCreateParams implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
-     * @param Mode|value-of<Mode>|null $mode
-     * @param list<string>|null $participantIDs
-     * @param Type|value-of<Type>|null $type
-     * @param User|UserShape|null $user
+     * @param list<string> $participantIDs
+     * @param Type|value-of<Type> $type
      */
     public static function with(
         string $accountID,
-        ?bool $allowInvite = null,
+        array $participantIDs,
+        Type|string $type,
         ?string $messageText = null,
-        Mode|string|null $mode = null,
-        ?array $participantIDs = null,
         ?string $title = null,
-        Type|string|null $type = null,
-        User|array|null $user = null,
     ): self {
         $self = new self;
 
         $self['accountID'] = $accountID;
+        $self['participantIDs'] = $participantIDs;
+        $self['type'] = $type;
 
-        null !== $allowInvite && $self['allowInvite'] = $allowInvite;
         null !== $messageText && $self['messageText'] = $messageText;
-        null !== $mode && $self['mode'] = $mode;
-        null !== $participantIDs && $self['participantIDs'] = $participantIDs;
         null !== $title && $self['title'] = $title;
-        null !== $type && $self['type'] = $type;
-        null !== $user && $self['user'] = $user;
 
         return $self;
     }
@@ -157,12 +125,27 @@ final class ChatCreateParams implements BaseModel
     }
 
     /**
-     * Only used for mode='start'. Whether invite-based DM creation is allowed when required by the platform.
+     * User IDs to include in the new chat.
+     *
+     * @param list<string> $participantIDs
      */
-    public function withAllowInvite(bool $allowInvite): self
+    public function withParticipantIDs(array $participantIDs): self
     {
         $self = clone $this;
-        $self['allowInvite'] = $allowInvite;
+        $self['participantIDs'] = $participantIDs;
+
+        return $self;
+    }
+
+    /**
+     * 'single' requires exactly one participantID; 'group' supports multiple participants and optional title.
+     *
+     * @param Type|value-of<Type> $type
+     */
+    public function withType(Type|string $type): self
+    {
+        $self = clone $this;
+        $self['type'] = $type;
 
         return $self;
     }
@@ -179,64 +162,12 @@ final class ChatCreateParams implements BaseModel
     }
 
     /**
-     * Operation mode. Use 'start' to resolve a user/contact and start a direct chat. Omit or set 'create' to create a chat directly.
-     *
-     * @param Mode|value-of<Mode> $mode
-     */
-    public function withMode(Mode|string $mode): self
-    {
-        $self = clone $this;
-        $self['mode'] = $mode;
-
-        return $self;
-    }
-
-    /**
-     * Required for create mode. Provide exactly one user ID for 'single' chats and one or more for 'group' chats.
-     *
-     * @param list<string> $participantIDs
-     */
-    public function withParticipantIDs(array $participantIDs): self
-    {
-        $self = clone $this;
-        $self['participantIDs'] = $participantIDs;
-
-        return $self;
-    }
-
-    /**
      * Optional title for group chats; ignored for single chats on most networks.
      */
     public function withTitle(string $title): self
     {
         $self = clone $this;
         $self['title'] = $title;
-
-        return $self;
-    }
-
-    /**
-     * Required for create mode. 'single' creates a direct message chat; 'group' creates a group chat.
-     *
-     * @param Type|value-of<Type> $type
-     */
-    public function withType(Type|string $type): self
-    {
-        $self = clone $this;
-        $self['type'] = $type;
-
-        return $self;
-    }
-
-    /**
-     * Required for mode='start'. Merged user-like contact payload used to resolve the best identifier.
-     *
-     * @param User|UserShape $user
-     */
-    public function withUser(User|array $user): self
-    {
-        $self = clone $this;
-        $self['user'] = $user;
 
         return $self;
     }

@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace BeeperDesktop\Services;
 
 use BeeperDesktop\Chats\Chat;
-use BeeperDesktop\Chats\ChatCreateParams\Mode;
 use BeeperDesktop\Chats\ChatCreateParams\Type;
-use BeeperDesktop\Chats\ChatCreateParams\User;
 use BeeperDesktop\Chats\ChatListParams\Direction;
 use BeeperDesktop\Chats\ChatListResponse;
 use BeeperDesktop\Chats\ChatNewResponse;
 use BeeperDesktop\Chats\ChatSearchParams\Inbox;
 use BeeperDesktop\Chats\ChatSearchParams\Scope;
+use BeeperDesktop\Chats\ChatStartParams\User;
+use BeeperDesktop\Chats\ChatStartResponse;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\Core\Util;
@@ -26,7 +26,7 @@ use BeeperDesktop\Services\Chats\RemindersService;
 /**
  * Manage chats.
  *
- * @phpstan-import-type UserShape from \BeeperDesktop\Chats\ChatCreateParams\User
+ * @phpstan-import-type UserShape from \BeeperDesktop\Chats\ChatStartParams\User
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class ChatsService implements ChatsContract
@@ -59,41 +59,32 @@ final class ChatsService implements ChatsContract
     /**
      * @api
      *
-     * Create a direct or group chat with mode="create", or use mode="start" to resolve a contact and open a direct chat.
+     * Create a direct or group chat from participant IDs.
      *
      * @param string $accountID account to create or start the chat on
-     * @param bool $allowInvite Only used for mode='start'. Whether invite-based DM creation is allowed when required by the platform.
+     * @param list<string> $participantIDs user IDs to include in the new chat
+     * @param Type|value-of<Type> $type 'single' requires exactly one participantID; 'group' supports multiple participants and optional title
      * @param string $messageText optional first message content if the platform requires it to create the chat
-     * @param Mode|value-of<Mode> $mode Operation mode. Use 'start' to resolve a user/contact and start a direct chat. Omit or set 'create' to create a chat directly.
-     * @param list<string> $participantIDs Required for create mode. Provide exactly one user ID for 'single' chats and one or more for 'group' chats.
      * @param string $title optional title for group chats; ignored for single chats on most networks
-     * @param Type|value-of<Type> $type Required for create mode. 'single' creates a direct message chat; 'group' creates a group chat.
-     * @param User|UserShape $user Required for mode='start'. Merged user-like contact payload used to resolve the best identifier.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
     public function create(
         string $accountID,
-        bool $allowInvite = true,
+        array $participantIDs,
+        Type|string $type,
         ?string $messageText = null,
-        Mode|string|null $mode = null,
-        ?array $participantIDs = null,
         ?string $title = null,
-        Type|string|null $type = null,
-        User|array|null $user = null,
         RequestOptions|array|null $requestOptions = null,
     ): ChatNewResponse {
         $params = Util::removeNulls(
             [
                 'accountID' => $accountID,
-                'allowInvite' => $allowInvite,
-                'messageText' => $messageText,
-                'mode' => $mode,
                 'participantIDs' => $participantIDs,
-                'title' => $title,
                 'type' => $type,
-                'user' => $user,
+                'messageText' => $messageText,
+                'title' => $title,
             ],
         );
 
@@ -244,6 +235,41 @@ final class ChatsService implements ChatsContract
 
         // @phpstan-ignore-next-line argument.type
         $response = $this->raw->search(params: $params, requestOptions: $requestOptions);
+
+        return $response->parse();
+    }
+
+    /**
+     * @api
+     *
+     * Resolve a user/contact and open a direct chat. Reuses an existing direct chat when one is found. Available in Beeper Desktop v4.2.799+.
+     *
+     * @param string $accountID account to create or start the chat on
+     * @param User|UserShape $user merged user-like contact payload used to resolve the best identifier
+     * @param bool $allowInvite whether invite-based DM creation is allowed when required by the platform
+     * @param string $messageText optional first message content if the platform requires it to create the chat
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function start(
+        string $accountID,
+        User|array $user,
+        bool $allowInvite = true,
+        ?string $messageText = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): ChatStartResponse {
+        $params = Util::removeNulls(
+            [
+                'accountID' => $accountID,
+                'user' => $user,
+                'allowInvite' => $allowInvite,
+                'messageText' => $messageText,
+            ],
+        );
+
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->start(params: $params, requestOptions: $requestOptions);
 
         return $response->parse();
     }

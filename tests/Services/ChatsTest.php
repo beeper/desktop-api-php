@@ -5,6 +5,7 @@ namespace Tests\Services;
 use BeeperDesktop\Chats\Chat;
 use BeeperDesktop\Chats\ChatListResponse;
 use BeeperDesktop\Chats\ChatNewResponse;
+use BeeperDesktop\Chats\ChatStartResponse;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Util;
 use BeeperDesktop\CursorNoLimit;
@@ -12,6 +13,7 @@ use BeeperDesktop\CursorSearch;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Tests\UnsupportedMockTests;
 
 /**
  * @internal
@@ -34,7 +36,11 @@ final class ChatsTest extends TestCase
     #[Test]
     public function testCreate(): void
     {
-        $result = $this->client->chats->create(accountID: 'accountID');
+        $result = $this->client->chats->create(
+            accountID: 'accountID',
+            participantIDs: ['string'],
+            type: 'single'
+        );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(ChatNewResponse::class, $result);
@@ -45,19 +51,10 @@ final class ChatsTest extends TestCase
     {
         $result = $this->client->chats->create(
             accountID: 'accountID',
-            allowInvite: true,
-            messageText: 'messageText',
-            mode: 'start',
             participantIDs: ['string'],
-            title: 'title',
             type: 'single',
-            user: [
-                'id' => 'id',
-                'email' => 'email',
-                'fullName' => 'fullName',
-                'phoneNumber' => 'phoneNumber',
-                'username' => 'username',
-            ],
+            messageText: 'messageText',
+            title: 'title',
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
@@ -108,5 +105,42 @@ final class ChatsTest extends TestCase
             // @phpstan-ignore-next-line method.alreadyNarrowedType
             $this->assertInstanceOf(Chat::class, $item);
         }
+    }
+
+    #[Test]
+    public function testStart(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Stainless mock tests currently load the project-published OpenAPI spec URL, which may not include newly-added local-only endpoints during build checks.');
+        }
+
+        $result = $this->client->chats->start(accountID: 'accountID', user: []);
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ChatStartResponse::class, $result);
+    }
+
+    #[Test]
+    public function testStartWithOptionalParams(): void
+    {
+        if (UnsupportedMockTests::$skip) {
+            $this->markTestSkipped('Stainless mock tests currently load the project-published OpenAPI spec URL, which may not include newly-added local-only endpoints during build checks.');
+        }
+
+        $result = $this->client->chats->start(
+            accountID: 'accountID',
+            user: [
+                'id' => 'id',
+                'email' => 'email',
+                'fullName' => 'fullName',
+                'phoneNumber' => 'phoneNumber',
+                'username' => 'username',
+            ],
+            allowInvite: true,
+            messageText: 'messageText',
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ChatStartResponse::class, $result);
     }
 }

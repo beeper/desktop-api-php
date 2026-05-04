@@ -36,7 +36,7 @@ final class Account implements BaseModel
     public string $accountID;
 
     /**
-     * Bridge metadata for the account. Available in Beeper Desktop v4.2.789+.
+     * Bridge metadata for the account. Available in Beeper Desktop v4.2.799+.
      */
     #[Required]
     public Bridge $bridge;
@@ -109,7 +109,7 @@ final class Account implements BaseModel
     }
 
     /**
-     * Bridge metadata for the account. Available in Beeper Desktop v4.2.789+.
+     * Bridge metadata for the account. Available in Beeper Desktop v4.2.799+.
      *
      * @param Bridge|BridgeShape $bridge
      */

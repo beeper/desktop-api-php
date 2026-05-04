@@ -12,6 +12,8 @@ use BeeperDesktop\Chats\ChatListResponse;
 use BeeperDesktop\Chats\ChatNewResponse;
 use BeeperDesktop\Chats\ChatRetrieveParams;
 use BeeperDesktop\Chats\ChatSearchParams;
+use BeeperDesktop\Chats\ChatStartParams;
+use BeeperDesktop\Chats\ChatStartResponse;
 use BeeperDesktop\Core\Contracts\BaseResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\CursorNoLimit;
@@ -99,6 +101,21 @@ interface ChatsRawContract
      */
     public function search(
         array|ChatSearchParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param array<string,mixed>|ChatStartParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ChatStartResponse>
+     *
+     * @throws APIException
+     */
+    public function start(
+        array|ChatStartParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 }
