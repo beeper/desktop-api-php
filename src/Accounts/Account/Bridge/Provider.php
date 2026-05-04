@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace BeeperDesktop\Accounts\Account\Bridge;
 
 /**
- * Bridge provider for the account. Available in Beeper Desktop v4.2.789+.
+ * Bridge provider for the account. Available in Beeper Desktop v4.2.799+.
  */
 enum Provider: string
 {
