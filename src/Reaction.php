@@ -24,7 +24,7 @@ final class Reaction implements BaseModel
     use SdkModel;
 
     /**
-     * Reaction ID, typically ${participantID}${reactionKey} if multiple reactions allowed, or just participantID otherwise.
+     * Reaction ID. When a participant can react more than once, the ID is the participant ID concatenated with the reaction key; otherwise it equals the participant ID.
      */
     #[Required]
     public string $id;
@@ -97,7 +97,7 @@ final class Reaction implements BaseModel
     }
 
     /**
-     * Reaction ID, typically ${participantID}${reactionKey} if multiple reactions allowed, or just participantID otherwise.
+     * Reaction ID. When a participant can react more than once, the ID is the participant ID concatenated with the reaction key; otherwise it equals the participant ID.
      */
     public function withID(string $id): self
     {

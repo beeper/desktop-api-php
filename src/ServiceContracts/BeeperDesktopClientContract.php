@@ -18,8 +18,8 @@ interface BeeperDesktopClientContract
      * @api
      *
      * @param string $chatID Optional Beeper chat ID (or local chat ID) to focus after opening the app. If omitted, only opens/focuses the app.
-     * @param string $draftAttachmentPath optional draft attachment path to populate in the message input field
-     * @param string $draftText optional draft text to populate in the message input field
+     * @param string $draftAttachmentPath optional image path to populate in the message input field
+     * @param string $draftText optional plain text to populate in the message input field
      * @param string $messageID Optional message ID. Jumps to that message in the chat when opening.
      * @param RequestOpts|null $requestOptions
      *

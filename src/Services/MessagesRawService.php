@@ -10,8 +10,10 @@ use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
 use BeeperDesktop\Message;
+use BeeperDesktop\Messages\MessageDeleteParams;
 use BeeperDesktop\Messages\MessageListParams;
 use BeeperDesktop\Messages\MessageListParams\Direction;
+use BeeperDesktop\Messages\MessageRetrieveParams;
 use BeeperDesktop\Messages\MessageSearchParams;
 use BeeperDesktop\Messages\MessageSearchParams\ChatType;
 use BeeperDesktop\Messages\MessageSearchParams\MediaType;
@@ -40,9 +42,43 @@ final class MessagesRawService implements MessagesRawContract
     /**
      * @api
      *
+     * Retrieve a message by final message ID, pendingMessageID, or Matrix event ID. Chat ID may be a Beeper chat ID or local chat ID.
+     *
+     * @param string $messageID message ID
+     * @param array{chatID: string}|MessageRetrieveParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Message>
+     *
+     * @throws APIException
+     */
+    public function retrieve(
+        string $messageID,
+        array|MessageRetrieveParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = MessageRetrieveParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $chatID = $parsed['chatID'];
+        unset($parsed['chatID']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['v1/chats/%1$s/messages/%2$s', $chatID, $messageID],
+            options: $options,
+            convert: Message::class,
+        );
+    }
+
+    /**
+     * @api
+     *
      * Edit the text content of an existing message. Messages with attachments cannot be edited.
      *
-     * @param string $messageID Path param: ID of the message to edit
+     * @param string $messageID path param: Message ID
      * @param array{chatID: string, text: string}|MessageUpdateParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -77,7 +113,7 @@ final class MessagesRawService implements MessagesRawContract
      *
      * List all messages in a chat with cursor-based pagination. Sorted by timestamp.
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      * @param array{
      *   cursor?: string, direction?: Direction|value-of<Direction>
      * }|MessageListParams $params
@@ -105,6 +141,43 @@ final class MessagesRawService implements MessagesRawContract
             options: $options,
             convert: Message::class,
             page: CursorNoLimit::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * Delete a message by final message ID. Pending message IDs are not accepted because messages cannot be deleted while sending.
+     *
+     * @param string $messageID path param: Message ID
+     * @param array{
+     *   chatID: string, forEveryone?: bool|null
+     * }|MessageDeleteParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<mixed>
+     *
+     * @throws APIException
+     */
+    public function delete(
+        string $messageID,
+        array|MessageDeleteParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse {
+        [$parsed, $options] = MessageDeleteParams::parseRequest(
+            $params,
+            $requestOptions,
+        );
+        $chatID = $parsed['chatID'];
+        unset($parsed['chatID']);
+
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'delete',
+            path: ['v1/chats/%1$s/messages/%2$s', $chatID, $messageID],
+            query: $parsed,
+            options: $options,
+            convert: null,
         );
     }
 
@@ -159,7 +232,7 @@ final class MessagesRawService implements MessagesRawContract
      *
      * Send a text message to a specific chat. Supports replying to existing messages. Returns a pending message ID.
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      * @param array{
      *   attachment?: Attachment|AttachmentShape,
      *   replyToMessageID?: string,

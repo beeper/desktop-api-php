@@ -32,10 +32,34 @@ final class MessagesTest extends TestCase
     }
 
     #[Test]
+    public function testRetrieve(): void
+    {
+        $result = $this->client->messages->retrieve(
+            '1343993',
+            chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(Message::class, $result);
+    }
+
+    #[Test]
+    public function testRetrieveWithOptionalParams(): void
+    {
+        $result = $this->client->messages->retrieve(
+            '1343993',
+            chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(Message::class, $result);
+    }
+
+    #[Test]
     public function testUpdate(): void
     {
         $result = $this->client->messages->update(
-            'messageID',
+            '1343993',
             chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com',
             text: 'x'
         );
@@ -48,7 +72,7 @@ final class MessagesTest extends TestCase
     public function testUpdateWithOptionalParams(): void
     {
         $result = $this->client->messages->update(
-            'messageID',
+            '1343993',
             chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com',
             text: 'x'
         );
@@ -69,6 +93,31 @@ final class MessagesTest extends TestCase
             // @phpstan-ignore-next-line method.alreadyNarrowedType
             $this->assertInstanceOf(Message::class, $item);
         }
+    }
+
+    #[Test]
+    public function testDelete(): void
+    {
+        $result = $this->client->messages->delete(
+            '1343993',
+            chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertNull($result);
+    }
+
+    #[Test]
+    public function testDeleteWithOptionalParams(): void
+    {
+        $result = $this->client->messages->delete(
+            '1343993',
+            chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com',
+            forEveryone: true
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertNull($result);
     }
 
     #[Test]

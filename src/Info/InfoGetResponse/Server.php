@@ -24,7 +24,7 @@ final class Server implements BaseModel
     use SdkModel;
 
     /**
-     * Base URL of the Connect server.
+     * Base URL of the Beeper Desktop API server.
      */
     #[Required('base_url')]
     public string $baseURL;
@@ -117,7 +117,7 @@ final class Server implements BaseModel
     }
 
     /**
-     * Base URL of the Connect server.
+     * Base URL of the Beeper Desktop API server.
      */
     public function withBaseURL(string $baseURL): self
     {

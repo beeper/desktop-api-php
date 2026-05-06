@@ -53,7 +53,7 @@ final class User implements BaseModel
     public ?string $fullName;
 
     /**
-     * Avatar image URL if available. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Avatar image URL if available. This may be a remote URL, Matrix media URL, data URL, or local filesystem URL depending on source and endpoint. May be temporary or local-only to this device; download promptly if durable access is needed.
      */
     #[Optional]
     public ?string $imgURL;
@@ -170,7 +170,7 @@ final class User implements BaseModel
     }
 
     /**
-     * Avatar image URL if available. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Avatar image URL if available. This may be a remote URL, Matrix media URL, data URL, or local filesystem URL depending on source and endpoint. May be temporary or local-only to this device; download promptly if durable access is needed.
      */
     public function withImgURL(string $imgURL): self
     {

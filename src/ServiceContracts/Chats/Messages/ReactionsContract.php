@@ -17,27 +17,27 @@ interface ReactionsContract
     /**
      * @api
      *
-     * @param string $messageID Path param: ID of the message to remove a reaction from
-     * @param string $chatID path param: Unique identifier of the chat
-     * @param string $reactionKey Query param: Reaction key to remove
+     * @param string $reactionKey Reaction key to remove (emoji, shortcode, or custom emoji key)
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $messageID message ID
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
     public function delete(
-        string $messageID,
-        string $chatID,
         string $reactionKey,
+        string $chatID,
+        string $messageID,
         RequestOptions|array|null $requestOptions = null,
     ): ReactionDeleteResponse;
 
     /**
      * @api
      *
-     * @param string $messageID Path param: ID of the message to add a reaction to
-     * @param string $chatID path param: Unique identifier of the chat
+     * @param string $messageID path param: Message ID
+     * @param string $chatID Path param: Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      * @param string $reactionKey Body param: Reaction key to add (emoji, shortcode, or custom emoji key)
-     * @param string $transactionID Body param: Optional transaction ID for deduplication and local echo tracking
+     * @param string $transactionID Body param: Optional transaction ID for deduplication and send tracking
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

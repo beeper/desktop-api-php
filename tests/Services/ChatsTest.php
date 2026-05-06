@@ -13,7 +13,6 @@ use BeeperDesktop\CursorSearch;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Tests\UnsupportedMockTests;
 
 /**
  * @internal
@@ -71,6 +70,15 @@ final class ChatsTest extends TestCase
     }
 
     #[Test]
+    public function testUpdate(): void
+    {
+        $result = $this->client->chats->update('!NCdzlIaMjZUmvmvyHU:beeper.com');
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(Chat::class, $result);
+    }
+
+    #[Test]
     public function testList(): void
     {
         $page = $this->client->chats->list();
@@ -94,6 +102,37 @@ final class ChatsTest extends TestCase
     }
 
     #[Test]
+    public function testMarkRead(): void
+    {
+        $result = $this->client->chats->markRead('!NCdzlIaMjZUmvmvyHU:beeper.com');
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(Chat::class, $result);
+    }
+
+    #[Test]
+    public function testMarkUnread(): void
+    {
+        $result = $this->client->chats->markUnread(
+            '!NCdzlIaMjZUmvmvyHU:beeper.com'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(Chat::class, $result);
+    }
+
+    #[Test]
+    public function testNotifyAnyway(): void
+    {
+        $result = $this->client->chats->notifyAnyway(
+            '!NCdzlIaMjZUmvmvyHU:beeper.com'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(Chat::class, $result);
+    }
+
+    #[Test]
     public function testSearch(): void
     {
         $page = $this->client->chats->search();
@@ -110,10 +149,6 @@ final class ChatsTest extends TestCase
     #[Test]
     public function testStart(): void
     {
-        if (UnsupportedMockTests::$skip) {
-            $this->markTestSkipped('Stainless mock tests currently load the project-published OpenAPI spec URL, which may not include newly-added local-only endpoints during build checks.');
-        }
-
         $result = $this->client->chats->start(accountID: 'accountID', user: []);
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
@@ -123,10 +158,6 @@ final class ChatsTest extends TestCase
     #[Test]
     public function testStartWithOptionalParams(): void
     {
-        if (UnsupportedMockTests::$skip) {
-            $this->markTestSkipped('Stainless mock tests currently load the project-published OpenAPI spec URL, which may not include newly-added local-only endpoints during build checks.');
-        }
-
         $result = $this->client->chats->start(
             accountID: 'accountID',
             user: [

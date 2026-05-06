@@ -11,7 +11,6 @@ use BeeperDesktop\Core\Util;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Tests\UnsupportedMockTests;
 
 /**
  * @internal
@@ -56,10 +55,6 @@ final class AssetsTest extends TestCase
     #[Test]
     public function testServe(): void
     {
-        if (UnsupportedMockTests::$skip) {
-            $this->markTestSkipped('Generated PHP mock test parses the binary stream response as null despite the OpenAPI response being application/octet-stream format=binary.');
-        }
-
         $result = $this->client->assets->serve(url: 'x');
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
@@ -69,10 +64,6 @@ final class AssetsTest extends TestCase
     #[Test]
     public function testServeWithOptionalParams(): void
     {
-        if (UnsupportedMockTests::$skip) {
-            $this->markTestSkipped('Generated PHP mock test parses the binary stream response as null despite the OpenAPI response being application/octet-stream format=binary.');
-        }
-
         $result = $this->client->assets->serve(url: 'x');
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType

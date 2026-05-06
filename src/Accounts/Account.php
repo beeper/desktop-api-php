@@ -30,13 +30,13 @@ final class Account implements BaseModel
     use SdkModel;
 
     /**
-     * Chat account added to Beeper. Use this to route account-scoped actions.
+     * Chat account added to Beeper. Use this to route account-scoped actions. Examples include matrix for Beeper/Matrix, discordgo for a cloud bridge, slackgo.TEAM-USER for workspace-scoped cloud bridges, and local-whatsapp_ba_... for local bridges.
      */
     #[Required]
     public string $accountID;
 
     /**
-     * Bridge metadata for the account. Available in Beeper Desktop v4.2.799+.
+     * Bridge metadata for the account. Available in Beeper Desktop v4.2.785+.
      */
     #[Required]
     public Bridge $bridge;
@@ -98,7 +98,7 @@ final class Account implements BaseModel
     }
 
     /**
-     * Chat account added to Beeper. Use this to route account-scoped actions.
+     * Chat account added to Beeper. Use this to route account-scoped actions. Examples include matrix for Beeper/Matrix, discordgo for a cloud bridge, slackgo.TEAM-USER for workspace-scoped cloud bridges, and local-whatsapp_ba_... for local bridges.
      */
     public function withAccountID(string $accountID): self
     {
@@ -109,7 +109,7 @@ final class Account implements BaseModel
     }
 
     /**
-     * Bridge metadata for the account. Available in Beeper Desktop v4.2.799+.
+     * Bridge metadata for the account. Available in Beeper Desktop v4.2.785+.
      *
      * @param Bridge|BridgeShape $bridge
      */

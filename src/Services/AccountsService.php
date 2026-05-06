@@ -40,7 +40,7 @@ final class AccountsService implements AccountsContract
     /**
      * @api
      *
-     * Lists chat accounts across networks (WhatsApp, Telegram, Twitter/X, etc.) actively connected to this Beeper Desktop instance
+     * List Chat Accounts connected to this Beeper Desktop instance, including bridge metadata and network identity.
      *
      * @param RequestOpts|null $requestOptions
      *

@@ -13,7 +13,7 @@ use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\BeeperDesktopClientContract;
 
 /**
- * Control the Beeper Desktop application.
+ * Top-level actions: focus the app window, jump to a chat, or run unified search across chats and messages.
  *
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
@@ -35,11 +35,11 @@ final class BeeperDesktopClientService implements BeeperDesktopClientContract
     /**
      * @api
      *
-     * Focus Beeper Desktop and optionally navigate to a specific chat, message, or pre-fill draft text and attachment.
+     * Focus Beeper Desktop and optionally navigate to a specific chat, message, or pre-fill plain text and an image path.
      *
      * @param string $chatID Optional Beeper chat ID (or local chat ID) to focus after opening the app. If omitted, only opens/focuses the app.
-     * @param string $draftAttachmentPath optional draft attachment path to populate in the message input field
-     * @param string $draftText optional draft text to populate in the message input field
+     * @param string $draftAttachmentPath optional image path to populate in the message input field
+     * @param string $draftText optional plain text to populate in the message input field
      * @param string $messageID Optional message ID. Jumps to that message in the chat when opening.
      * @param RequestOpts|null $requestOptions
      *

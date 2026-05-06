@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace BeeperDesktop\Chats\ChatStartResponse;
 
 /**
- * Only returned in start mode. 'existing' means an existing chat was reused; 'created' means a new chat was created.
+ * DEPRECATED - legacy start-chat status for older clients. New clients should inspect the returned Chat instead.
+ *
+ * @deprecated
  */
 enum Status: string
 {

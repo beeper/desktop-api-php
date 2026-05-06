@@ -12,7 +12,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Create a direct or group chat from participant IDs.
+ * Create a direct or group chat from participant IDs. Returns the created chat.
  *
  * @see BeeperDesktop\Services\ChatsService::create()
  *

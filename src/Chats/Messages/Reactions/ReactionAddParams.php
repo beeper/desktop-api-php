@@ -26,7 +26,7 @@ final class ReactionAddParams implements BaseModel
     use SdkParams;
 
     /**
-     * Unique identifier of the chat.
+     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      */
     #[Required]
     public string $chatID;
@@ -38,7 +38,7 @@ final class ReactionAddParams implements BaseModel
     public string $reactionKey;
 
     /**
-     * Optional transaction ID for deduplication and local echo tracking.
+     * Optional transaction ID for deduplication and send tracking.
      */
     #[Optional]
     public ?string $transactionID;
@@ -83,7 +83,7 @@ final class ReactionAddParams implements BaseModel
     }
 
     /**
-     * Unique identifier of the chat.
+     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      */
     public function withChatID(string $chatID): self
     {
@@ -105,7 +105,7 @@ final class ReactionAddParams implements BaseModel
     }
 
     /**
-     * Optional transaction ID for deduplication and local echo tracking.
+     * Optional transaction ID for deduplication and send tracking.
      */
     public function withTransactionID(string $transactionID): self
     {

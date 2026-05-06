@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BeeperDesktop;
 
 use BeeperDesktop\Attachment\Size;
+use BeeperDesktop\Attachment\Transcription;
 use BeeperDesktop\Attachment\Type;
 use BeeperDesktop\Core\Attributes\Optional;
 use BeeperDesktop\Core\Attributes\Required;
@@ -13,6 +14,7 @@ use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
  * @phpstan-import-type SizeShape from \BeeperDesktop\Attachment\Size
+ * @phpstan-import-type TranscriptionShape from \BeeperDesktop\Attachment\Transcription
  *
  * @phpstan-type AttachmentShape = array{
  *   type: Type|value-of<Type>,
@@ -27,6 +29,7 @@ use BeeperDesktop\Core\Contracts\BaseModel;
  *   posterImg?: string|null,
  *   size?: null|Size|SizeShape,
  *   srcURL?: string|null,
+ *   transcription?: null|Transcription|TranscriptionShape,
  * }
  */
 final class Attachment implements BaseModel
@@ -43,7 +46,7 @@ final class Attachment implements BaseModel
     public string $type;
 
     /**
-     * Attachment identifier (typically an mxc:// URL). Use with /v1/assets/download to get a local file path.
+     * Attachment identifier (typically an mxc:// URL). Use the download file endpoint to get a local file path.
      */
     #[Optional]
     public ?string $id;
@@ -103,10 +106,16 @@ final class Attachment implements BaseModel
     public ?Size $size;
 
     /**
-     * Public URL or local file path to fetch the asset. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Public URL or local file path to fetch the file. May be temporary or local-only to this device; download promptly if durable access is needed.
      */
     #[Optional]
     public ?string $srcURL;
+
+    /**
+     * Attachment transcription if available.
+     */
+    #[Optional]
+    public ?Transcription $transcription;
 
     /**
      * `new Attachment()` is missing required properties by the API.
@@ -134,6 +143,7 @@ final class Attachment implements BaseModel
      *
      * @param Type|value-of<Type> $type
      * @param Size|SizeShape|null $size
+     * @param Transcription|TranscriptionShape|null $transcription
      */
     public static function with(
         Type|string $type,
@@ -148,6 +158,7 @@ final class Attachment implements BaseModel
         ?string $posterImg = null,
         Size|array|null $size = null,
         ?string $srcURL = null,
+        Transcription|array|null $transcription = null,
     ): self {
         $self = new self;
 
@@ -164,6 +175,7 @@ final class Attachment implements BaseModel
         null !== $posterImg && $self['posterImg'] = $posterImg;
         null !== $size && $self['size'] = $size;
         null !== $srcURL && $self['srcURL'] = $srcURL;
+        null !== $transcription && $self['transcription'] = $transcription;
 
         return $self;
     }
@@ -182,7 +194,7 @@ final class Attachment implements BaseModel
     }
 
     /**
-     * Attachment identifier (typically an mxc:// URL). Use with /v1/assets/download to get a local file path.
+     * Attachment identifier (typically an mxc:// URL). Use the download file endpoint to get a local file path.
      */
     public function withID(string $id): self
     {
@@ -294,12 +306,25 @@ final class Attachment implements BaseModel
     }
 
     /**
-     * Public URL or local file path to fetch the asset. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Public URL or local file path to fetch the file. May be temporary or local-only to this device; download promptly if durable access is needed.
      */
     public function withSrcURL(string $srcURL): self
     {
         $self = clone $this;
         $self['srcURL'] = $srcURL;
+
+        return $self;
+    }
+
+    /**
+     * Attachment transcription if available.
+     *
+     * @param Transcription|TranscriptionShape $transcription
+     */
+    public function withTranscription(Transcription|array $transcription): self
+    {
+        $self = clone $this;
+        $self['transcription'] = $transcription;
 
         return $self;
     }
