@@ -63,13 +63,13 @@ final class AssetUploadBase64Response implements BaseModel
     public ?string $mimeType;
 
     /**
-     * Local file URL (file://) for the uploaded asset.
+     * Local file URL (file://) for the uploaded file.
      */
     #[Optional]
     public ?string $srcURL;
 
     /**
-     * Unique upload ID for this asset.
+     * Unique upload ID for this temporary file.
      */
     #[Optional]
     public ?string $uploadID;
@@ -183,7 +183,7 @@ final class AssetUploadBase64Response implements BaseModel
     }
 
     /**
-     * Local file URL (file://) for the uploaded asset.
+     * Local file URL (file://) for the uploaded file.
      */
     public function withSrcURL(string $srcURL): self
     {
@@ -194,7 +194,7 @@ final class AssetUploadBase64Response implements BaseModel
     }
 
     /**
-     * Unique upload ID for this asset.
+     * Unique upload ID for this temporary file.
      */
     public function withUploadID(string $uploadID): self
     {

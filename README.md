@@ -42,7 +42,14 @@ $client = new Client(
   accessToken: getenv('BEEPER_ACCESS_TOKEN') ?: 'My Access Token'
 );
 
-$page = $client->chats->search(includeMuted: true, limit: 3, type: 'single');
+$page = $client->chats->search(
+  accountIDs: [
+    'matrix', 'discordgo', 'local-whatsapp_ba_EvYDBBsZbRQAy3UOSWqG0LuTVkc'
+  ],
+  includeMuted: true,
+  limit: 3,
+  type: 'single',
+);
 
 var_dump($page->id);
 ```
@@ -70,9 +77,9 @@ $client = new Client(
 );
 
 $page = $client->messages->search(
-  accountIDs: ['local-telegram_ba_QFrb5lrLPhO3OT5MFBeTWv0x4BI'],
+  accountIDs: ['discordgo', 'local-whatsapp_ba_EvYDBBsZbRQAy3UOSWqG0LuTVkc'],
   limit: 10,
-  query: 'deployment',
+  query: 'oauth',
 );
 
 var_dump($page);

@@ -12,7 +12,7 @@ use BeeperDesktop\Core\Contracts\BaseModel;
 use BeeperDesktop\Core\FileParam;
 
 /**
- * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending messages with attachments.
+ * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending a message or materializing a draft attachment.
  *
  * @see BeeperDesktop\Services\AssetsService::upload()
  *

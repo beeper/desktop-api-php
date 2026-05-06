@@ -11,7 +11,7 @@ use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\InfoContract;
 
 /**
- * Control the Beeper Desktop application.
+ * Server discovery and capability metadata. Use /v1/info before authentication setup.
  *
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
@@ -33,7 +33,7 @@ final class InfoService implements InfoContract
     /**
      * @api
      *
-     * Returns app, platform, server, and endpoint discovery metadata for this Beeper Desktop instance.
+     * Returns app, platform, server, endpoint discovery, OAuth, and WebSocket metadata for this Beeper Desktop instance.
      *
      * @param RequestOpts|null $requestOptions
      *

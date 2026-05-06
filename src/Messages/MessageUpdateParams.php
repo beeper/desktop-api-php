@@ -23,7 +23,7 @@ final class MessageUpdateParams implements BaseModel
     use SdkParams;
 
     /**
-     * Unique identifier of the chat.
+     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      */
     #[Required]
     public string $chatID;
@@ -69,7 +69,7 @@ final class MessageUpdateParams implements BaseModel
     }
 
     /**
-     * Unique identifier of the chat.
+     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      */
     public function withChatID(string $chatID): self
     {

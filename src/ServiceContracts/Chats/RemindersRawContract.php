@@ -17,7 +17,7 @@ interface RemindersRawContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      * @param array<string,mixed>|ReminderCreateParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -34,7 +34,7 @@ interface RemindersRawContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      * @param RequestOpts|null $requestOptions
      *
      * @return BaseResponse<mixed>

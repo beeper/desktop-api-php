@@ -12,7 +12,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Resolve a user/contact and open a direct chat. Reuses an existing direct chat when one is found. Available in Beeper Desktop v4.2.799+.
+ * Resolve a user/contact and open a direct chat. Reuses and returns an existing direct chat when one is found. Available in Beeper Desktop v4.2.808+.
  *
  * @see BeeperDesktop\Services\ChatsService::start()
  *

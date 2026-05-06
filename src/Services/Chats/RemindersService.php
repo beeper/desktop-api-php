@@ -37,7 +37,7 @@ final class RemindersService implements RemindersContract
      *
      * Set a reminder for a chat at a specific time
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      * @param Reminder|ReminderShape $reminder Reminder configuration
      * @param RequestOpts|null $requestOptions
      *
@@ -61,7 +61,7 @@ final class RemindersService implements RemindersContract
      *
      * Clear an existing reminder from a chat
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

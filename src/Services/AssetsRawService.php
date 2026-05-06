@@ -34,7 +34,7 @@ final class AssetsRawService implements AssetsRawContract
     /**
      * @api
      *
-     * Download a Matrix asset using its mxc:// or localmxc:// URL to the device running Beeper Desktop and return the local file URL.
+     * Download a Matrix file using its mxc:// or localmxc:// URL to the device running Beeper Desktop and return the local file URL.
      *
      * @param array{url: string}|AssetDownloadParams $params
      * @param RequestOpts|null $requestOptions
@@ -97,7 +97,7 @@ final class AssetsRawService implements AssetsRawContract
     /**
      * @api
      *
-     * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending messages with attachments.
+     * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending a message or materializing a draft attachment.
      *
      * @param array{
      *   file: string|FileParam, fileName?: string, mimeType?: string
@@ -131,7 +131,7 @@ final class AssetsRawService implements AssetsRawContract
     /**
      * @api
      *
-     * Upload a file using a JSON body with base64-encoded content. Returns an uploadID that can be referenced when sending messages with attachments. Alternative to the multipart upload endpoint.
+     * Upload a file using a JSON body with base64-encoded content. Returns an uploadID that can be referenced when sending a message or materializing a draft attachment. Alternative to the multipart upload endpoint.
      *
      * @param array{
      *   content: string, fileName?: string, mimeType?: string

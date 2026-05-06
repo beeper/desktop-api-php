@@ -13,12 +13,14 @@ use BeeperDesktop\Chats\ChatSearchParams\Inbox;
 use BeeperDesktop\Chats\ChatSearchParams\Scope;
 use BeeperDesktop\Chats\ChatStartParams\User;
 use BeeperDesktop\Chats\ChatStartResponse;
+use BeeperDesktop\Chats\ChatUpdateParams\Draft;
 use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
 use BeeperDesktop\RequestOptions;
 
 /**
+ * @phpstan-import-type DraftShape from \BeeperDesktop\Chats\ChatUpdateParams\Draft
  * @phpstan-import-type UserShape from \BeeperDesktop\Chats\ChatStartParams\User
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
@@ -48,15 +50,46 @@ interface ChatsContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
-     * @param int|null $maxParticipantCount Maximum number of participants to return. Use -1 for all; otherwise 0–500. Defaults to all (-1).
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param int|null $maxParticipantCount Maximum number of participants to return. Use -1 for all; otherwise 0-500. Defaults to 100. List and search endpoints return up to 20 participants per chat.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
      */
     public function retrieve(
         string $chatID,
-        ?int $maxParticipantCount = -1,
+        ?int $maxParticipantCount = 100,
+        RequestOptions|array|null $requestOptions = null,
+    ): Chat;
+
+    /**
+     * @api
+     *
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string|null $description Group chat description/topic. Support depends on the chat account and chat permissions.
+     * @param Draft|DraftShape|null $draft Draft object to set or clear. Non-empty drafts are only accepted when the current draft is empty. Send draft=null to clear text and attachments together before setting a new draft.
+     * @param string|null $imgURL Local filesystem path to a group chat avatar image. Support depends on the chat account and chat permissions.
+     * @param bool $isArchived archive or unarchive the chat
+     * @param bool $isLowPriority mark or unmark the chat as low priority when supported by the account
+     * @param bool $isMuted mute or unmute the chat
+     * @param bool $isPinned pin or unpin the chat when supported by the account
+     * @param int|null $messageExpirySeconds disappearing-message timer in seconds, or null to clear when supported
+     * @param string|null $title Custom chat title. Support depends on the chat account and chat permissions.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function update(
+        string $chatID,
+        ?string $description = null,
+        Draft|array|null $draft = null,
+        ?string $imgURL = null,
+        ?bool $isArchived = null,
+        ?bool $isLowPriority = null,
+        ?bool $isMuted = null,
+        ?bool $isPinned = null,
+        ?int $messageExpirySeconds = null,
+        ?string $title = null,
         RequestOptions|array|null $requestOptions = null,
     ): Chat;
 
@@ -82,7 +115,7 @@ interface ChatsContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      * @param bool $archived True to archive, false to unarchive
      * @param RequestOpts|null $requestOptions
      *
@@ -93,6 +126,49 @@ interface ChatsContract
         bool $archived = true,
         RequestOptions|array|null $requestOptions = null,
     ): mixed;
+
+    /**
+     * @api
+     *
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $messageID optional message ID to mark read through
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function markRead(
+        string $chatID,
+        ?string $messageID = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): Chat;
+
+    /**
+     * @api
+     *
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $messageID optional message ID to mark unread from
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function markUnread(
+        string $chatID,
+        ?string $messageID = null,
+        RequestOptions|array|null $requestOptions = null,
+    ): Chat;
+
+    /**
+     * @api
+     *
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function notifyAnyway(
+        string $chatID,
+        RequestOptions|array|null $requestOptions = null
+    ): Chat;
 
     /**
      * @api

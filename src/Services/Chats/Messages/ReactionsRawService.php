@@ -32,8 +32,8 @@ final class ReactionsRawService implements ReactionsRawContract
      *
      * Remove the reaction added by the authenticated user from an existing message.
      *
-     * @param string $messageID Path param: ID of the message to remove a reaction from
-     * @param array{chatID: string, reactionKey: string}|ReactionDeleteParams $params
+     * @param string $reactionKey Reaction key to remove (emoji, shortcode, or custom emoji key)
+     * @param array{chatID: string, messageID: string}|ReactionDeleteParams $params
      * @param RequestOpts|null $requestOptions
      *
      * @return BaseResponse<ReactionDeleteResponse>
@@ -41,7 +41,7 @@ final class ReactionsRawService implements ReactionsRawContract
      * @throws APIException
      */
     public function delete(
-        string $messageID,
+        string $reactionKey,
         array|ReactionDeleteParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse {
@@ -51,12 +51,18 @@ final class ReactionsRawService implements ReactionsRawContract
         );
         $chatID = $parsed['chatID'];
         unset($parsed['chatID']);
+        $messageID = $parsed['messageID'];
+        unset($parsed['messageID']);
 
         // @phpstan-ignore-next-line return.type
         return $this->client->request(
             method: 'delete',
-            path: ['v1/chats/%1$s/messages/%2$s/reactions', $chatID, $messageID],
-            query: $parsed,
+            path: [
+                'v1/chats/%1$s/messages/%2$s/reactions/%3$s',
+                $chatID,
+                $messageID,
+                $reactionKey,
+            ],
             options: $options,
             convert: ReactionDeleteResponse::class,
         );
@@ -67,7 +73,7 @@ final class ReactionsRawService implements ReactionsRawContract
      *
      * Add a reaction to an existing message.
      *
-     * @param string $messageID Path param: ID of the message to add a reaction to
+     * @param string $messageID path param: Message ID
      * @param array{
      *   chatID: string, reactionKey: string, transactionID?: string
      * }|ReactionAddParams $params

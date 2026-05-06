@@ -23,13 +23,13 @@ final class ReactionAddResponse implements BaseModel
     use SdkModel;
 
     /**
-     * Whether the reaction was successfully added.
+     * Always true. Indicates the reaction was queued; failures return an error response.
      */
     #[Required]
     public bool $success = true;
 
     /**
-     * Unique identifier of the chat.
+     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      */
     #[Required]
     public string $chatID;
@@ -47,7 +47,7 @@ final class ReactionAddResponse implements BaseModel
     public string $reactionKey;
 
     /**
-     * Transaction ID used for the reaction event.
+     * Transaction ID used for send tracking.
      */
     #[Required]
     public string $transactionID;
@@ -99,7 +99,7 @@ final class ReactionAddResponse implements BaseModel
     }
 
     /**
-     * Unique identifier of the chat.
+     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      */
     public function withChatID(string $chatID): self
     {
@@ -132,7 +132,7 @@ final class ReactionAddResponse implements BaseModel
     }
 
     /**
-     * Whether the reaction was successfully added.
+     * Always true. Indicates the reaction was queued; failures return an error response.
      */
     public function withSuccess(bool $success): self
     {
@@ -143,7 +143,7 @@ final class ReactionAddResponse implements BaseModel
     }
 
     /**
-     * Transaction ID used for the reaction event.
+     * Transaction ID used for send tracking.
      */
     public function withTransactionID(string $transactionID): self
     {

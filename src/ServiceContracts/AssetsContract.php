@@ -19,7 +19,7 @@ interface AssetsContract
     /**
      * @api
      *
-     * @param string $url matrix content URL (mxc:// or localmxc://) for the asset to download
+     * @param string $url matrix content URL (mxc:// or localmxc://) for the file to download
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -32,7 +32,7 @@ interface AssetsContract
     /**
      * @api
      *
-     * @param string $url Asset URL to serve. Accepts mxc://, localmxc://, or file:// URLs.
+     * @param string $url File URL to serve. Accepts mxc://, localmxc://, or file:// URLs.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

@@ -9,7 +9,9 @@ use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
 use BeeperDesktop\Message;
+use BeeperDesktop\Messages\MessageDeleteParams;
 use BeeperDesktop\Messages\MessageListParams;
+use BeeperDesktop\Messages\MessageRetrieveParams;
 use BeeperDesktop\Messages\MessageSearchParams;
 use BeeperDesktop\Messages\MessageSendParams;
 use BeeperDesktop\Messages\MessageSendResponse;
@@ -25,7 +27,24 @@ interface MessagesRawContract
     /**
      * @api
      *
-     * @param string $messageID Path param: ID of the message to edit
+     * @param string $messageID message ID
+     * @param array<string,mixed>|MessageRetrieveParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Message>
+     *
+     * @throws APIException
+     */
+    public function retrieve(
+        string $messageID,
+        array|MessageRetrieveParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $messageID path param: Message ID
      * @param array<string,mixed>|MessageUpdateParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -42,7 +61,7 @@ interface MessagesRawContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      * @param array<string,mixed>|MessageListParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -53,6 +72,23 @@ interface MessagesRawContract
     public function list(
         string $chatID,
         array|MessageListParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $messageID path param: Message ID
+     * @param array<string,mixed>|MessageDeleteParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<mixed>
+     *
+     * @throws APIException
+     */
+    public function delete(
+        string $messageID,
+        array|MessageDeleteParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 
@@ -74,7 +110,7 @@ interface MessagesRawContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      * @param array<string,mixed>|MessageSendParams $params
      * @param RequestOpts|null $requestOptions
      *

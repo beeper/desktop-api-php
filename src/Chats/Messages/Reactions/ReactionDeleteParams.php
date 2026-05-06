@@ -15,7 +15,7 @@ use BeeperDesktop\Core\Contracts\BaseModel;
  * @see BeeperDesktop\Services\Chats\Messages\ReactionsService::delete()
  *
  * @phpstan-type ReactionDeleteParamsShape = array{
- *   chatID: string, reactionKey: string
+ *   chatID: string, messageID: string
  * }
  */
 final class ReactionDeleteParams implements BaseModel
@@ -25,29 +25,29 @@ final class ReactionDeleteParams implements BaseModel
     use SdkParams;
 
     /**
-     * Unique identifier of the chat.
+     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      */
     #[Required]
     public string $chatID;
 
     /**
-     * Reaction key to remove.
+     * Message ID.
      */
     #[Required]
-    public string $reactionKey;
+    public string $messageID;
 
     /**
      * `new ReactionDeleteParams()` is missing required properties by the API.
      *
      * To enforce required parameters use
      * ```
-     * ReactionDeleteParams::with(chatID: ..., reactionKey: ...)
+     * ReactionDeleteParams::with(chatID: ..., messageID: ...)
      * ```
      *
      * Otherwise ensure the following setters are called
      *
      * ```
-     * (new ReactionDeleteParams)->withChatID(...)->withReactionKey(...)
+     * (new ReactionDeleteParams)->withChatID(...)->withMessageID(...)
      * ```
      */
     public function __construct()
@@ -60,18 +60,18 @@ final class ReactionDeleteParams implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      */
-    public static function with(string $chatID, string $reactionKey): self
+    public static function with(string $chatID, string $messageID): self
     {
         $self = new self;
 
         $self['chatID'] = $chatID;
-        $self['reactionKey'] = $reactionKey;
+        $self['messageID'] = $messageID;
 
         return $self;
     }
 
     /**
-     * Unique identifier of the chat.
+     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
      */
     public function withChatID(string $chatID): self
     {
@@ -82,12 +82,12 @@ final class ReactionDeleteParams implements BaseModel
     }
 
     /**
-     * Reaction key to remove.
+     * Message ID.
      */
-    public function withReactionKey(string $reactionKey): self
+    public function withMessageID(string $messageID): self
     {
         $self = clone $this;
-        $self['reactionKey'] = $reactionKey;
+        $self['messageID'] = $messageID;
 
         return $self;
     }

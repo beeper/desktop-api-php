@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Bridge metadata for the account. Available in Beeper Desktop v4.2.799+.
+ * Bridge metadata for the account. Available in Beeper Desktop v4.2.785+.
  *
  * @phpstan-type BridgeShape = array{
  *   id: string, provider: Provider|value-of<Provider>, type: string
@@ -22,13 +22,13 @@ final class Bridge implements BaseModel
     use SdkModel;
 
     /**
-     * Bridge instance identifier. Available in Beeper Desktop v4.2.799+.
+     * Bridge instance identifier. Matrix and cloud bridges often use the bridge type (for example matrix or discordgo); local bridges use a local bridge ID (for example local-whatsapp). Available in Beeper Desktop v4.2.785+.
      */
     #[Required]
     public string $id;
 
     /**
-     * Bridge provider for the account. Available in Beeper Desktop v4.2.799+.
+     * Bridge provider for the account. Available in Beeper Desktop v4.2.785+.
      *
      * @var value-of<Provider> $provider
      */
@@ -36,7 +36,7 @@ final class Bridge implements BaseModel
     public string $provider;
 
     /**
-     * Bridge type. Available in Beeper Desktop v4.2.799+.
+     * Bridge type, such as matrix, discordgo, slackgo, whatsapp, telegram, or twitter. Available in Beeper Desktop v4.2.785+.
      */
     #[Required]
     public string $type;
@@ -82,7 +82,7 @@ final class Bridge implements BaseModel
     }
 
     /**
-     * Bridge instance identifier. Available in Beeper Desktop v4.2.799+.
+     * Bridge instance identifier. Matrix and cloud bridges often use the bridge type (for example matrix or discordgo); local bridges use a local bridge ID (for example local-whatsapp). Available in Beeper Desktop v4.2.785+.
      */
     public function withID(string $id): self
     {
@@ -93,7 +93,7 @@ final class Bridge implements BaseModel
     }
 
     /**
-     * Bridge provider for the account. Available in Beeper Desktop v4.2.799+.
+     * Bridge provider for the account. Available in Beeper Desktop v4.2.785+.
      *
      * @param Provider|value-of<Provider> $provider
      */
@@ -106,7 +106,7 @@ final class Bridge implements BaseModel
     }
 
     /**
-     * Bridge type. Available in Beeper Desktop v4.2.799+.
+     * Bridge type, such as matrix, discordgo, slackgo, whatsapp, telegram, or twitter. Available in Beeper Desktop v4.2.785+.
      */
     public function withType(string $type): self
     {
