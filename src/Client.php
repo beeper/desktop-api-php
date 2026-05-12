@@ -8,6 +8,7 @@ use BeeperDesktop\BeeperDesktopClientService\BeeperDesktopClientServiceFocusResp
 use BeeperDesktop\BeeperDesktopClientService\BeeperDesktopClientServiceSearchResponse;
 use BeeperDesktop\Core\BaseClient;
 use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\Core\Implementation\StreamingHttpClient;
 use BeeperDesktop\Core\Util;
 use BeeperDesktop\Services\AccountsService;
 use BeeperDesktop\Services\AssetsService;
@@ -85,6 +86,11 @@ class Client extends BaseClient
             ),
             $requestOptions,
         );
+
+        if (is_null($options->streamingTransporter)) {
+            assert(!is_null($options->transporter));
+            $options->streamingTransporter = new StreamingHttpClient($options->transporter);
+        }
 
         /** @var array<string, string|null> $headers */
         $headers = [
