@@ -34,22 +34,12 @@ class Client extends BaseClient
     /**
      * @api
      */
-    public AppService $app;
-
-    /**
-     * @api
-     */
     public AccountsService $accounts;
 
     /**
      * @api
      */
     public BridgesService $bridges;
-
-    /**
-     * @api
-     */
-    public MatrixService $matrix;
 
     /**
      * @api
@@ -70,6 +60,16 @@ class Client extends BaseClient
      * @api
      */
     public InfoService $info;
+
+    /**
+     * @api
+     */
+    public AppService $app;
+
+    /**
+     * @api
+     */
+    public MatrixService $matrix;
 
     /**
      * @api
@@ -139,14 +139,14 @@ class Client extends BaseClient
             options: $options
         );
 
-        $this->app = new AppService($this);
         $this->accounts = new AccountsService($this);
         $this->bridges = new BridgesService($this);
-        $this->matrix = new MatrixService($this);
         $this->chats = new ChatsService($this);
         $this->messages = new MessagesService($this);
         $this->assets = new AssetsService($this);
         $this->info = new InfoService($this);
+        $this->app = new AppService($this);
+        $this->matrix = new MatrixService($this);
         $this->raw = new BeeperDesktopClientRawService($this);
         $this->beeperDesktopClientService = new BeeperDesktopClientService($this);
     }
