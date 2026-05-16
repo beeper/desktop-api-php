@@ -11,11 +11,14 @@ use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\Core\Implementation\StreamingHttpClient;
 use BeeperDesktop\Core\Util;
 use BeeperDesktop\Services\AccountsService;
+use BeeperDesktop\Services\AppService;
 use BeeperDesktop\Services\AssetsService;
 use BeeperDesktop\Services\BeeperDesktopClientRawService;
 use BeeperDesktop\Services\BeeperDesktopClientService;
+use BeeperDesktop\Services\BridgesService;
 use BeeperDesktop\Services\ChatsService;
 use BeeperDesktop\Services\InfoService;
+use BeeperDesktop\Services\MatrixService;
 use BeeperDesktop\Services\MessagesService;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
@@ -31,7 +34,22 @@ class Client extends BaseClient
     /**
      * @api
      */
+    public AppService $app;
+
+    /**
+     * @api
+     */
     public AccountsService $accounts;
+
+    /**
+     * @api
+     */
+    public BridgesService $bridges;
+
+    /**
+     * @api
+     */
+    public MatrixService $matrix;
 
     /**
      * @api
@@ -121,7 +139,10 @@ class Client extends BaseClient
             options: $options
         );
 
+        $this->app = new AppService($this);
         $this->accounts = new AccountsService($this);
+        $this->bridges = new BridgesService($this);
+        $this->matrix = new MatrixService($this);
         $this->chats = new ChatsService($this);
         $this->messages = new MessagesService($this);
         $this->assets = new AssetsService($this);
