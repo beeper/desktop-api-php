@@ -25,7 +25,7 @@ final class Draft implements BaseModel
     use SdkModel;
 
     /**
-     * Matrix HTML draft body.
+     * Rich-text draft body as returned by Beeper.
      */
     #[Required]
     public string $text;
@@ -76,7 +76,7 @@ final class Draft implements BaseModel
     }
 
     /**
-     * Matrix HTML draft body.
+     * Rich-text draft body as returned by Beeper.
      */
     public function withText(string $text): self
     {

@@ -55,6 +55,14 @@ final class MessageUpdateResponse implements BaseModel
     use SdkModel;
 
     /**
+     * @deprecated Use the HTTP 200 response status instead.
+     *
+     * DEPRECATED - compatibility field. Successful responses are already represented by the 200 status code.
+     */
+    #[Required]
+    public bool $success = true;
+
+    /**
      * Message ID.
      */
     #[Required]
@@ -67,13 +75,13 @@ final class MessageUpdateResponse implements BaseModel
     public string $accountID;
 
     /**
-     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * Chat ID. Input routes also accept the local chat ID from this installation when available.
      */
     #[Required]
     public string $chatID;
 
     /**
-     * Matrix-style fully-qualified sender user ID, usually including a bridge prefix and homeserver.
+     * Fully qualified sender user ID. Network-backed IDs usually include the network prefix and homeserver.
      */
     #[Required]
     public string $senderID;
@@ -167,7 +175,7 @@ final class MessageUpdateResponse implements BaseModel
     public bool|\DateTimeInterface|array|null $seen;
 
     /**
-     * Resolved sender display name (impersonator/full name/username/participant name).
+     * Resolved sender display name.
      */
     #[Optional]
     public ?string $senderName;
@@ -179,7 +187,7 @@ final class MessageUpdateResponse implements BaseModel
     public ?SendStatus $sendStatus;
 
     /**
-     * Matrix HTML body if present.
+     * Rich-text message body if present.
      */
     #[Optional]
     public ?string $text;
@@ -193,20 +201,12 @@ final class MessageUpdateResponse implements BaseModel
     public ?string $type;
 
     /**
-     * @deprecated
+     * @deprecated Use id instead.
      *
      * DEPRECATED - use id instead. Compatibility alias for older clients.
      */
     #[Required]
     public string $messageID;
-
-    /**
-     * @deprecated
-     *
-     * DEPRECATED - compatibility field. Successful responses are already represented by the 200 status code.
-     */
-    #[Required]
-    public bool $success;
 
     /**
      * `new MessageUpdateResponse()` is missing required properties by the API.
@@ -221,7 +221,6 @@ final class MessageUpdateResponse implements BaseModel
      *   sortKey: ...,
      *   timestamp: ...,
      *   messageID: ...,
-     *   success: ...,
      * )
      * ```
      *
@@ -236,7 +235,6 @@ final class MessageUpdateResponse implements BaseModel
      *   ->withSortKey(...)
      *   ->withTimestamp(...)
      *   ->withMessageID(...)
-     *   ->withSuccess(...)
      * ```
      */
     public function __construct()
@@ -265,7 +263,6 @@ final class MessageUpdateResponse implements BaseModel
         string $sortKey,
         \DateTimeInterface $timestamp,
         string $messageID,
-        bool $success,
         ?array $attachments = null,
         ?\DateTimeInterface $editedTimestamp = null,
         ?bool $isDeleted = null,
@@ -291,7 +288,6 @@ final class MessageUpdateResponse implements BaseModel
         $self['sortKey'] = $sortKey;
         $self['timestamp'] = $timestamp;
         $self['messageID'] = $messageID;
-        $self['success'] = $success;
 
         null !== $attachments && $self['attachments'] = $attachments;
         null !== $editedTimestamp && $self['editedTimestamp'] = $editedTimestamp;
@@ -335,7 +331,7 @@ final class MessageUpdateResponse implements BaseModel
     }
 
     /**
-     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * Chat ID. Input routes also accept the local chat ID from this installation when available.
      */
     public function withChatID(string $chatID): self
     {
@@ -346,7 +342,7 @@ final class MessageUpdateResponse implements BaseModel
     }
 
     /**
-     * Matrix-style fully-qualified sender user ID, usually including a bridge prefix and homeserver.
+     * Fully qualified sender user ID. Network-backed IDs usually include the network prefix and homeserver.
      */
     public function withSenderID(string $senderID): self
     {
@@ -511,7 +507,7 @@ final class MessageUpdateResponse implements BaseModel
     }
 
     /**
-     * Resolved sender display name (impersonator/full name/username/participant name).
+     * Resolved sender display name.
      */
     public function withSenderName(string $senderName): self
     {
@@ -535,7 +531,7 @@ final class MessageUpdateResponse implements BaseModel
     }
 
     /**
-     * Matrix HTML body if present.
+     * Rich-text message body if present.
      */
     public function withText(string $text): self
     {

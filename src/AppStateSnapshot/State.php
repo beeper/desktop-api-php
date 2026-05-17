@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace BeeperDesktop\AppStateSnapshot;
 
 /**
- * Current onboarding state for Beeper Desktop.
+ * Current sign-in and encrypted messaging setup state for Beeper Desktop or Beeper Server.
  */
 enum State: string
 {

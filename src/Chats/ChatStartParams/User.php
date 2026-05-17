@@ -9,7 +9,7 @@ use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Merged user-like contact payload used to resolve the best identifier.
+ * Contact-like user payload used to resolve the best identifier.
  *
  * @phpstan-type UserShape = array{
  *   id?: string|null,

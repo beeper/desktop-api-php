@@ -23,7 +23,7 @@ final class ContactSearchParams implements BaseModel
     use SdkParams;
 
     /**
-     * Text to search users by. Network-specific behavior.
+     * Text to search contacts by. Matching behavior depends on the network.
      */
     #[Required]
     public string $query;
@@ -62,7 +62,7 @@ final class ContactSearchParams implements BaseModel
     }
 
     /**
-     * Text to search users by. Network-specific behavior.
+     * Text to search contacts by. Matching behavior depends on the network.
      */
     public function withQuery(string $query): self
     {

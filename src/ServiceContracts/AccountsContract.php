@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BeeperDesktop\ServiceContracts;
 
 use BeeperDesktop\Accounts\Account;
+use BeeperDesktop\Accounts\AccountGetResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\RequestOptions;
 
@@ -13,6 +14,19 @@ use BeeperDesktop\RequestOptions;
  */
 interface AccountsContract
 {
+    /**
+     * @api
+     *
+     * @param string $accountID account ID this resource belongs to
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function retrieve(
+        string $accountID,
+        RequestOptions|array|null $requestOptions = null
+    ): AccountGetResponse;
+
     /**
      * @api
      *

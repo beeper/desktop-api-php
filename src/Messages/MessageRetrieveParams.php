@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Retrieve a message by final message ID, pendingMessageID, or Matrix event ID. Chat ID may be a Beeper chat ID or local chat ID.
+ * Retrieve a message by final message ID, pendingMessageID, or Matrix event ID. chatID may be a Beeper chat ID or a local chat ID.
  *
  * @see BeeperDesktop\Services\MessagesService::retrieve()
  *
@@ -23,7 +23,7 @@ final class MessageRetrieveParams implements BaseModel
     use SdkParams;
 
     /**
-     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * Chat ID. Input routes also accept the local chat ID from this installation when available.
      */
     #[Required]
     public string $chatID;
@@ -62,7 +62,7 @@ final class MessageRetrieveParams implements BaseModel
     }
 
     /**
-     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * Chat ID. Input routes also accept the local chat ID from this installation when available.
      */
     public function withChatID(string $chatID): self
     {

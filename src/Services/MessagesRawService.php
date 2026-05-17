@@ -42,7 +42,7 @@ final class MessagesRawService implements MessagesRawContract
     /**
      * @api
      *
-     * Retrieve a message by final message ID, pendingMessageID, or Matrix event ID. Chat ID may be a Beeper chat ID or local chat ID.
+     * Retrieve a message by final message ID, pendingMessageID, or Matrix event ID. chatID may be a Beeper chat ID or a local chat ID.
      *
      * @param string $messageID message ID
      * @param array{chatID: string}|MessageRetrieveParams $params
@@ -113,7 +113,7 @@ final class MessagesRawService implements MessagesRawContract
      *
      * List all messages in a chat with cursor-based pagination. Sorted by timestamp.
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array{
      *   cursor?: string, direction?: Direction|value-of<Direction>
      * }|MessageListParams $params
@@ -232,7 +232,7 @@ final class MessagesRawService implements MessagesRawContract
      *
      * Send a text message to a specific chat. Supports replying to existing messages. Returns a pending message ID.
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array{
      *   attachment?: Attachment|AttachmentShape,
      *   replyToMessageID?: string,

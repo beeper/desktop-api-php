@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Retrieve chat details including metadata, participants, and latest message.
+ * Retrieve chat details, including metadata, participants, and the latest message.
  *
  * @see BeeperDesktop\Services\ChatsService::retrieve()
  *

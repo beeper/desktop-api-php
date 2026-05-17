@@ -40,7 +40,7 @@ final class ChatSearchParams implements BaseModel
     use SdkParams;
 
     /**
-     * Provide an array of account IDs to filter chats from specific messaging accounts only.
+     * Limit results to specific chat accounts.
      *
      * @var list<string>|null $accountIDs
      */
@@ -76,13 +76,13 @@ final class ChatSearchParams implements BaseModel
     public ?bool $includeMuted;
 
     /**
-     * Provide an ISO datetime string to only retrieve chats with last activity after this time.
+     * Only include chats with last activity after this ISO 8601 datetime.
      */
     #[Optional]
     public ?\DateTimeInterface $lastActivityAfter;
 
     /**
-     * Provide an ISO datetime string to only retrieve chats with last activity before this time.
+     * Only include chats with last activity before this ISO 8601 datetime.
      */
     #[Optional]
     public ?\DateTimeInterface $lastActivityBefore;
@@ -94,7 +94,7 @@ final class ChatSearchParams implements BaseModel
     public ?int $limit;
 
     /**
-     * Literal token search (non-semantic). Use single words users type (e.g., "dinner"). When multiple words provided, ALL must match. Case-insensitive.
+     * Literal chat search. Use words the user typed, such as "dinner". When multiple words are provided, all must match. Case-insensitive.
      */
     #[Optional]
     public ?string $query;
@@ -170,7 +170,7 @@ final class ChatSearchParams implements BaseModel
     }
 
     /**
-     * Provide an array of account IDs to filter chats from specific messaging accounts only.
+     * Limit results to specific chat accounts.
      *
      * @param list<string> $accountIDs
      */
@@ -231,7 +231,7 @@ final class ChatSearchParams implements BaseModel
     }
 
     /**
-     * Provide an ISO datetime string to only retrieve chats with last activity after this time.
+     * Only include chats with last activity after this ISO 8601 datetime.
      */
     public function withLastActivityAfter(
         \DateTimeInterface $lastActivityAfter
@@ -243,7 +243,7 @@ final class ChatSearchParams implements BaseModel
     }
 
     /**
-     * Provide an ISO datetime string to only retrieve chats with last activity before this time.
+     * Only include chats with last activity before this ISO 8601 datetime.
      */
     public function withLastActivityBefore(
         \DateTimeInterface $lastActivityBefore
@@ -266,7 +266,7 @@ final class ChatSearchParams implements BaseModel
     }
 
     /**
-     * Literal token search (non-semantic). Use single words users type (e.g., "dinner"). When multiple words provided, ALL must match. Case-insensitive.
+     * Literal chat search. Use words the user typed, such as "dinner". When multiple words are provided, all must match. Case-insensitive.
      */
     public function withQuery(string $query): self
     {

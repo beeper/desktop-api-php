@@ -116,7 +116,7 @@ final class MessageSearchParams implements BaseModel
     public ?array $mediaTypes;
 
     /**
-     * Literal word search (non-semantic). Finds messages containing these EXACT words in any order. Use single words users actually type, not concepts or phrases. Example: use "dinner" not "dinner plans", use "sick" not "health issues". If omitted, returns results filtered only by other parameters.
+     * Literal word search. Finds messages containing these words in any order. Use words the user actually typed, not inferred concepts. Example: use "dinner" rather than "dinner plans". If omitted, returns results filtered only by the other parameters.
      */
     #[Optional]
     public ?string $query;
@@ -309,7 +309,7 @@ final class MessageSearchParams implements BaseModel
     }
 
     /**
-     * Literal word search (non-semantic). Finds messages containing these EXACT words in any order. Use single words users actually type, not concepts or phrases. Example: use "dinner" not "dinner plans", use "sick" not "health issues". If omitted, returns results filtered only by other parameters.
+     * Literal word search. Finds messages containing these words in any order. Use words the user actually typed, not inferred concepts. Example: use "dinner" rather than "dinner plans". If omitted, returns results filtered only by the other parameters.
      */
     public function withQuery(string $query): self
     {

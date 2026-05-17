@@ -9,8 +9,6 @@ namespace BeeperDesktop\AppStateSnapshot\Verification;
  */
 enum State: string
 {
-    case IDLE = 'idle';
-
     case REQUESTED = 'requested';
 
     case READY = 'ready';

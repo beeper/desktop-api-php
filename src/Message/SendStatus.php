@@ -50,7 +50,7 @@ final class SendStatus implements BaseModel
     public ?array $deliveredToUsers;
 
     /**
-     * Internal bridge error detail. Intended for diagnostics, not end-user display.
+     * Diagnostic error detail from the messaging network adapter. Do not show directly to users.
      */
     #[Optional]
     public ?string $internalError;
@@ -153,7 +153,7 @@ final class SendStatus implements BaseModel
     }
 
     /**
-     * Internal bridge error detail. Intended for diagnostics, not end-user display.
+     * Diagnostic error detail from the messaging network adapter. Do not show directly to users.
      */
     public function withInternalError(string $internalError): self
     {

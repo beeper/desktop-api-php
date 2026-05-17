@@ -37,9 +37,9 @@ final class AssetsService implements AssetsContract
     /**
      * @api
      *
-     * Download a Matrix file using its mxc:// or localmxc:// URL to the device running Beeper Desktop and return the local file URL.
+     * Download a file from an mxc:// or localmxc:// URL to the device running the Beeper Client API and return the local file URL.
      *
-     * @param string $url matrix content URL (mxc:// or localmxc://) for the file to download
+     * @param string $url beeper media URL (mxc:// or localmxc://) for the file to download
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -81,7 +81,7 @@ final class AssetsService implements AssetsContract
     /**
      * @api
      *
-     * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending a message or materializing a draft attachment.
+     * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending a message or creating a draft attachment.
      *
      * @param string|FileParam $file the file to upload (max 500 MB)
      * @param string $fileName Original filename. Defaults to the uploaded file name if omitted
@@ -109,7 +109,7 @@ final class AssetsService implements AssetsContract
     /**
      * @api
      *
-     * Upload a file using a JSON body with base64-encoded content. Returns an uploadID that can be referenced when sending a message or materializing a draft attachment. Alternative to the multipart upload endpoint.
+     * Upload a file using a JSON body with base64-encoded content. Returns an uploadID that can be referenced when sending a message or creating a draft attachment. Alternative to the multipart upload endpoint.
      *
      * @param string $content Base64-encoded file content (max ~500MB decoded)
      * @param string $fileName Original filename. Generated if omitted

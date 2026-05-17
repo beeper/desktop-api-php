@@ -42,7 +42,7 @@ final class MessageSendParams implements BaseModel
     public ?string $replyToMessageID;
 
     /**
-     * Draft text. Plain text and Markdown are converted to Matrix HTML with the same rules used by send and edit.
+     * Draft text. Plain text and Markdown are converted to Beeper rich text with the same rules used by send and edit.
      */
     #[Optional]
     public ?string $text;
@@ -98,7 +98,7 @@ final class MessageSendParams implements BaseModel
     }
 
     /**
-     * Draft text. Plain text and Markdown are converted to Matrix HTML with the same rules used by send and edit.
+     * Draft text. Plain text and Markdown are converted to Beeper rich text with the same rules used by send and edit.
      */
     public function withText(string $text): self
     {

@@ -25,7 +25,7 @@ final class Draft implements BaseModel
     use SdkModel;
 
     /**
-     * Draft text. Plain text and Markdown are converted to Matrix HTML with the same rules used by send and edit.
+     * Draft text. Plain text and Markdown are converted to Beeper rich text with the same rules used by send and edit.
      */
     #[Required]
     public string $text;
@@ -76,7 +76,7 @@ final class Draft implements BaseModel
     }
 
     /**
-     * Draft text. Plain text and Markdown are converted to Matrix HTML with the same rules used by send and edit.
+     * Draft text. Plain text and Markdown are converted to Beeper rich text with the same rules used by send and edit.
      */
     public function withText(string $text): self
     {

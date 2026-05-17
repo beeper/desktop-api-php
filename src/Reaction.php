@@ -48,7 +48,7 @@ final class Reaction implements BaseModel
     public ?bool $emoji;
 
     /**
-     * URL to the reaction's image. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * URL to the reaction's image. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     #[Optional]
     public ?string $imgURL;
@@ -141,7 +141,7 @@ final class Reaction implements BaseModel
     }
 
     /**
-     * URL to the reaction's image. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * URL to the reaction's image. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     public function withImgURL(string $imgURL): self
     {

@@ -11,7 +11,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Update supported chat fields. Non-empty draft objects are accepted only when the current draft is empty. Send draft=null to clear the draft before setting new draft text or attachments.
+ * Update supported chat fields. Non-empty drafts are accepted only when the current draft is empty. Send draft=null to clear the draft before setting new draft text or attachments.
  *
  * @see BeeperDesktop\Services\ChatsService::update()
  *
