@@ -8,6 +8,7 @@ use BeeperDesktop\Core\Conversion\CoerceState;
 use BeeperDesktop\Core\Conversion\Contracts\Converter;
 use BeeperDesktop\Core\Conversion\Contracts\ConverterSource;
 use BeeperDesktop\Core\Conversion\DumpState;
+use BeeperDesktop\Core\Conversion\EnumOf;
 
 /**
  * @internal
@@ -21,6 +22,10 @@ final class Conversion
         }
 
         if (is_object($value)) {
+            if ($value instanceof FileParam) {
+                return $value;
+            }
+
             if (is_a($value, class: ConverterSource::class)) {
                 return $value::converter()->dump($value, state: $state);
             }
@@ -61,6 +66,13 @@ final class Conversion
             return $target->coerce($value, state: $state);
         }
 
+        // BackedEnum class-name targets: wrap in EnumOf so enum values are scored
+        // against the enum's cases. Without this, tryConvert's default case scores
+        // any class-name target as `no`, even when the value is a valid enum member.
+        if (is_a($target, class: \BackedEnum::class, allow_string: true)) {
+            return EnumOf::fromBackedEnum($target)->coerce($value, state: $state);
+        }
+
         return self::tryConvert($target, value: $value, state: $state);
     }
 
@@ -72,6 +84,13 @@ final class Conversion
 
         if (is_a($target, class: ConverterSource::class, allow_string: true)) {
             return $target::converter()->dump($value, state: $state);
+        }
+
+        // BackedEnum class-name targets: wrap in EnumOf so enum values are scored
+        // against the enum's cases. Without this, tryConvert's default case scores
+        // any class-name target as `no`, even when the value is a valid enum member.
+        if (is_a($target, class: \BackedEnum::class, allow_string: true)) {
+            return EnumOf::fromBackedEnum($target)->dump($value, state: $state);
         }
 
         self::tryConvert($target, value: $value, state: $state);
@@ -164,6 +183,37 @@ final class Conversion
 
                 if ($value instanceof \Generator) {
                     return implode('', iterator_to_array($value));
+                }
+
+                ++$state->no;
+
+                return $value;
+
+            case 'DateTimeInterface':
+            case 'DateTimeImmutable':
+                if (is_string($value)) {
+                    try {
+                        ++$state->maybe;
+
+                        return new \DateTimeImmutable($value);
+                    } catch (\Exception) {
+                        --$state->maybe;
+                    }
+                }
+
+                ++$state->no;
+
+                return $value;
+
+            case 'DateTime':
+                if (is_string($value)) {
+                    try {
+                        ++$state->maybe;
+
+                        return new \DateTime($value);
+                    } catch (\Exception) {
+                        --$state->maybe;
+                    }
                 }
 
                 ++$state->no;

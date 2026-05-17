@@ -24,7 +24,7 @@ final class Reaction implements BaseModel
     use SdkModel;
 
     /**
-     * Reaction ID, typically ${participantID}${reactionKey} if multiple reactions allowed, or just participantID otherwise.
+     * Reaction ID. When a participant can react more than once, the ID is the participant ID concatenated with the reaction key; otherwise it equals the participant ID.
      */
     #[Required]
     public string $id;
@@ -48,7 +48,7 @@ final class Reaction implements BaseModel
     public ?bool $emoji;
 
     /**
-     * URL to the reaction's image. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * URL to the reaction's image. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     #[Optional]
     public ?string $imgURL;
@@ -97,7 +97,7 @@ final class Reaction implements BaseModel
     }
 
     /**
-     * Reaction ID, typically ${participantID}${reactionKey} if multiple reactions allowed, or just participantID otherwise.
+     * Reaction ID. When a participant can react more than once, the ID is the participant ID concatenated with the reaction key; otherwise it equals the participant ID.
      */
     public function withID(string $id): self
     {
@@ -141,7 +141,7 @@ final class Reaction implements BaseModel
     }
 
     /**
-     * URL to the reaction's image. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * URL to the reaction's image. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     public function withImgURL(string $imgURL): self
     {

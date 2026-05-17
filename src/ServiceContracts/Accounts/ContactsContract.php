@@ -23,7 +23,7 @@ interface ContactsContract
      * @param string $cursor Opaque pagination cursor; do not inspect. Use together with 'direction'.
      * @param Direction|value-of<Direction> $direction Pagination direction used with 'cursor': 'before' fetches older results, 'after' fetches newer results. Defaults to 'before' when only 'cursor' is provided.
      * @param int $limit maximum contacts to return per page
-     * @param string $query optional search query for blended contact lookup
+     * @param string $query optional search query for contact lookup
      * @param RequestOpts|null $requestOptions
      *
      * @return CursorSearch<User>
@@ -43,7 +43,7 @@ interface ContactsContract
      * @api
      *
      * @param string $accountID account ID this resource belongs to
-     * @param string $query Text to search users by. Network-specific behavior.
+     * @param string $query Text to search contacts by. Matching behavior depends on the network.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

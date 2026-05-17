@@ -19,13 +19,13 @@ final class ReactionDeleteResponse implements BaseModel
     use SdkModel;
 
     /**
-     * Whether the reaction was successfully removed.
+     * Always true. Indicates the reaction removal was queued; failures return an error response.
      */
     #[Required]
     public bool $success = true;
 
     /**
-     * Unique identifier of the chat.
+     * Chat ID. Input routes also accept the local chat ID from this installation when available.
      */
     #[Required]
     public string $chatID;
@@ -84,7 +84,7 @@ final class ReactionDeleteResponse implements BaseModel
     }
 
     /**
-     * Unique identifier of the chat.
+     * Chat ID. Input routes also accept the local chat ID from this installation when available.
      */
     public function withChatID(string $chatID): self
     {
@@ -117,7 +117,7 @@ final class ReactionDeleteResponse implements BaseModel
     }
 
     /**
-     * Whether the reaction was successfully removed.
+     * Always true. Indicates the reaction removal was queued; failures return an error response.
      */
     public function withSuccess(bool $success): self
     {

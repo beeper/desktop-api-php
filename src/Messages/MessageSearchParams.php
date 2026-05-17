@@ -11,10 +11,9 @@ use BeeperDesktop\Core\Contracts\BaseModel;
 use BeeperDesktop\Messages\MessageSearchParams\ChatType;
 use BeeperDesktop\Messages\MessageSearchParams\Direction;
 use BeeperDesktop\Messages\MessageSearchParams\MediaType;
-use BeeperDesktop\Messages\MessageSearchParams\Sender;
 
 /**
- * Search messages across chats using Beeper's message index.
+ * Search messages across chats.
  *
  * @see BeeperDesktop\Services\MessagesService::search()
  *
@@ -31,7 +30,7 @@ use BeeperDesktop\Messages\MessageSearchParams\Sender;
  *   limit?: int|null,
  *   mediaTypes?: list<MediaType|value-of<MediaType>>|null,
  *   query?: string|null,
- *   sender?: string|null|Sender|value-of<Sender>,
+ *   sender?: string|null,
  * }
  */
 final class MessageSearchParams implements BaseModel
@@ -117,17 +116,15 @@ final class MessageSearchParams implements BaseModel
     public ?array $mediaTypes;
 
     /**
-     * Literal word search (non-semantic). Finds messages containing these EXACT words in any order. Use single words users actually type, not concepts or phrases. Example: use "dinner" not "dinner plans", use "sick" not "health issues". If omitted, returns results filtered only by other parameters.
+     * Literal word search. Finds messages containing these words in any order. Use words the user actually typed, not inferred concepts. Example: use "dinner" rather than "dinner plans". If omitted, returns results filtered only by the other parameters.
      */
     #[Optional]
     public ?string $query;
 
     /**
      * Filter by sender: 'me' (messages sent by the authenticated user), 'others' (messages sent by others), or a specific user ID string (user.id).
-     *
-     * @var string|value-of<Sender>|null $sender
      */
-    #[Optional(enum: Sender::class)]
+    #[Optional]
     public ?string $sender;
 
     public function __construct()
@@ -145,7 +142,6 @@ final class MessageSearchParams implements BaseModel
      * @param ChatType|value-of<ChatType>|null $chatType
      * @param Direction|value-of<Direction>|null $direction
      * @param list<MediaType|value-of<MediaType>>|null $mediaTypes
-     * @param string|Sender|value-of<Sender>|null $sender
      */
     public static function with(
         ?array $accountIDs = null,
@@ -160,7 +156,7 @@ final class MessageSearchParams implements BaseModel
         ?int $limit = null,
         ?array $mediaTypes = null,
         ?string $query = null,
-        Sender|string|null $sender = null,
+        ?string $sender = null,
     ): self {
         $self = new self;
 
@@ -313,7 +309,7 @@ final class MessageSearchParams implements BaseModel
     }
 
     /**
-     * Literal word search (non-semantic). Finds messages containing these EXACT words in any order. Use single words users actually type, not concepts or phrases. Example: use "dinner" not "dinner plans", use "sick" not "health issues". If omitted, returns results filtered only by other parameters.
+     * Literal word search. Finds messages containing these words in any order. Use words the user actually typed, not inferred concepts. Example: use "dinner" rather than "dinner plans". If omitted, returns results filtered only by the other parameters.
      */
     public function withQuery(string $query): self
     {
@@ -325,10 +321,8 @@ final class MessageSearchParams implements BaseModel
 
     /**
      * Filter by sender: 'me' (messages sent by the authenticated user), 'others' (messages sent by others), or a specific user ID string (user.id).
-     *
-     * @param string|Sender|value-of<Sender> $sender
      */
-    public function withSender(Sender|string $sender): self
+    public function withSender(string $sender): self
     {
         $self = clone $this;
         $self['sender'] = $sender;

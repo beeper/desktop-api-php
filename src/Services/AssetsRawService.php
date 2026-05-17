@@ -14,6 +14,7 @@ use BeeperDesktop\Assets\AssetUploadResponse;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Contracts\BaseResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\Core\FileParam;
 use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\AssetsRawContract;
 
@@ -33,7 +34,7 @@ final class AssetsRawService implements AssetsRawContract
     /**
      * @api
      *
-     * Download a Matrix asset using its mxc:// or localmxc:// URL to the device running Beeper Desktop and return the local file URL.
+     * Download a file from an mxc:// or localmxc:// URL to the device running the Beeper Client API and return the local file URL.
      *
      * @param array{url: string}|AssetDownloadParams $params
      * @param RequestOpts|null $requestOptions
@@ -69,7 +70,7 @@ final class AssetsRawService implements AssetsRawContract
      * @param array{url: string}|AssetServeParams $params
      * @param RequestOpts|null $requestOptions
      *
-     * @return BaseResponse<mixed>
+     * @return BaseResponse<string>
      *
      * @throws APIException
      */
@@ -87,18 +88,19 @@ final class AssetsRawService implements AssetsRawContract
             method: 'get',
             path: 'v1/assets/serve',
             query: $parsed,
+            headers: ['Accept' => 'application/octet-stream'],
             options: $options,
-            convert: null,
+            convert: 'string',
         );
     }
 
     /**
      * @api
      *
-     * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending messages with attachments.
+     * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending a message or creating a draft attachment.
      *
      * @param array{
-     *   file: string, fileName?: string, mimeType?: string
+     *   file: string|FileParam, fileName?: string, mimeType?: string
      * }|AssetUploadParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -129,7 +131,7 @@ final class AssetsRawService implements AssetsRawContract
     /**
      * @api
      *
-     * Upload a file using a JSON body with base64-encoded content. Returns an uploadID that can be referenced when sending messages with attachments. Alternative to the multipart upload endpoint.
+     * Upload a file using a JSON body with base64-encoded content. Returns an uploadID that can be referenced when sending a message or creating a draft attachment. Alternative to the multipart upload endpoint.
      *
      * @param array{
      *   content: string, fileName?: string, mimeType?: string

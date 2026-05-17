@@ -4,8 +4,8 @@ namespace Tests\Services;
 
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Util;
+use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
-use BeeperDesktop\CursorSortKey;
 use BeeperDesktop\Message;
 use BeeperDesktop\Messages\MessageSendResponse;
 use BeeperDesktop\Messages\MessageUpdateResponse;
@@ -32,10 +32,34 @@ final class MessagesTest extends TestCase
     }
 
     #[Test]
+    public function testRetrieve(): void
+    {
+        $result = $this->client->messages->retrieve(
+            '1343993',
+            chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(Message::class, $result);
+    }
+
+    #[Test]
+    public function testRetrieveWithOptionalParams(): void
+    {
+        $result = $this->client->messages->retrieve(
+            '1343993',
+            chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(Message::class, $result);
+    }
+
+    #[Test]
     public function testUpdate(): void
     {
         $result = $this->client->messages->update(
-            'messageID',
+            '1343993',
             chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com',
             text: 'x'
         );
@@ -48,7 +72,7 @@ final class MessagesTest extends TestCase
     public function testUpdateWithOptionalParams(): void
     {
         $result = $this->client->messages->update(
-            'messageID',
+            '1343993',
             chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com',
             text: 'x'
         );
@@ -63,12 +87,37 @@ final class MessagesTest extends TestCase
         $page = $this->client->messages->list('!NCdzlIaMjZUmvmvyHU:beeper.com');
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
-        $this->assertInstanceOf(CursorSortKey::class, $page);
+        $this->assertInstanceOf(CursorNoLimit::class, $page);
 
         if ($item = $page->getItems()[0] ?? null) {
             // @phpstan-ignore-next-line method.alreadyNarrowedType
             $this->assertInstanceOf(Message::class, $item);
         }
+    }
+
+    #[Test]
+    public function testDelete(): void
+    {
+        $result = $this->client->messages->delete(
+            '1343993',
+            chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com'
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertNull($result);
+    }
+
+    #[Test]
+    public function testDeleteWithOptionalParams(): void
+    {
+        $result = $this->client->messages->delete(
+            '1343993',
+            chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com',
+            forEveryone: true
+        );
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertNull($result);
     }
 
     #[Test]

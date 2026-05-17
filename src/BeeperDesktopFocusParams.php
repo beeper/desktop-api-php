@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Focus Beeper Desktop and optionally navigate to a specific chat, message, or pre-fill draft text and attachment.
+ * Focus Beeper Desktop and optionally open a specific chat, jump to a message, or pre-fill text and an image.
  *
  * @see BeeperDesktop\Services\BeeperDesktopClientService::focus()
  *
@@ -34,13 +34,13 @@ final class BeeperDesktopFocusParams implements BaseModel
     public ?string $chatID;
 
     /**
-     * Optional draft attachment path to populate in the message input field.
+     * Optional local image path to populate in the message input field.
      */
     #[Optional]
     public ?string $draftAttachmentPath;
 
     /**
-     * Optional draft text to populate in the message input field.
+     * Optional plain text to populate in the message input field.
      */
     #[Optional]
     public ?string $draftText;
@@ -89,7 +89,7 @@ final class BeeperDesktopFocusParams implements BaseModel
     }
 
     /**
-     * Optional draft attachment path to populate in the message input field.
+     * Optional local image path to populate in the message input field.
      */
     public function withDraftAttachmentPath(string $draftAttachmentPath): self
     {
@@ -100,7 +100,7 @@ final class BeeperDesktopFocusParams implements BaseModel
     }
 
     /**
-     * Optional draft text to populate in the message input field.
+     * Optional plain text to populate in the message input field.
      */
     public function withDraftText(string $draftText): self
     {

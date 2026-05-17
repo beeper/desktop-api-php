@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Download a Matrix asset using its mxc:// or localmxc:// URL to the device running Beeper Desktop and return the local file URL.
+ * Download a file from an mxc:// or localmxc:// URL to the device running the Beeper Client API and return the local file URL.
  *
  * @see BeeperDesktop\Services\AssetsService::download()
  *
@@ -23,7 +23,7 @@ final class AssetDownloadParams implements BaseModel
     use SdkParams;
 
     /**
-     * Matrix content URL (mxc:// or localmxc://) for the asset to download.
+     * Beeper media URL (mxc:// or localmxc://) for the file to download.
      */
     #[Required]
     public string $url;
@@ -62,7 +62,7 @@ final class AssetDownloadParams implements BaseModel
     }
 
     /**
-     * Matrix content URL (mxc:// or localmxc://) for the asset to download.
+     * Beeper media URL (mxc:// or localmxc://) for the file to download.
      */
     public function withURL(string $url): self
     {

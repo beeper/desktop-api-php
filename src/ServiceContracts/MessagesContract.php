@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace BeeperDesktop\ServiceContracts;
 
 use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\CursorNoLimit;
 use BeeperDesktop\CursorSearch;
-use BeeperDesktop\CursorSortKey;
 use BeeperDesktop\Message;
 use BeeperDesktop\Messages\MessageListParams\Direction;
 use BeeperDesktop\Messages\MessageSearchParams\ChatType;
 use BeeperDesktop\Messages\MessageSearchParams\MediaType;
-use BeeperDesktop\Messages\MessageSearchParams\Sender;
 use BeeperDesktop\Messages\MessageSendParams\Attachment;
 use BeeperDesktop\Messages\MessageSendResponse;
 use BeeperDesktop\Messages\MessageUpdateResponse;
@@ -26,8 +25,23 @@ interface MessagesContract
     /**
      * @api
      *
-     * @param string $messageID Path param: ID of the message to edit
-     * @param string $chatID path param: Unique identifier of the chat
+     * @param string $messageID message ID
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function retrieve(
+        string $messageID,
+        string $chatID,
+        RequestOptions|array|null $requestOptions = null,
+    ): Message;
+
+    /**
+     * @api
+     *
+     * @param string $messageID path param: Message ID
+     * @param string $chatID Path param: Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param string $text Body param: New text content for the message
      * @param RequestOpts|null $requestOptions
      *
@@ -43,12 +57,12 @@ interface MessagesContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param string $cursor Opaque pagination cursor; do not inspect. Use together with 'direction'.
      * @param Direction|value-of<Direction> $direction Pagination direction used with 'cursor': 'before' fetches older results, 'after' fetches newer results. Defaults to 'before' when only 'cursor' is provided.
      * @param RequestOpts|null $requestOptions
      *
-     * @return CursorSortKey<Message>
+     * @return CursorNoLimit<Message>
      *
      * @throws APIException
      */
@@ -57,7 +71,24 @@ interface MessagesContract
         ?string $cursor = null,
         Direction|string|null $direction = null,
         RequestOptions|array|null $requestOptions = null,
-    ): CursorSortKey;
+    ): CursorNoLimit;
+
+    /**
+     * @api
+     *
+     * @param string $messageID path param: Message ID
+     * @param string $chatID Path param: Chat ID. Input routes also accept the local chat ID from this installation when available.
+     * @param bool|null $forEveryone query param: True to request deletion for everyone when the network supports it; false to delete only for the authenticated user when supported
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function delete(
+        string $messageID,
+        string $chatID,
+        ?bool $forEveryone = true,
+        RequestOptions|array|null $requestOptions = null,
+    ): mixed;
 
     /**
      * @api
@@ -73,8 +104,8 @@ interface MessagesContract
      * @param bool|null $includeMuted Include messages in chats marked as Muted by the user, which are usually less important. Default: true. Set to false if the user wants a more refined search.
      * @param int $limit maximum number of messages to return
      * @param list<MediaType|value-of<MediaType>> $mediaTypes Filter messages by media types. Use ['any'] for any media type, or specify exact types like ['video', 'image']. Omit for no media filtering.
-     * @param string $query Literal word search (non-semantic). Finds messages containing these EXACT words in any order. Use single words users actually type, not concepts or phrases. Example: use "dinner" not "dinner plans", use "sick" not "health issues". If omitted, returns results filtered only by other parameters.
-     * @param string|Sender|value-of<Sender> $sender Filter by sender: 'me' (messages sent by the authenticated user), 'others' (messages sent by others), or a specific user ID string (user.id).
+     * @param string $query Literal word search. Finds messages containing these words in any order. Use words the user actually typed, not inferred concepts. Example: use "dinner" rather than "dinner plans". If omitted, returns results filtered only by the other parameters.
+     * @param string $sender Filter by sender: 'me' (messages sent by the authenticated user), 'others' (messages sent by others), or a specific user ID string (user.id).
      * @param RequestOpts|null $requestOptions
      *
      * @return CursorSearch<Message>
@@ -94,17 +125,17 @@ interface MessagesContract
         int $limit = 20,
         ?array $mediaTypes = null,
         ?string $query = null,
-        Sender|string|null $sender = null,
+        ?string $sender = null,
         RequestOptions|array|null $requestOptions = null,
     ): CursorSearch;
 
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param Attachment|AttachmentShape $attachment Single attachment to send with the message
      * @param string $replyToMessageID Provide a message ID to send this as a reply to an existing message
-     * @param string $text Text content of the message you want to send. You may use markdown.
+     * @param string $text Draft text. Plain text and Markdown are converted to Beeper rich text with the same rules used by send and edit.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

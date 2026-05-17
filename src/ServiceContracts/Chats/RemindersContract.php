@@ -17,7 +17,7 @@ interface RemindersContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param Reminder|ReminderShape $reminder Reminder configuration
      * @param RequestOpts|null $requestOptions
      *
@@ -32,7 +32,7 @@ interface RemindersContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

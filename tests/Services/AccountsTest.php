@@ -2,6 +2,7 @@
 
 namespace Tests\Services;
 
+use BeeperDesktop\Accounts\AccountGetResponse;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Util;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -24,6 +25,15 @@ final class AccountsTest extends TestCase
         $client = new Client(accessToken: 'My Access Token', baseUrl: $testUrl);
 
         $this->client = $client;
+    }
+
+    #[Test]
+    public function testRetrieve(): void
+    {
+        $result = $this->client->accounts->retrieve('accountID');
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(AccountGetResponse::class, $result);
     }
 
     #[Test]

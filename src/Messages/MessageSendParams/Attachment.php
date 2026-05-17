@@ -61,7 +61,7 @@ final class Attachment implements BaseModel
     public ?Size $size;
 
     /**
-     * Special attachment type (gif, voiceNote, sticker). If omitted, auto-detected from mimeType.
+     * Attachment type hint (image, video, audio, file, gif, voice-note, sticker). If omitted, auto-detected from mimeType.
      *
      * @var value-of<Type>|null $type
      */
@@ -174,7 +174,7 @@ final class Attachment implements BaseModel
     }
 
     /**
-     * Special attachment type (gif, voiceNote, sticker). If omitted, auto-detected from mimeType.
+     * Attachment type hint (image, video, audio, file, gif, voice-note, sticker). If omitted, auto-detected from mimeType.
      *
      * @param Type|value-of<Type> $type
      */

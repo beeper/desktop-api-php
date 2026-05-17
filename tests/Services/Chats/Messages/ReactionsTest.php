@@ -32,9 +32,9 @@ final class ReactionsTest extends TestCase
     public function testDelete(): void
     {
         $result = $this->client->chats->messages->reactions->delete(
-            'messageID',
+            'x',
             chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com',
-            reactionKey: 'x'
+            messageID: '1343993'
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
@@ -45,9 +45,9 @@ final class ReactionsTest extends TestCase
     public function testDeleteWithOptionalParams(): void
     {
         $result = $this->client->chats->messages->reactions->delete(
-            'messageID',
+            'x',
             chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com',
-            reactionKey: 'x'
+            messageID: '1343993'
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
@@ -58,7 +58,7 @@ final class ReactionsTest extends TestCase
     public function testAdd(): void
     {
         $result = $this->client->chats->messages->reactions->add(
-            'messageID',
+            '1343993',
             chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com',
             reactionKey: 'x'
         );
@@ -71,7 +71,7 @@ final class ReactionsTest extends TestCase
     public function testAddWithOptionalParams(): void
     {
         $result = $this->client->chats->messages->reactions->add(
-            'messageID',
+            '1343993',
             chatID: '!NCdzlIaMjZUmvmvyHU:beeper.com',
             reactionKey: 'x',
             transactionID: 'transactionID',

@@ -25,7 +25,7 @@ final class AssetDownloadResponse implements BaseModel
     public ?string $error;
 
     /**
-     * Local file URL to the downloaded asset.
+     * Local file URL to the downloaded file.
      */
     #[Optional]
     public ?string $srcURL;
@@ -64,7 +64,7 @@ final class AssetDownloadResponse implements BaseModel
     }
 
     /**
-     * Local file URL to the downloaded asset.
+     * Local file URL to the downloaded file.
      */
     public function withSrcURL(string $srcURL): self
     {

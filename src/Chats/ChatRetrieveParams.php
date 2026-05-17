@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Retrieve chat details including metadata, participants, and latest message.
+ * Retrieve chat details, including metadata, participants, and the latest message.
  *
  * @see BeeperDesktop\Services\ChatsService::retrieve()
  *
@@ -23,7 +23,7 @@ final class ChatRetrieveParams implements BaseModel
     use SdkParams;
 
     /**
-     * Maximum number of participants to return. Use -1 for all; otherwise 0–500. Defaults to all (-1).
+     * Maximum number of participants to return. Use -1 for all; otherwise 0-500. Defaults to 100. List and search endpoints return up to 20 participants per chat.
      */
     #[Optional(nullable: true)]
     public ?int $maxParticipantCount;
@@ -48,7 +48,7 @@ final class ChatRetrieveParams implements BaseModel
     }
 
     /**
-     * Maximum number of participants to return. Use -1 for all; otherwise 0–500. Defaults to all (-1).
+     * Maximum number of participants to return. Use -1 for all; otherwise 0-500. Defaults to 100. List and search endpoints return up to 20 participants per chat.
      */
     public function withMaxParticipantCount(?int $maxParticipantCount): self
     {

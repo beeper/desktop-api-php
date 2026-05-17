@@ -9,14 +9,15 @@ use BeeperDesktop\Core\Attributes\Required;
 use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
+use BeeperDesktop\Core\FileParam;
 
 /**
- * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending messages with attachments.
+ * Upload a file to a temporary location using multipart/form-data. Returns an uploadID that can be referenced when sending a message or creating a draft attachment.
  *
  * @see BeeperDesktop\Services\AssetsService::upload()
  *
  * @phpstan-type AssetUploadParamsShape = array{
- *   file: string, fileName?: string|null, mimeType?: string|null
+ *   file: string|FileParam, fileName?: string|null, mimeType?: string|null
  * }
  */
 final class AssetUploadParams implements BaseModel
@@ -68,7 +69,7 @@ final class AssetUploadParams implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      */
     public static function with(
-        string $file,
+        string|FileParam $file,
         ?string $fileName = null,
         ?string $mimeType = null
     ): self {
@@ -85,7 +86,7 @@ final class AssetUploadParams implements BaseModel
     /**
      * The file to upload (max 500 MB).
      */
-    public function withFile(string $file): self
+    public function withFile(string|FileParam $file): self
     {
         $self = clone $this;
         $self['file'] = $file;

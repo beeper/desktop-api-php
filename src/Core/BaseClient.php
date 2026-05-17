@@ -55,6 +55,7 @@ abstract class BaseClient
      * @param string|int|list<string|int>|null $unwrap
      * @param class-string<BasePage<mixed>>|null $page
      * @param class-string<BaseStream<mixed>>|null $stream
+     * @param array{bearerAuth?: bool}|null $security
      * @param RequestOptions|array<string,mixed>|null $options
      *
      * @return BaseResponse<mixed>
@@ -69,6 +70,7 @@ abstract class BaseClient
         string|Converter|ConverterSource|null $convert = null,
         ?string $page = null,
         ?string $stream = null,
+        ?array $security = null,
         RequestOptions|array|null $options = [],
     ): BaseResponse {
         [$req, $opts] = $this->buildRequest(
@@ -79,6 +81,7 @@ abstract class BaseClient
             // @phpstan-ignore argument.type
             headers: $headers,
             body: $body,
+            security: $security,
             // @phpstan-ignore argument.type
             opts: $options,
         );
@@ -113,6 +116,7 @@ abstract class BaseClient
      * @param array<string,mixed> $query
      * @param array<string,string|int|list<string|int>|null> $headers
      * @param RequestOpts|null $opts
+     * @param array{bearerAuth?: bool}|null $security
      *
      * @return array{NormalizedRequest, RequestOptions}
      */
@@ -123,6 +127,7 @@ abstract class BaseClient
         array $headers,
         mixed $body,
         RequestOptions|array|null $opts,
+        ?array $security = null,
     ): array {
         $options = RequestOptions::parse($this->options, $opts);
 
@@ -241,11 +246,15 @@ abstract class BaseClient
         $req = $req->withHeader('X-Stainless-Retry-Count', strval($retryCount));
         $req = Util::withSetBody($opts->streamFactory, req: $req, body: $data);
 
+        $transporter = Util::isStreamingRequest($req)
+            ? ($opts->streamingTransporter ?? $opts->transporter)
+            : $opts->transporter;
+
         $rsp = null;
         $err = null;
 
         try {
-            $rsp = $opts->transporter->sendRequest($req);
+            $rsp = $transporter->sendRequest($req);
         } catch (ClientExceptionInterface $e) {
             $err = $e;
         }
