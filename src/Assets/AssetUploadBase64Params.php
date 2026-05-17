@@ -11,7 +11,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Upload a file using a JSON body with base64-encoded content. Returns an uploadID that can be referenced when sending a message or materializing a draft attachment. Alternative to the multipart upload endpoint.
+ * Upload a file using a JSON body with base64-encoded content. Returns an uploadID that can be referenced when sending a message or creating a draft attachment. Alternative to the multipart upload endpoint.
  *
  * @see BeeperDesktop\Services\AssetsService::uploadBase64()
  *

@@ -12,7 +12,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Resolve a user/contact and open a direct chat. Reuses and returns an existing direct chat when one is found. Available in Beeper Desktop v4.2.808+.
+ * Resolve a user/contact and open a direct chat. Reuses and returns an existing direct chat when one is found. Available in Beeper v4.2.808+.
  *
  * @see BeeperDesktop\Services\ChatsService::start()
  *
@@ -38,7 +38,7 @@ final class ChatStartParams implements BaseModel
     public string $accountID;
 
     /**
-     * Merged user-like contact payload used to resolve the best identifier.
+     * Contact-like user payload used to resolve the best identifier.
      */
     #[Required]
     public User $user;
@@ -110,7 +110,7 @@ final class ChatStartParams implements BaseModel
     }
 
     /**
-     * Merged user-like contact payload used to resolve the best identifier.
+     * Contact-like user payload used to resolve the best identifier.
      *
      * @param User|UserShape $user
      */

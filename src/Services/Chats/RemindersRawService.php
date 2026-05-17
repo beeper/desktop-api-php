@@ -29,9 +29,9 @@ final class RemindersRawService implements RemindersRawContract
     /**
      * @api
      *
-     * Set a reminder for a chat at a specific time
+     * Set a reminder for a chat at a specific time.
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array{reminder: Reminder|ReminderShape}|ReminderCreateParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -62,9 +62,9 @@ final class RemindersRawService implements RemindersRawContract
     /**
      * @api
      *
-     * Clear an existing reminder from a chat
+     * Clear an existing reminder from a chat.
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param RequestOpts|null $requestOptions
      *
      * @return BaseResponse<mixed>

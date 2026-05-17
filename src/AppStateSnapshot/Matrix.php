@@ -27,7 +27,7 @@ final class Matrix implements BaseModel
     public string $deviceID;
 
     /**
-     * Beeper server URL for this account.
+     * Beeper homeserver URL for this account.
      */
     #[Required]
     public string $homeserver;
@@ -88,7 +88,7 @@ final class Matrix implements BaseModel
     }
 
     /**
-     * Beeper server URL for this account.
+     * Beeper homeserver URL for this account.
      */
     public function withHomeserver(string $homeserver): self
     {

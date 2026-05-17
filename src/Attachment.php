@@ -46,7 +46,7 @@ final class Attachment implements BaseModel
     public string $type;
 
     /**
-     * Attachment identifier (typically an mxc:// URL). Use the download file endpoint to get a local file path.
+     * Attachment identifier, typically an mxc:// URL. Use the download file endpoint to get a local file path.
      */
     #[Optional]
     public ?string $id;
@@ -94,7 +94,7 @@ final class Attachment implements BaseModel
     public ?string $mimeType;
 
     /**
-     * Preview image URL for video attachments (poster frame). May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Preview image URL for video attachments (poster frame). May be temporary or available only on this device; download promptly if durable access is needed.
      */
     #[Optional]
     public ?string $posterImg;
@@ -106,7 +106,7 @@ final class Attachment implements BaseModel
     public ?Size $size;
 
     /**
-     * Public URL or local file path to fetch the file. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Public URL or local file path to fetch the file. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     #[Optional]
     public ?string $srcURL;
@@ -194,7 +194,7 @@ final class Attachment implements BaseModel
     }
 
     /**
-     * Attachment identifier (typically an mxc:// URL). Use the download file endpoint to get a local file path.
+     * Attachment identifier, typically an mxc:// URL. Use the download file endpoint to get a local file path.
      */
     public function withID(string $id): self
     {
@@ -282,7 +282,7 @@ final class Attachment implements BaseModel
     }
 
     /**
-     * Preview image URL for video attachments (poster frame). May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Preview image URL for video attachments (poster frame). May be temporary or available only on this device; download promptly if durable access is needed.
      */
     public function withPosterImg(string $posterImg): self
     {
@@ -306,7 +306,7 @@ final class Attachment implements BaseModel
     }
 
     /**
-     * Public URL or local file path to fetch the file. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Public URL or local file path to fetch the file. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     public function withSrcURL(string $srcURL): self
     {

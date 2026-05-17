@@ -86,9 +86,9 @@ final class ChatsRawService implements ChatsRawContract
     /**
      * @api
      *
-     * Retrieve chat details including metadata, participants, and latest message
+     * Retrieve chat details, including metadata, participants, and the latest message.
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array{maxParticipantCount?: int|null}|ChatRetrieveParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -119,9 +119,9 @@ final class ChatsRawService implements ChatsRawContract
     /**
      * @api
      *
-     * Update supported chat fields. Non-empty draft objects are accepted only when the current draft is empty. Send draft=null to clear the draft before setting new draft text or attachments.
+     * Update supported chat fields. Non-empty drafts are accepted only when the current draft is empty. Send draft=null to clear the draft before setting new draft text or attachments.
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array{
      *   description?: string|null,
      *   draft?: Draft|DraftShape|null,
@@ -198,9 +198,9 @@ final class ChatsRawService implements ChatsRawContract
     /**
      * @api
      *
-     * Archive or unarchive a chat. Set archived=true to move to archive, archived=false to move back to inbox
+     * Archive or unarchive a chat. Set archived=true to move it to Archive, or archived=false to move it back to the inbox.
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array{archived?: bool}|ChatArchiveParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -233,7 +233,7 @@ final class ChatsRawService implements ChatsRawContract
      *
      * Mark a chat as read, optionally through a specific message ID.
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array{messageID?: string}|ChatMarkReadParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -266,7 +266,7 @@ final class ChatsRawService implements ChatsRawContract
      *
      * Mark a chat as unread, optionally from a specific message ID.
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array{messageID?: string}|ChatMarkUnreadParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -297,9 +297,9 @@ final class ChatsRawService implements ChatsRawContract
     /**
      * @api
      *
-     * Force a delivery notification when supported by the underlying network. Currently intended for iMessage on macOS; unsupported networks return an error.
+     * Send a notification despite the recipient focus state when the network supports it. Currently intended for iMessage on macOS; unsupported networks return an error.
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param RequestOpts|null $requestOptions
      *
      * @return BaseResponse<Chat>
@@ -367,7 +367,7 @@ final class ChatsRawService implements ChatsRawContract
     /**
      * @api
      *
-     * Resolve a user/contact and open a direct chat. Reuses and returns an existing direct chat when one is found. Available in Beeper Desktop v4.2.808+.
+     * Resolve a user/contact and open a direct chat. Reuses and returns an existing direct chat when one is found. Available in Beeper v4.2.808+.
      *
      * @param array{
      *   accountID: string,

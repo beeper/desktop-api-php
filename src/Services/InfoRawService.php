@@ -27,7 +27,7 @@ final class InfoRawService implements InfoRawContract
     /**
      * @api
      *
-     * Returns app, platform, server, endpoint discovery, OAuth, and WebSocket metadata for this Beeper Desktop instance.
+     * Returns app, platform, server, endpoint discovery, OAuth, and WebSocket metadata for this Beeper Client API server.
      *
      * @param RequestOpts|null $requestOptions
      *

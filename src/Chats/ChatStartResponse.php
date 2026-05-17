@@ -174,7 +174,7 @@ final class ChatStartResponse implements BaseModel
     public ?string $lastReadMessageSortKey;
 
     /**
-     * Local chat ID specific to this Beeper Desktop installation.
+     * Local chat ID specific to this installation.
      */
     #[Optional(nullable: true)]
     public ?string $localChatID;
@@ -204,7 +204,7 @@ final class ChatStartResponse implements BaseModel
     public ?int $unreadMentionsCount;
 
     /**
-     * @deprecated
+     * @deprecated Use id instead.
      *
      * DEPRECATED - use id instead. Compatibility alias for older clients.
      */
@@ -212,7 +212,7 @@ final class ChatStartResponse implements BaseModel
     public string $chatID;
 
     /**
-     * @deprecated
+     * @deprecated Inspect the returned Chat instead.
      *
      * DEPRECATED - legacy start-chat status for older clients. New clients should inspect the returned Chat instead.
      *
@@ -550,7 +550,7 @@ final class ChatStartResponse implements BaseModel
     }
 
     /**
-     * Local chat ID specific to this Beeper Desktop installation.
+     * Local chat ID specific to this installation.
      */
     public function withLocalChatID(?string $localChatID): self
     {

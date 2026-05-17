@@ -19,7 +19,7 @@ interface AssetsContract
     /**
      * @api
      *
-     * @param string $url matrix content URL (mxc:// or localmxc://) for the file to download
+     * @param string $url beeper media URL (mxc:// or localmxc://) for the file to download
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

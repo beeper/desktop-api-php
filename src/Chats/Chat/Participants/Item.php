@@ -56,7 +56,7 @@ final class Item implements BaseModel
     public ?string $fullName;
 
     /**
-     * Avatar image URL if available. This may be a remote URL, Matrix media URL, data URL, or local filesystem URL depending on source and endpoint. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Avatar image URL if available. This may be a remote URL, media URL, data URL, or local file URL depending on the source. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     #[Optional]
     public ?string $imgURL;
@@ -86,7 +86,7 @@ final class Item implements BaseModel
     public ?bool $isAdmin;
 
     /**
-     * True if this participant represents a network or bridge bot.
+     * True if this participant represents an automated network account.
      */
     #[Optional]
     public ?bool $isNetworkBot;
@@ -197,7 +197,7 @@ final class Item implements BaseModel
     }
 
     /**
-     * Avatar image URL if available. This may be a remote URL, Matrix media URL, data URL, or local filesystem URL depending on source and endpoint. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Avatar image URL if available. This may be a remote URL, media URL, data URL, or local file URL depending on the source. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     public function withImgURL(string $imgURL): self
     {
@@ -252,7 +252,7 @@ final class Item implements BaseModel
     }
 
     /**
-     * True if this participant represents a network or bridge bot.
+     * True if this participant represents an automated network account.
      */
     public function withIsNetworkBot(bool $isNetworkBot): self
     {

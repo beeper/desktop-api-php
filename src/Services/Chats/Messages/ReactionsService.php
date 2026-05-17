@@ -38,7 +38,7 @@ final class ReactionsService implements ReactionsContract
      * Remove the reaction added by the authenticated user from an existing message.
      *
      * @param string $reactionKey Reaction key to remove (emoji, shortcode, or custom emoji key)
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param string $messageID message ID
      * @param RequestOpts|null $requestOptions
      *
@@ -66,7 +66,7 @@ final class ReactionsService implements ReactionsContract
      * Add a reaction to an existing message.
      *
      * @param string $messageID path param: Message ID
-     * @param string $chatID Path param: Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Path param: Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param string $reactionKey Body param: Reaction key to add (emoji, shortcode, or custom emoji key)
      * @param string $transactionID Body param: Optional transaction ID for deduplication and send tracking
      * @param RequestOpts|null $requestOptions

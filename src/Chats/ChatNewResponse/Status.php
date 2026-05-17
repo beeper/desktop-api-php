@@ -7,7 +7,7 @@ namespace BeeperDesktop\Chats\ChatNewResponse;
 /**
  * DEPRECATED - legacy start-chat status for older clients. New clients should inspect the returned Chat instead.
  *
- * @deprecated
+ * @deprecated inspect the returned Chat instead
  */
 enum Status: string
 {

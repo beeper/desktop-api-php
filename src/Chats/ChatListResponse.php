@@ -176,7 +176,7 @@ final class ChatListResponse implements BaseModel
     public ?string $lastReadMessageSortKey;
 
     /**
-     * Local chat ID specific to this Beeper Desktop installation.
+     * Local chat ID specific to this installation.
      */
     #[Optional(nullable: true)]
     public ?string $localChatID;
@@ -533,7 +533,7 @@ final class ChatListResponse implements BaseModel
     }
 
     /**
-     * Local chat ID specific to this Beeper Desktop installation.
+     * Local chat ID specific to this installation.
      */
     public function withLocalChatID(?string $localChatID): self
     {

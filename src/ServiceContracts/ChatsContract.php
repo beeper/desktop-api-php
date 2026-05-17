@@ -50,7 +50,7 @@ interface ChatsContract
     /**
      * @api
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param int|null $maxParticipantCount Maximum number of participants to return. Use -1 for all; otherwise 0-500. Defaults to 100. List and search endpoints return up to 20 participants per chat.
      * @param RequestOpts|null $requestOptions
      *
@@ -65,7 +65,7 @@ interface ChatsContract
     /**
      * @api
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param string|null $description Group chat description/topic. Support depends on the chat account and chat permissions.
      * @param Draft|DraftShape|null $draft Draft object to set or clear. Non-empty drafts are only accepted when the current draft is empty. Send draft=null to clear text and attachments together before setting a new draft.
      * @param string|null $imgURL Local filesystem path to a group chat avatar image. Support depends on the chat account and chat permissions.
@@ -115,7 +115,7 @@ interface ChatsContract
     /**
      * @api
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param bool $archived True to archive, false to unarchive
      * @param RequestOpts|null $requestOptions
      *
@@ -130,7 +130,7 @@ interface ChatsContract
     /**
      * @api
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param string $messageID optional message ID to mark read through
      * @param RequestOpts|null $requestOptions
      *
@@ -145,7 +145,7 @@ interface ChatsContract
     /**
      * @api
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param string $messageID optional message ID to mark unread from
      * @param RequestOpts|null $requestOptions
      *
@@ -160,7 +160,7 @@ interface ChatsContract
     /**
      * @api
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException
@@ -173,15 +173,15 @@ interface ChatsContract
     /**
      * @api
      *
-     * @param list<string> $accountIDs Provide an array of account IDs to filter chats from specific messaging accounts only
+     * @param list<string> $accountIDs limit results to specific chat accounts
      * @param string $cursor Opaque pagination cursor; do not inspect. Use together with 'direction'.
      * @param \BeeperDesktop\Chats\ChatSearchParams\Direction|value-of<\BeeperDesktop\Chats\ChatSearchParams\Direction> $direction Pagination direction used with 'cursor': 'before' fetches older results, 'after' fetches newer results. Defaults to 'before' when only 'cursor' is provided.
      * @param Inbox|value-of<Inbox> $inbox Filter by inbox type: "primary" (non-archived, non-low-priority), "low-priority", or "archive". If not specified, shows all chats.
      * @param bool|null $includeMuted Include chats marked as Muted by the user, which are usually less important. Default: true. Set to false if the user wants a more refined search.
-     * @param \DateTimeInterface $lastActivityAfter Provide an ISO datetime string to only retrieve chats with last activity after this time
-     * @param \DateTimeInterface $lastActivityBefore Provide an ISO datetime string to only retrieve chats with last activity before this time
+     * @param \DateTimeInterface $lastActivityAfter only include chats with last activity after this ISO 8601 datetime
+     * @param \DateTimeInterface $lastActivityBefore only include chats with last activity before this ISO 8601 datetime
      * @param int $limit Set the maximum number of chats to retrieve. Valid range: 1-200, default is 50
-     * @param string $query Literal token search (non-semantic). Use single words users type (e.g., "dinner"). When multiple words provided, ALL must match. Case-insensitive.
+     * @param string $query Literal chat search. Use words the user typed, such as "dinner". When multiple words are provided, all must match. Case-insensitive.
      * @param Scope|value-of<Scope> $scope search scope: 'titles' matches title + network; 'participants' matches participant names
      * @param \BeeperDesktop\Chats\ChatSearchParams\Type|value-of<\BeeperDesktop\Chats\ChatSearchParams\Type> $type Specify the type of chats to retrieve: use "single" for direct messages, "group" for group chats, or "any" to get all types
      * @param bool|null $unreadOnly Set to true to only retrieve chats that have unread messages
@@ -211,7 +211,7 @@ interface ChatsContract
      * @api
      *
      * @param string $accountID account to create or start the chat on
-     * @param User|UserShape $user merged user-like contact payload used to resolve the best identifier
+     * @param User|UserShape $user contact-like user payload used to resolve the best identifier
      * @param bool $allowInvite whether invite-based DM creation is allowed when required by the platform
      * @param string $messageText optional first message content if the platform requires it to create the chat
      * @param RequestOpts|null $requestOptions

@@ -61,7 +61,7 @@ interface MessagesRawContract
     /**
      * @api
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array<string,mixed>|MessageListParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -110,7 +110,7 @@ interface MessagesRawContract
     /**
      * @api
      *
-     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array<string,mixed>|MessageSendParams $params
      * @param RequestOpts|null $requestOptions
      *

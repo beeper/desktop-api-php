@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BeeperDesktop\Services;
 
 use BeeperDesktop\Accounts\Account;
+use BeeperDesktop\Accounts\AccountGetResponse;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\RequestOptions;
@@ -40,7 +41,27 @@ final class AccountsService implements AccountsContract
     /**
      * @api
      *
-     * List Chat Accounts connected to this Beeper Desktop instance, including bridge metadata and network identity.
+     * Get one chat account connected to this Beeper Client API server.
+     *
+     * @param string $accountID account ID this resource belongs to
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function retrieve(
+        string $accountID,
+        RequestOptions|array|null $requestOptions = null
+    ): AccountGetResponse {
+        // @phpstan-ignore-next-line argument.type
+        $response = $this->raw->retrieve($accountID, requestOptions: $requestOptions);
+
+        return $response->parse();
+    }
+
+    /**
+     * @api
+     *
+     * List chat accounts connected to this Beeper Client API server, including bridge, network, user identity, and connection status.
      *
      * @param RequestOpts|null $requestOptions
      *

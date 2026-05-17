@@ -43,13 +43,13 @@ final class Link implements BaseModel
     public string $url;
 
     /**
-     * Favicon URL if available. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Favicon URL if available. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     #[Optional]
     public ?string $favicon;
 
     /**
-     * Preview image URL if available. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Preview image URL if available. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     #[Optional]
     public ?string $img;
@@ -144,7 +144,7 @@ final class Link implements BaseModel
     }
 
     /**
-     * Favicon URL if available. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Favicon URL if available. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     public function withFavicon(string $favicon): self
     {
@@ -155,7 +155,7 @@ final class Link implements BaseModel
     }
 
     /**
-     * Preview image URL if available. May be temporary or local-only to this device; download promptly if durable access is needed.
+     * Preview image URL if available. May be temporary or available only on this device; download promptly if durable access is needed.
      */
     public function withImg(string $img): self
     {

@@ -18,7 +18,6 @@ use BeeperDesktop\Services\BeeperDesktopClientService;
 use BeeperDesktop\Services\BridgesService;
 use BeeperDesktop\Services\ChatsService;
 use BeeperDesktop\Services\InfoService;
-use BeeperDesktop\Services\MatrixService;
 use BeeperDesktop\Services\MessagesService;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
@@ -65,11 +64,6 @@ class Client extends BaseClient
      * @api
      */
     public AppService $app;
-
-    /**
-     * @api
-     */
-    public MatrixService $matrix;
 
     /**
      * @api
@@ -146,7 +140,6 @@ class Client extends BaseClient
         $this->assets = new AssetsService($this);
         $this->info = new InfoService($this);
         $this->app = new AppService($this);
-        $this->matrix = new MatrixService($this);
         $this->raw = new BeeperDesktopClientRawService($this);
         $this->beeperDesktopClientService = new BeeperDesktopClientService($this);
     }
@@ -154,10 +147,10 @@ class Client extends BaseClient
     /**
      * @api
      *
-     * Focus Beeper Desktop and optionally navigate to a specific chat, message, or pre-fill plain text and an image path.
+     * Focus Beeper Desktop and optionally open a specific chat, jump to a message, or pre-fill text and an image.
      *
      * @param string $chatID Optional Beeper chat ID (or local chat ID) to focus after opening the app. If omitted, only opens/focuses the app.
-     * @param string $draftAttachmentPath optional image path to populate in the message input field
+     * @param string $draftAttachmentPath optional local image path to populate in the message input field
      * @param string $draftText optional plain text to populate in the message input field
      * @param string $messageID Optional message ID. Jumps to that message in the chat when opening.
      * @param RequestOpts|null $requestOptions
@@ -183,9 +176,9 @@ class Client extends BaseClient
     /**
      * @api
      *
-     * Returns matching chats, participant name matches in groups, and the first page of messages in one call. Paginate messages via search-messages. Paginate chats via search-chats.
+     * Return matching chats, participant matches in group chats, and the first page of message results in one call. Use the dedicated chat and message search endpoints for pagination.
      *
-     * @param string $query User-typed search text. Literal word matching (non-semantic).
+     * @param string $query User-typed search text. Uses literal word matching.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

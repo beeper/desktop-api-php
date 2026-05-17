@@ -6,10 +6,6 @@ namespace BeeperDesktop\AppStateSnapshot\Verification;
 
 enum AvailableAction: string
 {
-    case CREATE = 'create';
-
-    case QR_SCAN = 'qr.scan';
-
     case ACCEPT = 'accept';
 
     case CANCEL = 'cancel';

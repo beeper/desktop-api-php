@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace BeeperDesktop;
 
-use BeeperDesktop\AppStateSnapshot\E2ee;
+use BeeperDesktop\AppStateSnapshot\E2EE;
 use BeeperDesktop\AppStateSnapshot\Matrix;
 use BeeperDesktop\AppStateSnapshot\State;
 use BeeperDesktop\AppStateSnapshot\Verification;
@@ -14,12 +14,12 @@ use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * @phpstan-import-type E2eeShape from \BeeperDesktop\AppStateSnapshot\E2ee
+ * @phpstan-import-type E2EEShape from \BeeperDesktop\AppStateSnapshot\E2EE
  * @phpstan-import-type MatrixShape from \BeeperDesktop\AppStateSnapshot\Matrix
  * @phpstan-import-type VerificationShape from \BeeperDesktop\AppStateSnapshot\Verification
  *
  * @phpstan-type AppStateSnapshotShape = array{
- *   e2ee: E2ee|E2eeShape,
+ *   e2ee: E2EE|E2EEShape,
  *   state: State|value-of<State>,
  *   matrix?: null|Matrix|MatrixShape,
  *   verification?: null|Verification|VerificationShape,
@@ -34,10 +34,10 @@ final class AppStateSnapshot implements BaseModel
      * Encrypted messaging setup status.
      */
     #[Required]
-    public E2ee $e2ee;
+    public E2EE $e2ee;
 
     /**
-     * Current onboarding state for Beeper Desktop.
+     * Current sign-in and encrypted messaging setup state for Beeper Desktop or Beeper Server.
      *
      * @var value-of<State> $state
      */
@@ -51,7 +51,7 @@ final class AppStateSnapshot implements BaseModel
     public ?Matrix $matrix;
 
     /**
-     * Trusted-device verification progress.
+     * Trusted device verification progress.
      */
     #[Optional]
     public ?Verification $verification;
@@ -67,7 +67,7 @@ final class AppStateSnapshot implements BaseModel
      * Otherwise ensure the following setters are called
      *
      * ```
-     * (new AppStateSnapshot)->withE2ee(...)->withState(...)
+     * (new AppStateSnapshot)->withE2EE(...)->withState(...)
      * ```
      */
     public function __construct()
@@ -80,13 +80,13 @@ final class AppStateSnapshot implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
-     * @param E2ee|E2eeShape $e2ee
+     * @param E2EE|E2EEShape $e2ee
      * @param State|value-of<State> $state
      * @param Matrix|MatrixShape|null $matrix
      * @param Verification|VerificationShape|null $verification
      */
     public static function with(
-        E2ee|array $e2ee,
+        E2EE|array $e2ee,
         State|string $state,
         Matrix|array|null $matrix = null,
         Verification|array|null $verification = null,
@@ -105,9 +105,9 @@ final class AppStateSnapshot implements BaseModel
     /**
      * Encrypted messaging setup status.
      *
-     * @param E2ee|E2eeShape $e2ee
+     * @param E2EE|E2EEShape $e2ee
      */
-    public function withE2ee(E2ee|array $e2ee): self
+    public function withE2EE(E2EE|array $e2ee): self
     {
         $self = clone $this;
         $self['e2ee'] = $e2ee;
@@ -116,7 +116,7 @@ final class AppStateSnapshot implements BaseModel
     }
 
     /**
-     * Current onboarding state for Beeper Desktop.
+     * Current sign-in and encrypted messaging setup state for Beeper Desktop or Beeper Server.
      *
      * @param State|value-of<State> $state
      */
@@ -142,7 +142,7 @@ final class AppStateSnapshot implements BaseModel
     }
 
     /**
-     * Trusted-device verification progress.
+     * Trusted device verification progress.
      *
      * @param Verification|VerificationShape $verification
      */

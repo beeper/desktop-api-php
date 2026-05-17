@@ -63,13 +63,13 @@ final class Message implements BaseModel
     public string $accountID;
 
     /**
-     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * Chat ID. Input routes also accept the local chat ID from this installation when available.
      */
     #[Required]
     public string $chatID;
 
     /**
-     * Matrix-style fully-qualified sender user ID, usually including a bridge prefix and homeserver.
+     * Fully qualified sender user ID. Network-backed IDs usually include the network prefix and homeserver.
      */
     #[Required]
     public string $senderID;
@@ -163,7 +163,7 @@ final class Message implements BaseModel
     public bool|\DateTimeInterface|array|null $seen;
 
     /**
-     * Resolved sender display name (impersonator/full name/username/participant name).
+     * Resolved sender display name.
      */
     #[Optional]
     public ?string $senderName;
@@ -175,7 +175,7 @@ final class Message implements BaseModel
     public ?SendStatus $sendStatus;
 
     /**
-     * Matrix HTML body if present.
+     * Rich-text message body if present.
      */
     #[Optional]
     public ?string $text;
@@ -307,7 +307,7 @@ final class Message implements BaseModel
     }
 
     /**
-     * Chat ID. Input routes also accept the local chat ID from this Beeper Desktop installation when available.
+     * Chat ID. Input routes also accept the local chat ID from this installation when available.
      */
     public function withChatID(string $chatID): self
     {
@@ -318,7 +318,7 @@ final class Message implements BaseModel
     }
 
     /**
-     * Matrix-style fully-qualified sender user ID, usually including a bridge prefix and homeserver.
+     * Fully qualified sender user ID. Network-backed IDs usually include the network prefix and homeserver.
      */
     public function withSenderID(string $senderID): self
     {
@@ -483,7 +483,7 @@ final class Message implements BaseModel
     }
 
     /**
-     * Resolved sender display name (impersonator/full name/username/participant name).
+     * Resolved sender display name.
      */
     public function withSenderName(string $senderName): self
     {
@@ -507,7 +507,7 @@ final class Message implements BaseModel
     }
 
     /**
-     * Matrix HTML body if present.
+     * Rich-text message body if present.
      */
     public function withText(string $text): self
     {

@@ -2,7 +2,9 @@
 
 namespace Tests\Services;
 
+use BeeperDesktop\Bridges\BridgeGetResponse;
 use BeeperDesktop\Bridges\BridgeListResponse;
+use BeeperDesktop\Bridges\ProvisioningCapabilities;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Util;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -28,11 +30,29 @@ final class BridgesTest extends TestCase
     }
 
     #[Test]
+    public function testRetrieve(): void
+    {
+        $result = $this->client->bridges->retrieve('local-whatsapp');
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(BridgeGetResponse::class, $result);
+    }
+
+    #[Test]
     public function testList(): void
     {
         $result = $this->client->bridges->list();
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
         $this->assertInstanceOf(BridgeListResponse::class, $result);
+    }
+
+    #[Test]
+    public function testRetrieveCapabilities(): void
+    {
+        $result = $this->client->bridges->retrieveCapabilities('local-whatsapp');
+
+        // @phpstan-ignore-next-line method.alreadyNarrowedType
+        $this->assertInstanceOf(ProvisioningCapabilities::class, $result);
     }
 }

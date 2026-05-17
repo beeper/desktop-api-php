@@ -9,21 +9,19 @@ use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Bridge-backed account types and their connected accounts.
+ * Available bridges and their connected accounts.
  *
- * @phpstan-import-type BridgeAvailabilityShape from \BeeperDesktop\Bridges\BridgeAvailability
+ * @phpstan-import-type BridgeShape from \BeeperDesktop\Bridges\Bridge
  *
- * @phpstan-type BridgeListResponseShape = array{
- *   items: list<BridgeAvailability|BridgeAvailabilityShape>
- * }
+ * @phpstan-type BridgeListResponseShape = array{items: list<Bridge|BridgeShape>}
  */
 final class BridgeListResponse implements BaseModel
 {
     /** @use SdkModel<BridgeListResponseShape> */
     use SdkModel;
 
-    /** @var list<BridgeAvailability> $items */
-    #[Required(list: BridgeAvailability::class)]
+    /** @var list<Bridge> $items */
+    #[Required(list: Bridge::class)]
     public array $items;
 
     /**
@@ -50,7 +48,7 @@ final class BridgeListResponse implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
-     * @param list<BridgeAvailability|BridgeAvailabilityShape> $items
+     * @param list<Bridge|BridgeShape> $items
      */
     public static function with(array $items): self
     {
@@ -62,7 +60,7 @@ final class BridgeListResponse implements BaseModel
     }
 
     /**
-     * @param list<BridgeAvailability|BridgeAvailabilityShape> $items
+     * @param list<Bridge|BridgeShape> $items
      */
     public function withItems(array $items): self
     {
