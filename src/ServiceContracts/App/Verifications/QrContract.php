@@ -4,4 +4,39 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\ServiceContracts\App\Verifications;
 
-interface QrContract {}
+use BeeperDesktop\App\Verifications\Qr\QrConfirmScannedResponse;
+use BeeperDesktop\App\Verifications\Qr\QrScanResponse;
+use BeeperDesktop\Core\Exceptions\APIException;
+use BeeperDesktop\RequestOptions;
+
+/**
+ * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
+ */
+interface QrContract
+{
+    /**
+     * @api
+     *
+     * @param string $verificationID verification ID
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function confirmScanned(
+        string $verificationID,
+        RequestOptions|array|null $requestOptions = null
+    ): QrConfirmScannedResponse;
+
+    /**
+     * @api
+     *
+     * @param string $data QR code payload scanned from the other device
+     * @param RequestOpts|null $requestOptions
+     *
+     * @throws APIException
+     */
+    public function scan(
+        string $data,
+        RequestOptions|array|null $requestOptions = null
+    ): QrScanResponse;
+}
