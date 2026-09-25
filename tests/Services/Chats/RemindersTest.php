@@ -31,7 +31,9 @@ final class RemindersTest extends TestCase
     {
         $result = $this->client->chats->reminders->create(
             '!NCdzlIaMjZUmvmvyHU:beeper.com',
-            reminder: ['remindAtMs' => 0]
+            reminder: [
+                'remindAt' => new \DateTimeImmutable('2025-08-31T23:30:12.520Z'),
+            ],
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType
@@ -43,7 +45,10 @@ final class RemindersTest extends TestCase
     {
         $result = $this->client->chats->reminders->create(
             '!NCdzlIaMjZUmvmvyHU:beeper.com',
-            reminder: ['remindAtMs' => 0, 'dismissOnIncomingMessage' => true],
+            reminder: [
+                'remindAt' => new \DateTimeImmutable('2025-08-31T23:30:12.520Z'),
+                'dismissOnIncomingMessage' => true,
+            ],
         );
 
         // @phpstan-ignore-next-line method.alreadyNarrowedType

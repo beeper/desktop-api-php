@@ -19,6 +19,7 @@ use BeeperDesktop\Core\Contracts\BaseModel;
  *   accountIDs?: list<string>|null,
  *   cursor?: string|null,
  *   direction?: null|Direction|value-of<Direction>,
+ *   limit?: int|null,
  * }
  */
 final class ChatListParams implements BaseModel
@@ -49,6 +50,12 @@ final class ChatListParams implements BaseModel
     #[Optional(enum: Direction::class)]
     public ?string $direction;
 
+    /**
+     * Set the maximum number of chats to retrieve. Valid range: 1-200, default is 25.
+     */
+    #[Optional]
+    public ?int $limit;
+
     public function __construct()
     {
         $this->initialize();
@@ -66,12 +73,14 @@ final class ChatListParams implements BaseModel
         ?array $accountIDs = null,
         ?string $cursor = null,
         Direction|string|null $direction = null,
+        ?int $limit = null,
     ): self {
         $self = new self;
 
         null !== $accountIDs && $self['accountIDs'] = $accountIDs;
         null !== $cursor && $self['cursor'] = $cursor;
         null !== $direction && $self['direction'] = $direction;
+        null !== $limit && $self['limit'] = $limit;
 
         return $self;
     }
@@ -109,6 +118,17 @@ final class ChatListParams implements BaseModel
     {
         $self = clone $this;
         $self['direction'] = $direction;
+
+        return $self;
+    }
+
+    /**
+     * Set the maximum number of chats to retrieve. Valid range: 1-200, default is 25.
+     */
+    public function withLimit(int $limit): self
+    {
+        $self = clone $this;
+        $self['limit'] = $limit;
 
         return $self;
     }

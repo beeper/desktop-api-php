@@ -4,21 +4,24 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\Chats;
 
-use BeeperDesktop\Chats\ChatCreateParams\Chat;
+use BeeperDesktop\Chats\ChatCreateParams\Type;
+use BeeperDesktop\Core\Attributes\Optional;
 use BeeperDesktop\Core\Attributes\Required;
 use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Create a single/group chat (mode='create') or start a direct chat from merged user data (mode='start').
+ * Create a direct or group chat from participant IDs. Returns the created chat.
  *
  * @see BeeperDesktop\Services\ChatsService::create()
  *
- * @phpstan-import-type ChatShape from \BeeperDesktop\Chats\ChatCreateParams\Chat
- *
  * @phpstan-type ChatCreateParamsShape = array{
- *   chat: \BeeperDesktop\Chats\ChatCreateParams\Chat|ChatShape
+ *   accountID: string,
+ *   participantIDs: list<string>,
+ *   type: Type|value-of<Type>,
+ *   messageText?: string|null,
+ *   title?: string|null,
  * }
  */
 final class ChatCreateParams implements BaseModel
@@ -27,21 +30,55 @@ final class ChatCreateParams implements BaseModel
     use SdkModel;
     use SdkParams;
 
+    /**
+     * Account to create or start the chat on.
+     */
     #[Required]
-    public Chat $chat;
+    public string $accountID;
+
+    /**
+     * User IDs to include in the new chat.
+     *
+     * @var list<string> $participantIDs
+     */
+    #[Required(list: 'string')]
+    public array $participantIDs;
+
+    /**
+     * 'single' requires exactly one participantID; 'group' supports multiple participants and optional title.
+     *
+     * @var value-of<Type> $type
+     */
+    #[Required(enum: Type::class)]
+    public string $type;
+
+    /**
+     * Optional first message content if the platform requires it to create the chat.
+     */
+    #[Optional]
+    public ?string $messageText;
+
+    /**
+     * Optional title for group chats; ignored for single chats on most networks.
+     */
+    #[Optional]
+    public ?string $title;
 
     /**
      * `new ChatCreateParams()` is missing required properties by the API.
      *
      * To enforce required parameters use
      * ```
-     * ChatCreateParams::with(chat: ...)
+     * ChatCreateParams::with(accountID: ..., participantIDs: ..., type: ...)
      * ```
      *
      * Otherwise ensure the following setters are called
      *
      * ```
-     * (new ChatCreateParams)->withChat(...)
+     * (new ChatCreateParams)
+     *   ->withAccountID(...)
+     *   ->withParticipantIDs(...)
+     *   ->withType(...)
      * ```
      */
     public function __construct()
@@ -54,26 +91,83 @@ final class ChatCreateParams implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
-     * @param Chat|ChatShape $chat
+     * @param list<string> $participantIDs
+     * @param Type|value-of<Type> $type
      */
     public static function with(
-        Chat|array $chat
+        string $accountID,
+        array $participantIDs,
+        Type|string $type,
+        ?string $messageText = null,
+        ?string $title = null,
     ): self {
         $self = new self;
 
-        $self['chat'] = $chat;
+        $self['accountID'] = $accountID;
+        $self['participantIDs'] = $participantIDs;
+        $self['type'] = $type;
+
+        null !== $messageText && $self['messageText'] = $messageText;
+        null !== $title && $self['title'] = $title;
 
         return $self;
     }
 
     /**
-     * @param Chat|ChatShape $chat
+     * Account to create or start the chat on.
      */
-    public function withChat(
-        Chat|array $chat
-    ): self {
+    public function withAccountID(string $accountID): self
+    {
         $self = clone $this;
-        $self['chat'] = $chat;
+        $self['accountID'] = $accountID;
+
+        return $self;
+    }
+
+    /**
+     * User IDs to include in the new chat.
+     *
+     * @param list<string> $participantIDs
+     */
+    public function withParticipantIDs(array $participantIDs): self
+    {
+        $self = clone $this;
+        $self['participantIDs'] = $participantIDs;
+
+        return $self;
+    }
+
+    /**
+     * 'single' requires exactly one participantID; 'group' supports multiple participants and optional title.
+     *
+     * @param Type|value-of<Type> $type
+     */
+    public function withType(Type|string $type): self
+    {
+        $self = clone $this;
+        $self['type'] = $type;
+
+        return $self;
+    }
+
+    /**
+     * Optional first message content if the platform requires it to create the chat.
+     */
+    public function withMessageText(string $messageText): self
+    {
+        $self = clone $this;
+        $self['messageText'] = $messageText;
+
+        return $self;
+    }
+
+    /**
+     * Optional title for group chats; ignored for single chats on most networks.
+     */
+    public function withTitle(string $title): self
+    {
+        $self = clone $this;
+        $self['title'] = $title;
 
         return $self;
     }

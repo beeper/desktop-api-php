@@ -19,13 +19,13 @@ final class MessageSendResponse implements BaseModel
     use SdkModel;
 
     /**
-     * Unique identifier of the chat.
+     * Chat the message was actually sent to. When sending to a merged chat, this is the member chat the send was routed to.
      */
     #[Required]
     public string $chatID;
 
     /**
-     * Pending message ID.
+     * Pending ID assigned to the message before the network confirms the send. Pass it to GET /v1/chats/{chatID}/messages/{messageID} to resolve, or wait for the matching message.upserted over the WebSocket.
      */
     #[Required]
     public string $pendingMessageID;
@@ -65,7 +65,7 @@ final class MessageSendResponse implements BaseModel
     }
 
     /**
-     * Unique identifier of the chat.
+     * Chat the message was actually sent to. When sending to a merged chat, this is the member chat the send was routed to.
      */
     public function withChatID(string $chatID): self
     {
@@ -76,7 +76,7 @@ final class MessageSendResponse implements BaseModel
     }
 
     /**
-     * Pending message ID.
+     * Pending ID assigned to the message before the network confirms the send. Pass it to GET /v1/chats/{chatID}/messages/{messageID} to resolve, or wait for the matching message.upserted over the WebSocket.
      */
     public function withPendingMessageID(string $pendingMessageID): self
     {

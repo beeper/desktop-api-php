@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BeeperDesktop\Services;
 
 use BeeperDesktop\Accounts\Account;
+use BeeperDesktop\Accounts\AccountGetResponse;
 use BeeperDesktop\Client;
 use BeeperDesktop\Core\Contracts\BaseResponse;
 use BeeperDesktop\Core\Conversion\ListOf;
@@ -28,7 +29,32 @@ final class AccountsRawService implements AccountsRawContract
     /**
      * @api
      *
-     * Lists chat accounts across networks (WhatsApp, Telegram, Twitter/X, etc.) actively connected to this Beeper Desktop instance
+     * Get one chat account connected to this Beeper Client API server.
+     *
+     * @param string $accountID account ID this resource belongs to
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<AccountGetResponse>
+     *
+     * @throws APIException
+     */
+    public function retrieve(
+        string $accountID,
+        RequestOptions|array|null $requestOptions = null
+    ): BaseResponse {
+        // @phpstan-ignore-next-line return.type
+        return $this->client->request(
+            method: 'get',
+            path: ['v1/accounts/%1$s', $accountID],
+            options: $requestOptions,
+            convert: AccountGetResponse::class,
+        );
+    }
+
+    /**
+     * @api
+     *
+     * List chat accounts connected to this Beeper Client API server, including bridge, network, user identity, and connection status.
      *
      * @param RequestOpts|null $requestOptions
      *

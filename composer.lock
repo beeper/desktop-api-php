@@ -4,7 +4,7 @@
     "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
     "This file is @generated automatically"
   ],
-  "content-hash": "5fc63f7c84d94b42416689723c547f69",
+  "content-hash": "bbae64cb4d21c987158bc3723eda4226",
   "packages": [
     {
       "name": "php-http/discovery",
@@ -194,16 +194,16 @@
   "packages-dev": [
     {
       "name": "brianium/paratest",
-      "version": "v7.8.4",
+      "version": "v7.8.5",
       "source": {
         "type": "git",
         "url": "https://github.com/paratestphp/paratest.git",
-        "reference": "130a9bf0e269ee5f5b320108f794ad03e275cad4"
+        "reference": "9b324c8fc319cf9728b581c7a90e1c8f6361c5e5"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/paratestphp/paratest/zipball/130a9bf0e269ee5f5b320108f794ad03e275cad4",
-        "reference": "130a9bf0e269ee5f5b320108f794ad03e275cad4",
+        "url": "https://api.github.com/repos/paratestphp/paratest/zipball/9b324c8fc319cf9728b581c7a90e1c8f6361c5e5",
+        "reference": "9b324c8fc319cf9728b581c7a90e1c8f6361c5e5",
         "shasum": ""
       },
       "require": {
@@ -211,27 +211,27 @@
         "ext-pcre": "*",
         "ext-reflection": "*",
         "ext-simplexml": "*",
-        "fidry/cpu-core-counter": "^1.2.0",
+        "fidry/cpu-core-counter": "^1.3.0",
         "jean85/pretty-package-versions": "^2.1.1",
-        "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
-        "phpunit/php-code-coverage": "^11.0.10",
+        "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+        "phpunit/php-code-coverage": "^11.0.12",
         "phpunit/php-file-iterator": "^5.1.0",
         "phpunit/php-timer": "^7.0.1",
-        "phpunit/phpunit": "^11.5.24",
+        "phpunit/phpunit": "^11.5.46",
         "sebastian/environment": "^7.2.1",
-        "symfony/console": "^6.4.22 || ^7.3.0",
-        "symfony/process": "^6.4.20 || ^7.3.0"
+        "symfony/console": "^6.4.22 || ^7.3.4 || ^8.0.3",
+        "symfony/process": "^6.4.20 || ^7.3.4 || ^8.0.3"
       },
       "require-dev": {
         "doctrine/coding-standard": "^12.0.0",
         "ext-pcov": "*",
         "ext-posix": "*",
-        "phpstan/phpstan": "^2.1.17",
+        "phpstan/phpstan": "^2.1.33",
         "phpstan/phpstan-deprecation-rules": "^2.0.3",
-        "phpstan/phpstan-phpunit": "^2.0.6",
-        "phpstan/phpstan-strict-rules": "^2.0.4",
-        "squizlabs/php_codesniffer": "^3.13.2",
-        "symfony/filesystem": "^6.4.13 || ^7.3.0"
+        "phpstan/phpstan-phpunit": "^2.0.11",
+        "phpstan/phpstan-strict-rules": "^2.0.7",
+        "squizlabs/php_codesniffer": "^3.13.5",
+        "symfony/filesystem": "^6.4.13 || ^7.3.2 || ^8.0.1"
       },
       "bin": [
         "bin/paratest",
@@ -271,7 +271,7 @@
       ],
       "support": {
         "issues": "https://github.com/paratestphp/paratest/issues",
-        "source": "https://github.com/paratestphp/paratest/tree/v7.8.4"
+        "source": "https://github.com/paratestphp/paratest/tree/v7.8.5"
       },
       "funding": [
         {
@@ -283,7 +283,7 @@
           "type": "paypal"
         }
       ],
-      "time": "2025-06-23T06:07:21+00:00"
+      "time": "2026-01-08T08:02:38+00:00"
     },
     {
       "name": "clue/ndjson-react",
@@ -969,6 +969,332 @@
       "time": "2026-01-08T21:57:37+00:00"
     },
     {
+      "name": "guzzlehttp/guzzle",
+      "version": "7.10.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/guzzle/guzzle.git",
+        "reference": "b51ac707cfa420b7bfd4e4d5e510ba8008e822b4"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/guzzle/guzzle/zipball/b51ac707cfa420b7bfd4e4d5e510ba8008e822b4",
+        "reference": "b51ac707cfa420b7bfd4e4d5e510ba8008e822b4",
+        "shasum": ""
+      },
+      "require": {
+        "ext-json": "*",
+        "guzzlehttp/promises": "^2.3",
+        "guzzlehttp/psr7": "^2.8",
+        "php": "^7.2.5 || ^8.0",
+        "psr/http-client": "^1.0",
+        "symfony/deprecation-contracts": "^2.2 || ^3.0"
+      },
+      "provide": {
+        "psr/http-client-implementation": "1.0"
+      },
+      "require-dev": {
+        "bamarni/composer-bin-plugin": "^1.8.2",
+        "ext-curl": "*",
+        "guzzle/client-integration-tests": "3.0.2",
+        "php-http/message-factory": "^1.1",
+        "phpunit/phpunit": "^8.5.39 || ^9.6.20",
+        "psr/log": "^1.1 || ^2.0 || ^3.0"
+      },
+      "suggest": {
+        "ext-curl": "Required for CURL handler support",
+        "ext-intl": "Required for Internationalized Domain Name (IDN) support",
+        "psr/log": "Required for using the Log middleware"
+      },
+      "type": "library",
+      "extra": {
+        "bamarni-bin": {
+          "bin-links": true,
+          "forward-command": false
+        }
+      },
+      "autoload": {
+        "files": [
+          "src/functions_include.php"
+        ],
+        "psr-4": {
+          "GuzzleHttp\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Graham Campbell",
+          "email": "hello@gjcampbell.co.uk",
+          "homepage": "https://github.com/GrahamCampbell"
+        },
+        {
+          "name": "Michael Dowling",
+          "email": "mtdowling@gmail.com",
+          "homepage": "https://github.com/mtdowling"
+        },
+        {
+          "name": "Jeremy Lindblom",
+          "email": "jeremeamia@gmail.com",
+          "homepage": "https://github.com/jeremeamia"
+        },
+        {
+          "name": "George Mponos",
+          "email": "gmponos@gmail.com",
+          "homepage": "https://github.com/gmponos"
+        },
+        {
+          "name": "Tobias Nyholm",
+          "email": "tobias.nyholm@gmail.com",
+          "homepage": "https://github.com/Nyholm"
+        },
+        {
+          "name": "Márk Sági-Kazár",
+          "email": "mark.sagikazar@gmail.com",
+          "homepage": "https://github.com/sagikazarmark"
+        },
+        {
+          "name": "Tobias Schultze",
+          "email": "webmaster@tubo-world.de",
+          "homepage": "https://github.com/Tobion"
+        }
+      ],
+      "description": "Guzzle is a PHP HTTP client library",
+      "keywords": [
+        "client",
+        "curl",
+        "framework",
+        "http",
+        "http client",
+        "psr-18",
+        "psr-7",
+        "rest",
+        "web service"
+      ],
+      "support": {
+        "issues": "https://github.com/guzzle/guzzle/issues",
+        "source": "https://github.com/guzzle/guzzle/tree/7.10.0"
+      },
+      "funding": [
+        {
+          "url": "https://github.com/GrahamCampbell",
+          "type": "github"
+        },
+        {
+          "url": "https://github.com/Nyholm",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/guzzlehttp/guzzle",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2025-08-23T22:36:01+00:00"
+    },
+    {
+      "name": "guzzlehttp/promises",
+      "version": "2.3.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/guzzle/promises.git",
+        "reference": "481557b130ef3790cf82b713667b43030dc9c957"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/guzzle/promises/zipball/481557b130ef3790cf82b713667b43030dc9c957",
+        "reference": "481557b130ef3790cf82b713667b43030dc9c957",
+        "shasum": ""
+      },
+      "require": {
+        "php": "^7.2.5 || ^8.0"
+      },
+      "require-dev": {
+        "bamarni/composer-bin-plugin": "^1.8.2",
+        "phpunit/phpunit": "^8.5.44 || ^9.6.25"
+      },
+      "type": "library",
+      "extra": {
+        "bamarni-bin": {
+          "bin-links": true,
+          "forward-command": false
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "GuzzleHttp\\Promise\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Graham Campbell",
+          "email": "hello@gjcampbell.co.uk",
+          "homepage": "https://github.com/GrahamCampbell"
+        },
+        {
+          "name": "Michael Dowling",
+          "email": "mtdowling@gmail.com",
+          "homepage": "https://github.com/mtdowling"
+        },
+        {
+          "name": "Tobias Nyholm",
+          "email": "tobias.nyholm@gmail.com",
+          "homepage": "https://github.com/Nyholm"
+        },
+        {
+          "name": "Tobias Schultze",
+          "email": "webmaster@tubo-world.de",
+          "homepage": "https://github.com/Tobion"
+        }
+      ],
+      "description": "Guzzle promises library",
+      "keywords": [
+        "promise"
+      ],
+      "support": {
+        "issues": "https://github.com/guzzle/promises/issues",
+        "source": "https://github.com/guzzle/promises/tree/2.3.0"
+      },
+      "funding": [
+        {
+          "url": "https://github.com/GrahamCampbell",
+          "type": "github"
+        },
+        {
+          "url": "https://github.com/Nyholm",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/guzzlehttp/promises",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2025-08-22T14:34:08+00:00"
+    },
+    {
+      "name": "guzzlehttp/psr7",
+      "version": "2.9.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/guzzle/psr7.git",
+        "reference": "7d0ed42f28e42d61352a7a79de682e5e67fec884"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/guzzle/psr7/zipball/7d0ed42f28e42d61352a7a79de682e5e67fec884",
+        "reference": "7d0ed42f28e42d61352a7a79de682e5e67fec884",
+        "shasum": ""
+      },
+      "require": {
+        "php": "^7.2.5 || ^8.0",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.1 || ^2.0",
+        "ralouphie/getallheaders": "^3.0"
+      },
+      "provide": {
+        "psr/http-factory-implementation": "1.0",
+        "psr/http-message-implementation": "1.0"
+      },
+      "require-dev": {
+        "bamarni/composer-bin-plugin": "^1.8.2",
+        "http-interop/http-factory-tests": "0.9.0",
+        "jshttp/mime-db": "1.54.0.1",
+        "phpunit/phpunit": "^8.5.44 || ^9.6.25"
+      },
+      "suggest": {
+        "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
+      },
+      "type": "library",
+      "extra": {
+        "bamarni-bin": {
+          "bin-links": true,
+          "forward-command": false
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "GuzzleHttp\\Psr7\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Graham Campbell",
+          "email": "hello@gjcampbell.co.uk",
+          "homepage": "https://github.com/GrahamCampbell"
+        },
+        {
+          "name": "Michael Dowling",
+          "email": "mtdowling@gmail.com",
+          "homepage": "https://github.com/mtdowling"
+        },
+        {
+          "name": "George Mponos",
+          "email": "gmponos@gmail.com",
+          "homepage": "https://github.com/gmponos"
+        },
+        {
+          "name": "Tobias Nyholm",
+          "email": "tobias.nyholm@gmail.com",
+          "homepage": "https://github.com/Nyholm"
+        },
+        {
+          "name": "Márk Sági-Kazár",
+          "email": "mark.sagikazar@gmail.com",
+          "homepage": "https://github.com/sagikazarmark"
+        },
+        {
+          "name": "Tobias Schultze",
+          "email": "webmaster@tubo-world.de",
+          "homepage": "https://github.com/Tobion"
+        },
+        {
+          "name": "Márk Sági-Kazár",
+          "email": "mark.sagikazar@gmail.com",
+          "homepage": "https://sagikazarmark.hu"
+        }
+      ],
+      "description": "PSR-7 message implementation that also provides common utility methods",
+      "keywords": [
+        "http",
+        "message",
+        "psr-7",
+        "request",
+        "response",
+        "stream",
+        "uri",
+        "url"
+      ],
+      "support": {
+        "issues": "https://github.com/guzzle/psr7/issues",
+        "source": "https://github.com/guzzle/psr7/tree/2.9.0"
+      },
+      "funding": [
+        {
+          "url": "https://github.com/GrahamCampbell",
+          "type": "github"
+        },
+        {
+          "url": "https://github.com/Nyholm",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/guzzlehttp/psr7",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2026-03-10T16:41:02+00:00"
+    },
+    {
       "name": "jean85/pretty-package-versions",
       "version": "2.1.1",
       "source": {
@@ -1412,38 +1738,38 @@
     },
     {
       "name": "pestphp/pest",
-      "version": "v3.8.4",
+      "version": "v3.8.5",
       "source": {
         "type": "git",
         "url": "https://github.com/pestphp/pest.git",
-        "reference": "72cf695554420e21858cda831d5db193db102574"
+        "reference": "7796630eafcfd1c02660cecdde3bc6984fbf01f4"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/pestphp/pest/zipball/72cf695554420e21858cda831d5db193db102574",
-        "reference": "72cf695554420e21858cda831d5db193db102574",
+        "url": "https://api.github.com/repos/pestphp/pest/zipball/7796630eafcfd1c02660cecdde3bc6984fbf01f4",
+        "reference": "7796630eafcfd1c02660cecdde3bc6984fbf01f4",
         "shasum": ""
       },
       "require": {
-        "brianium/paratest": "^7.8.4",
-        "nunomaduro/collision": "^8.8.2",
-        "nunomaduro/termwind": "^2.3.1",
+        "brianium/paratest": "^7.8.5",
+        "nunomaduro/collision": "^8.8.3",
+        "nunomaduro/termwind": "^2.3.3",
         "pestphp/pest-plugin": "^3.0.0",
         "pestphp/pest-plugin-arch": "^3.1.1",
         "pestphp/pest-plugin-mutate": "^3.0.5",
         "php": "^8.2.0",
-        "phpunit/phpunit": "^11.5.33"
+        "phpunit/phpunit": "^11.5.50"
       },
       "conflict": {
         "filp/whoops": "<2.16.0",
-        "phpunit/phpunit": ">11.5.33",
+        "phpunit/phpunit": ">11.5.50",
         "sebastian/exporter": "<6.0.0",
         "webmozart/assert": "<1.11.0"
       },
       "require-dev": {
         "pestphp/pest-dev-tools": "^3.4.0",
         "pestphp/pest-plugin-type-coverage": "^3.6.1",
-        "symfony/process": "^7.3.0"
+        "symfony/process": "^7.4.4"
       },
       "bin": [
         "bin/pest"
@@ -1508,7 +1834,7 @@
       ],
       "support": {
         "issues": "https://github.com/pestphp/pest/issues",
-        "source": "https://github.com/pestphp/pest/tree/v3.8.4"
+        "source": "https://github.com/pestphp/pest/tree/v3.8.5"
       },
       "funding": [
         {
@@ -1520,7 +1846,7 @@
           "type": "github"
         }
       ],
-      "time": "2025-08-20T19:12:42+00:00"
+      "time": "2026-01-28T01:33:45+00:00"
     },
     {
       "name": "pestphp/pest-plugin",
@@ -2627,28 +2953,28 @@
     },
     {
       "name": "phpunit/php-file-iterator",
-      "version": "5.1.0",
+      "version": "5.1.1",
       "source": {
         "type": "git",
         "url": "https://github.com/sebastianbergmann/php-file-iterator.git",
-        "reference": "118cfaaa8bc5aef3287bf315b6060b1174754af6"
+        "reference": "2f3a64888c814fc235386b7387dd5b5ed92ad903"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/118cfaaa8bc5aef3287bf315b6060b1174754af6",
-        "reference": "118cfaaa8bc5aef3287bf315b6060b1174754af6",
+        "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/2f3a64888c814fc235386b7387dd5b5ed92ad903",
+        "reference": "2f3a64888c814fc235386b7387dd5b5ed92ad903",
         "shasum": ""
       },
       "require": {
         "php": ">=8.2"
       },
       "require-dev": {
-        "phpunit/phpunit": "^11.0"
+        "phpunit/phpunit": "^11.3"
       },
       "type": "library",
       "extra": {
         "branch-alias": {
-          "dev-main": "5.0-dev"
+          "dev-main": "5.1-dev"
         }
       },
       "autoload": {
@@ -2676,15 +3002,27 @@
       "support": {
         "issues": "https://github.com/sebastianbergmann/php-file-iterator/issues",
         "security": "https://github.com/sebastianbergmann/php-file-iterator/security/policy",
-        "source": "https://github.com/sebastianbergmann/php-file-iterator/tree/5.1.0"
+        "source": "https://github.com/sebastianbergmann/php-file-iterator/tree/5.1.1"
       },
       "funding": [
         {
           "url": "https://github.com/sebastianbergmann",
           "type": "github"
+        },
+        {
+          "url": "https://liberapay.com/sebastianbergmann",
+          "type": "liberapay"
+        },
+        {
+          "url": "https://thanks.dev/u/gh/sebastianbergmann",
+          "type": "thanks_dev"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/phpunit/php-file-iterator",
+          "type": "tidelift"
         }
       ],
-      "time": "2024-08-27T05:02:59+00:00"
+      "time": "2026-02-02T13:52:54+00:00"
     },
     {
       "name": "phpunit/php-invoker",
@@ -2872,16 +3210,16 @@
     },
     {
       "name": "phpunit/phpunit",
-      "version": "11.5.33",
+      "version": "11.5.50",
       "source": {
         "type": "git",
         "url": "https://github.com/sebastianbergmann/phpunit.git",
-        "reference": "5965e9ff57546cb9137c0ff6aa78cb7442b05cf6"
+        "reference": "fdfc727f0fcacfeb8fcb30c7e5da173125b58be3"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5965e9ff57546cb9137c0ff6aa78cb7442b05cf6",
-        "reference": "5965e9ff57546cb9137c0ff6aa78cb7442b05cf6",
+        "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fdfc727f0fcacfeb8fcb30c7e5da173125b58be3",
+        "reference": "fdfc727f0fcacfeb8fcb30c7e5da173125b58be3",
         "shasum": ""
       },
       "require": {
@@ -2895,17 +3233,17 @@
         "phar-io/manifest": "^2.0.4",
         "phar-io/version": "^3.2.1",
         "php": ">=8.2",
-        "phpunit/php-code-coverage": "^11.0.10",
+        "phpunit/php-code-coverage": "^11.0.12",
         "phpunit/php-file-iterator": "^5.1.0",
         "phpunit/php-invoker": "^5.0.1",
         "phpunit/php-text-template": "^4.0.1",
         "phpunit/php-timer": "^7.0.1",
         "sebastian/cli-parser": "^3.0.2",
         "sebastian/code-unit": "^3.0.3",
-        "sebastian/comparator": "^6.3.2",
+        "sebastian/comparator": "^6.3.3",
         "sebastian/diff": "^6.0.2",
         "sebastian/environment": "^7.2.1",
-        "sebastian/exporter": "^6.3.0",
+        "sebastian/exporter": "^6.3.2",
         "sebastian/global-state": "^7.0.2",
         "sebastian/object-enumerator": "^6.0.1",
         "sebastian/type": "^5.1.3",
@@ -2953,7 +3291,7 @@
       "support": {
         "issues": "https://github.com/sebastianbergmann/phpunit/issues",
         "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-        "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.33"
+        "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.50"
       },
       "funding": [
         {
@@ -2977,7 +3315,7 @@
           "type": "tidelift"
         }
       ],
-      "time": "2025-08-16T05:19:02+00:00"
+      "time": "2026-01-27T05:59:18+00:00"
     },
     {
       "name": "psr/container",
@@ -3237,6 +3575,50 @@
         "source": "https://github.com/php-fig/simple-cache/tree/3.0.0"
       },
       "time": "2021-10-29T13:26:27+00:00"
+    },
+    {
+      "name": "ralouphie/getallheaders",
+      "version": "3.0.3",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/ralouphie/getallheaders.git",
+        "reference": "120b605dfeb996808c31b6477290a714d356e822"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/ralouphie/getallheaders/zipball/120b605dfeb996808c31b6477290a714d356e822",
+        "reference": "120b605dfeb996808c31b6477290a714d356e822",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=5.6"
+      },
+      "require-dev": {
+        "php-coveralls/php-coveralls": "^2.1",
+        "phpunit/phpunit": "^5 || ^6.5"
+      },
+      "type": "library",
+      "autoload": {
+        "files": [
+          "src/getallheaders.php"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Ralph Khattar",
+          "email": "ralph.khattar@gmail.com"
+        }
+      ],
+      "description": "A polyfill for getallheaders.",
+      "support": {
+        "issues": "https://github.com/ralouphie/getallheaders/issues",
+        "source": "https://github.com/ralouphie/getallheaders/tree/develop"
+      },
+      "time": "2019-03-08T08:55:37+00:00"
     },
     {
       "name": "react/cache",
@@ -3936,16 +4318,16 @@
     },
     {
       "name": "sebastian/comparator",
-      "version": "6.3.2",
+      "version": "6.3.3",
       "source": {
         "type": "git",
         "url": "https://github.com/sebastianbergmann/comparator.git",
-        "reference": "85c77556683e6eee4323e4c5468641ca0237e2e8"
+        "reference": "2c95e1e86cb8dd41beb8d502057d1081ccc8eca9"
       },
       "dist": {
         "type": "zip",
-        "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/85c77556683e6eee4323e4c5468641ca0237e2e8",
-        "reference": "85c77556683e6eee4323e4c5468641ca0237e2e8",
+        "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/2c95e1e86cb8dd41beb8d502057d1081ccc8eca9",
+        "reference": "2c95e1e86cb8dd41beb8d502057d1081ccc8eca9",
         "shasum": ""
       },
       "require": {
@@ -4004,7 +4386,7 @@
       "support": {
         "issues": "https://github.com/sebastianbergmann/comparator/issues",
         "security": "https://github.com/sebastianbergmann/comparator/security/policy",
-        "source": "https://github.com/sebastianbergmann/comparator/tree/6.3.2"
+        "source": "https://github.com/sebastianbergmann/comparator/tree/6.3.3"
       },
       "funding": [
         {
@@ -4024,7 +4406,7 @@
           "type": "tidelift"
         }
       ],
-      "time": "2025-08-10T08:07:46+00:00"
+      "time": "2026-01-24T09:26:40+00:00"
     },
     {
       "name": "sebastian/complexity",

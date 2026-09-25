@@ -20,7 +20,7 @@ interface ReactionsRawContract
     /**
      * @api
      *
-     * @param string $messageID Path param: ID of the message to remove a reaction from
+     * @param string $reactionKey Reaction key to remove (emoji, shortcode, or custom emoji key)
      * @param array<string,mixed>|ReactionDeleteParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -29,7 +29,7 @@ interface ReactionsRawContract
      * @throws APIException
      */
     public function delete(
-        string $messageID,
+        string $reactionKey,
         array|ReactionDeleteParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
@@ -37,7 +37,7 @@ interface ReactionsRawContract
     /**
      * @api
      *
-     * @param string $messageID Path param: ID of the message to add a reaction to
+     * @param string $messageID path param: Message ID
      * @param array<string,mixed>|ReactionAddParams $params
      * @param RequestOpts|null $requestOptions
      *

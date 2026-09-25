@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace BeeperDesktop\Chats\Chat;
 
+use BeeperDesktop\Chats\Chat\Participants\Item;
 use BeeperDesktop\Core\Attributes\Required;
 use BeeperDesktop\Core\Concerns\SdkModel;
 use BeeperDesktop\Core\Contracts\BaseModel;
-use BeeperDesktop\User;
 
 /**
  * Chat participants information.
  *
- * @phpstan-import-type UserShape from \BeeperDesktop\User
+ * @phpstan-import-type ItemShape from \BeeperDesktop\Chats\Chat\Participants\Item
  *
  * @phpstan-type ParticipantsShape = array{
- *   hasMore: bool, items: list<User|UserShape>, total: int
+ *   hasMore: bool, items: list<Item|ItemShape>, total: int
  * }
  */
 final class Participants implements BaseModel
@@ -32,9 +32,9 @@ final class Participants implements BaseModel
     /**
      * Participants returned for this chat (limited by the request; may be a subset).
      *
-     * @var list<User> $items
+     * @var list<Item> $items
      */
-    #[Required(list: User::class)]
+    #[Required(list: Item::class)]
     public array $items;
 
     /**
@@ -67,7 +67,7 @@ final class Participants implements BaseModel
      *
      * You must use named parameters to construct any parameters with a default value.
      *
-     * @param list<User|UserShape> $items
+     * @param list<Item|ItemShape> $items
      */
     public static function with(bool $hasMore, array $items, int $total): self
     {
@@ -94,7 +94,7 @@ final class Participants implements BaseModel
     /**
      * Participants returned for this chat (limited by the request; may be a subset).
      *
-     * @param list<User|UserShape> $items
+     * @param list<Item|ItemShape> $items
      */
     public function withItems(array $items): self
     {

@@ -13,6 +13,8 @@ use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\BeeperDesktopClientContract;
 
 /**
+ * Top-level actions: focus Beeper Desktop, jump to a chat, or run unified search across chats and messages.
+ *
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class BeeperDesktopClientService implements BeeperDesktopClientContract
@@ -33,11 +35,11 @@ final class BeeperDesktopClientService implements BeeperDesktopClientContract
     /**
      * @api
      *
-     * Focus Beeper Desktop and optionally navigate to a specific chat, message, or pre-fill draft text and attachment.
+     * Focus Beeper Desktop and optionally open a specific chat, jump to a message, or pre-fill text and an image.
      *
      * @param string $chatID Optional Beeper chat ID (or local chat ID) to focus after opening the app. If omitted, only opens/focuses the app.
-     * @param string $draftAttachmentPath optional draft attachment path to populate in the message input field
-     * @param string $draftText optional draft text to populate in the message input field
+     * @param string $draftAttachmentPath optional local image path to populate in the message input field
+     * @param string $draftText optional plain text to populate in the message input field
      * @param string $messageID Optional message ID. Jumps to that message in the chat when opening.
      * @param RequestOpts|null $requestOptions
      *
@@ -68,9 +70,9 @@ final class BeeperDesktopClientService implements BeeperDesktopClientContract
     /**
      * @api
      *
-     * Returns matching chats, participant name matches in groups, and the first page of messages in one call. Paginate messages via search-messages. Paginate chats via search-chats.
+     * Return matching chats, participant matches in group chats, and the first page of message results in one call. Use the dedicated chat and message search endpoints for pagination.
      *
-     * @param string $query User-typed search text. Literal word matching (non-semantic).
+     * @param string $query User-typed search text. Uses literal word matching.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

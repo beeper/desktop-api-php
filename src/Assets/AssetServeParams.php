@@ -23,7 +23,7 @@ final class AssetServeParams implements BaseModel
     use SdkParams;
 
     /**
-     * Asset URL to serve. Accepts mxc://, localmxc://, or file:// URLs.
+     * File URL to serve. Accepts mxc://, localmxc://, or file:// URLs.
      */
     #[Required]
     public string $url;
@@ -62,7 +62,7 @@ final class AssetServeParams implements BaseModel
     }
 
     /**
-     * Asset URL to serve. Accepts mxc://, localmxc://, or file:// URLs.
+     * File URL to serve. Accepts mxc://, localmxc://, or file:// URLs.
      */
     public function withURL(string $url): self
     {

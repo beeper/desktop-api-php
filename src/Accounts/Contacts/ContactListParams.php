@@ -49,7 +49,7 @@ final class ContactListParams implements BaseModel
     public ?int $limit;
 
     /**
-     * Optional search query for blended contact lookup.
+     * Optional search query for contact lookup.
      */
     #[Optional]
     public ?string $query;
@@ -118,7 +118,7 @@ final class ContactListParams implements BaseModel
     }
 
     /**
-     * Optional search query for blended contact lookup.
+     * Optional search query for contact lookup.
      */
     public function withQuery(string $query): self
     {
