@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Archive or unarchive a chat. Set archived=true to move to archive, archived=false to move back to inbox.
+ * Archive or unarchive a chat. Set archived=true to move it to Archive, or archived=false to move it back to the inbox.
  *
  * @see BeeperDesktop\Services\ChatsService::archive()
  *

@@ -43,7 +43,7 @@ final class ContactsService implements ContactsContract
      * @param string $cursor Opaque pagination cursor; do not inspect. Use together with 'direction'.
      * @param Direction|value-of<Direction> $direction Pagination direction used with 'cursor': 'before' fetches older results, 'after' fetches newer results. Defaults to 'before' when only 'cursor' is provided.
      * @param int $limit maximum contacts to return per page
-     * @param string $query optional search query for blended contact lookup
+     * @param string $query optional search query for contact lookup
      * @param RequestOpts|null $requestOptions
      *
      * @return CursorSearch<User>
@@ -76,10 +76,10 @@ final class ContactsService implements ContactsContract
     /**
      * @api
      *
-     * Search contacts on a specific account using merged account contacts, network search, and exact identifier lookup.
+     * Search contacts on a specific account using merged account contacts, network search, and exact identifier lookup. The exact lookup only runs when the query is a phone number, email address, or username; pass one of those to resolve a specific person.
      *
      * @param string $accountID account ID this resource belongs to
-     * @param string $query Text to search users by. Network-specific behavior.
+     * @param string $query Text to search contacts by. A phone number, email address, or username written with a leading @ is additionally looked up as an exact identifier on the network; any other text, such as a bare handle or a person or business name, searches existing contacts only. Matching behavior depends on the network.
      * @param RequestOpts|null $requestOptions
      *
      * @throws APIException

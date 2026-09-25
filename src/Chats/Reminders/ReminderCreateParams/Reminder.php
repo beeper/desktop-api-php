@@ -13,7 +13,7 @@ use BeeperDesktop\Core\Contracts\BaseModel;
  * Reminder configuration.
  *
  * @phpstan-type ReminderShape = array{
- *   remindAtMs: float, dismissOnIncomingMessage?: bool|null
+ *   remindAt: \DateTimeInterface, dismissOnIncomingMessage?: bool|null
  * }
  */
 final class Reminder implements BaseModel
@@ -22,10 +22,10 @@ final class Reminder implements BaseModel
     use SdkModel;
 
     /**
-     * Unix timestamp in milliseconds when reminder should trigger.
+     * Timestamp when the reminder should trigger.
      */
     #[Required]
-    public float $remindAtMs;
+    public \DateTimeInterface $remindAt;
 
     /**
      * Cancel reminder if someone messages in the chat.
@@ -38,13 +38,13 @@ final class Reminder implements BaseModel
      *
      * To enforce required parameters use
      * ```
-     * Reminder::with(remindAtMs: ...)
+     * Reminder::with(remindAt: ...)
      * ```
      *
      * Otherwise ensure the following setters are called
      *
      * ```
-     * (new Reminder)->withRemindAtMs(...)
+     * (new Reminder)->withRemindAt(...)
      * ```
      */
     public function __construct()
@@ -58,12 +58,12 @@ final class Reminder implements BaseModel
      * You must use named parameters to construct any parameters with a default value.
      */
     public static function with(
-        float $remindAtMs,
+        \DateTimeInterface $remindAt,
         ?bool $dismissOnIncomingMessage = null
     ): self {
         $self = new self;
 
-        $self['remindAtMs'] = $remindAtMs;
+        $self['remindAt'] = $remindAt;
 
         null !== $dismissOnIncomingMessage && $self['dismissOnIncomingMessage'] = $dismissOnIncomingMessage;
 
@@ -71,12 +71,12 @@ final class Reminder implements BaseModel
     }
 
     /**
-     * Unix timestamp in milliseconds when reminder should trigger.
+     * Timestamp when the reminder should trigger.
      */
-    public function withRemindAtMs(float $remindAtMs): self
+    public function withRemindAt(\DateTimeInterface $remindAt): self
     {
         $self = clone $this;
-        $self['remindAtMs'] = $remindAtMs;
+        $self['remindAt'] = $remindAt;
 
         return $self;
     }

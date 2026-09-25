@@ -12,6 +12,8 @@ use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\InfoRawContract;
 
 /**
+ * Server discovery and capability metadata. Use /v1/info before authentication setup.
+ *
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class InfoRawService implements InfoRawContract
@@ -25,7 +27,7 @@ final class InfoRawService implements InfoRawContract
     /**
      * @api
      *
-     * Returns app, platform, server, and endpoint discovery metadata for this Beeper Desktop instance.
+     * Returns app, platform, server, endpoint discovery, OAuth, and WebSocket metadata for this Beeper Client API server.
      *
      * @param RequestOpts|null $requestOptions
      *
@@ -42,6 +44,7 @@ final class InfoRawService implements InfoRawContract
             path: 'v1/info',
             options: $requestOptions,
             convert: InfoGetResponse::class,
+            security: [],
         );
     }
 }

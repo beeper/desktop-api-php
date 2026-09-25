@@ -1,0 +1,206 @@
+<?php
+
+declare(strict_types=1);
+
+namespace BeeperDesktop\Chats\ChatUpdateParams\Draft;
+
+use BeeperDesktop\Chats\ChatUpdateParams\Draft\Attachment\Size;
+use BeeperDesktop\Chats\ChatUpdateParams\Draft\Attachment\Type;
+use BeeperDesktop\Core\Attributes\Optional;
+use BeeperDesktop\Core\Attributes\Required;
+use BeeperDesktop\Core\Concerns\SdkModel;
+use BeeperDesktop\Core\Contracts\BaseModel;
+
+/**
+ * @phpstan-import-type SizeShape from \BeeperDesktop\Chats\ChatUpdateParams\Draft\Attachment\Size
+ *
+ * @phpstan-type AttachmentShape = array{
+ *   uploadID: string,
+ *   id?: string|null,
+ *   duration?: float|null,
+ *   fileName?: string|null,
+ *   mimeType?: string|null,
+ *   size?: null|Size|SizeShape,
+ *   type?: null|Type|value-of<Type>,
+ * }
+ */
+final class Attachment implements BaseModel
+{
+    /** @use SdkModel<AttachmentShape> */
+    use SdkModel;
+
+    /**
+     * Upload ID from uploadAsset endpoint. Required to reference uploaded files.
+     */
+    #[Required]
+    public string $uploadID;
+
+    /**
+     * Optional draft attachment identifier. If omitted, a new identifier is generated.
+     */
+    #[Optional]
+    public ?string $id;
+
+    /**
+     * Duration in seconds (optional override of cached value).
+     */
+    #[Optional]
+    public ?float $duration;
+
+    /**
+     * Filename (optional override of cached value).
+     */
+    #[Optional]
+    public ?string $fileName;
+
+    /**
+     * MIME type (optional override of cached value).
+     */
+    #[Optional]
+    public ?string $mimeType;
+
+    /**
+     * Dimensions (optional override of cached value).
+     */
+    #[Optional]
+    public ?Size $size;
+
+    /**
+     * Attachment type hint (image, video, audio, file, gif, voice-note, sticker). If omitted, auto-detected from mimeType.
+     *
+     * @var value-of<Type>|null $type
+     */
+    #[Optional(enum: Type::class)]
+    public ?string $type;
+
+    /**
+     * `new Attachment()` is missing required properties by the API.
+     *
+     * To enforce required parameters use
+     * ```
+     * Attachment::with(uploadID: ...)
+     * ```
+     *
+     * Otherwise ensure the following setters are called
+     *
+     * ```
+     * (new Attachment)->withUploadID(...)
+     * ```
+     */
+    public function __construct()
+    {
+        $this->initialize();
+    }
+
+    /**
+     * Construct an instance from the required parameters.
+     *
+     * You must use named parameters to construct any parameters with a default value.
+     *
+     * @param Size|SizeShape|null $size
+     * @param Type|value-of<Type>|null $type
+     */
+    public static function with(
+        string $uploadID,
+        ?string $id = null,
+        ?float $duration = null,
+        ?string $fileName = null,
+        ?string $mimeType = null,
+        Size|array|null $size = null,
+        Type|string|null $type = null,
+    ): self {
+        $self = new self;
+
+        $self['uploadID'] = $uploadID;
+
+        null !== $id && $self['id'] = $id;
+        null !== $duration && $self['duration'] = $duration;
+        null !== $fileName && $self['fileName'] = $fileName;
+        null !== $mimeType && $self['mimeType'] = $mimeType;
+        null !== $size && $self['size'] = $size;
+        null !== $type && $self['type'] = $type;
+
+        return $self;
+    }
+
+    /**
+     * Upload ID from uploadAsset endpoint. Required to reference uploaded files.
+     */
+    public function withUploadID(string $uploadID): self
+    {
+        $self = clone $this;
+        $self['uploadID'] = $uploadID;
+
+        return $self;
+    }
+
+    /**
+     * Optional draft attachment identifier. If omitted, a new identifier is generated.
+     */
+    public function withID(string $id): self
+    {
+        $self = clone $this;
+        $self['id'] = $id;
+
+        return $self;
+    }
+
+    /**
+     * Duration in seconds (optional override of cached value).
+     */
+    public function withDuration(float $duration): self
+    {
+        $self = clone $this;
+        $self['duration'] = $duration;
+
+        return $self;
+    }
+
+    /**
+     * Filename (optional override of cached value).
+     */
+    public function withFileName(string $fileName): self
+    {
+        $self = clone $this;
+        $self['fileName'] = $fileName;
+
+        return $self;
+    }
+
+    /**
+     * MIME type (optional override of cached value).
+     */
+    public function withMimeType(string $mimeType): self
+    {
+        $self = clone $this;
+        $self['mimeType'] = $mimeType;
+
+        return $self;
+    }
+
+    /**
+     * Dimensions (optional override of cached value).
+     *
+     * @param Size|SizeShape $size
+     */
+    public function withSize(Size|array $size): self
+    {
+        $self = clone $this;
+        $self['size'] = $size;
+
+        return $self;
+    }
+
+    /**
+     * Attachment type hint (image, video, audio, file, gif, voice-note, sticker). If omitted, auto-detected from mimeType.
+     *
+     * @param Type|value-of<Type> $type
+     */
+    public function withType(Type|string $type): self
+    {
+        $self = clone $this;
+        $self['type'] = $type;
+
+        return $self;
+    }
+}

@@ -25,6 +25,8 @@ final class Util
 
     public const JSONL_CONTENT_TYPE = '/^application\/(:?x-(?:n|l)djson)|(:?(?:x-)?jsonl)/';
 
+    public const STREAMING_CONTENT_TYPE = ['/^text\/event-stream/', self::JSONL_CONTENT_TYPE];
+
     public static function getenv(string $key): ?string
     {
         if (array_key_exists($key, array: $_ENV)) {
@@ -217,6 +219,16 @@ final class Util
         return $base->withQuery($qs);
     }
 
+    public static function isStreamingRequest(RequestInterface $request): bool
+    {
+        $accept = $request->getHeaderLine('Accept');
+
+        return !empty(array_filter(
+            self::STREAMING_CONTENT_TYPE,
+            static fn (string $pattern) => (bool) preg_match($pattern, subject: $accept),
+        ));
+    }
+
     /**
      * @param array<string,string|int|list<string|int>|null> $headers
      */
@@ -283,7 +295,7 @@ final class Util
 
         if (preg_match('/^multipart\/form-data/', $contentType)) {
             [$boundary, $gen] = self::encodeMultipartStreaming($body);
-            $encoded = implode('', iterator_to_array($gen));
+            $encoded = implode('', iterator_to_array($gen, preserve_keys: false));
             $stream = $factory->createStream($encoded);
 
             /** @var RequestInterface */
@@ -447,11 +459,18 @@ final class Util
     ): \Generator {
         $contentLine = "Content-Type: %s\r\n\r\n";
 
-        if (is_resource($val)) {
-            yield sprintf($contentLine, $contentType ?? 'application/octet-stream');
-            while (!feof($val)) {
-                if ($read = fread($val, length: self::BUF_SIZE)) {
-                    yield $read;
+        if ($val instanceof FileParam) {
+            $ct = $val->contentType ?? $contentType;
+
+            yield sprintf($contentLine, $ct);
+            $data = $val->data;
+            if (is_string($data)) {
+                yield $data;
+            } else { // resource
+                while (!feof($data)) {
+                    if ($read = fread($data, length: self::BUF_SIZE)) {
+                        yield $read;
+                    }
                 }
             }
         } elseif (is_string($val) || is_numeric($val) || is_bool($val)) {
@@ -483,14 +502,45 @@ final class Util
         yield 'Content-Disposition: form-data';
 
         if (!is_null($key)) {
-            $name = rawurlencode(self::strVal($key));
+            $name = str_replace(['"', "\r", "\n"], replace: '', subject: $key);
 
             yield "; name=\"{$name}\"";
+        }
+
+        // File uploads require a filename in the Content-Disposition header,
+        // e.g. `Content-Disposition: form-data; name="file"; filename="data.csv"`
+        // Without this, many servers will reject the upload with a 400.
+        if ($val instanceof FileParam) {
+            $filename = str_replace(['"', "\r", "\n"], replace: '', subject: $val->filename);
+
+            yield "; filename=\"{$filename}\"";
         }
 
         yield "\r\n";
         foreach (self::writeMultipartContent($val, closing: $closing) as $chunk) {
             yield $chunk;
+        }
+    }
+
+    /**
+     * Expands list arrays into separate multipart parts, applying the configured array key format.
+     *
+     * @param list<callable> $closing
+     *
+     * @return \Generator<string>
+     */
+    private static function writeMultipartField(
+        string $boundary,
+        ?string $key,
+        mixed $val,
+        array &$closing
+    ): \Generator {
+        if (is_array($val) && array_is_list($val)) {
+            foreach ($val as $item) {
+                yield from self::writeMultipartField(boundary: $boundary, key: $key, val: $item, closing: $closing);
+            }
+        } else {
+            yield from self::writeMultipartChunk(boundary: $boundary, key: $key, val: $val, closing: $closing);
         }
     }
 
@@ -508,14 +558,10 @@ final class Util
             try {
                 if (is_array($body) || is_object($body)) {
                     foreach ((array) $body as $key => $val) {
-                        foreach (static::writeMultipartChunk(boundary: $boundary, key: $key, val: $val, closing: $closing) as $chunk) {
-                            yield $chunk;
-                        }
+                        yield from static::writeMultipartField(boundary: $boundary, key: $key, val: $val, closing: $closing);
                     }
                 } else {
-                    foreach (static::writeMultipartChunk(boundary: $boundary, key: null, val: $body, closing: $closing) as $chunk) {
-                        yield $chunk;
-                    }
+                    yield from static::writeMultipartField(boundary: $boundary, key: null, val: $body, closing: $closing);
                 }
 
                 yield "--{$boundary}--\r\n";

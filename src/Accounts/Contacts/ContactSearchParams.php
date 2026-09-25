@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Search contacts on a specific account using merged account contacts, network search, and exact identifier lookup.
+ * Search contacts on a specific account using merged account contacts, network search, and exact identifier lookup. The exact lookup only runs when the query is a phone number, email address, or username; pass one of those to resolve a specific person.
  *
  * @see BeeperDesktop\Services\Accounts\ContactsService::search()
  *
@@ -23,7 +23,7 @@ final class ContactSearchParams implements BaseModel
     use SdkParams;
 
     /**
-     * Text to search users by. Network-specific behavior.
+     * Text to search contacts by. A phone number, email address, or username written with a leading @ is additionally looked up as an exact identifier on the network; any other text, such as a bare handle or a person or business name, searches existing contacts only. Matching behavior depends on the network.
      */
     #[Required]
     public string $query;
@@ -62,7 +62,7 @@ final class ContactSearchParams implements BaseModel
     }
 
     /**
-     * Text to search users by. Network-specific behavior.
+     * Text to search contacts by. A phone number, email address, or username written with a leading @ is additionally looked up as an exact identifier on the network; any other text, such as a bare handle or a person or business name, searches existing contacts only. Matching behavior depends on the network.
      */
     public function withQuery(string $query): self
     {

@@ -10,7 +10,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Returns matching chats, participant name matches in groups, and the first page of messages in one call. Paginate messages via search-messages. Paginate chats via search-chats.
+ * Return matching chats, participant matches in group chats, and the first page of message results in one call. Use the dedicated chat and message search endpoints for pagination.
  *
  * @see BeeperDesktop\Services\BeeperDesktopClientService::search()
  *
@@ -23,7 +23,7 @@ final class BeeperDesktopSearchParams implements BaseModel
     use SdkParams;
 
     /**
-     * User-typed search text. Literal word matching (non-semantic).
+     * User-typed search text. Uses literal word matching.
      */
     #[Required]
     public string $query;
@@ -62,7 +62,7 @@ final class BeeperDesktopSearchParams implements BaseModel
     }
 
     /**
-     * User-typed search text. Literal word matching (non-semantic).
+     * User-typed search text. Uses literal word matching.
      */
     public function withQuery(string $query): self
     {

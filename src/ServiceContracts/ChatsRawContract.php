@@ -9,9 +9,14 @@ use BeeperDesktop\Chats\ChatArchiveParams;
 use BeeperDesktop\Chats\ChatCreateParams;
 use BeeperDesktop\Chats\ChatListParams;
 use BeeperDesktop\Chats\ChatListResponse;
+use BeeperDesktop\Chats\ChatMarkReadParams;
+use BeeperDesktop\Chats\ChatMarkUnreadParams;
 use BeeperDesktop\Chats\ChatNewResponse;
 use BeeperDesktop\Chats\ChatRetrieveParams;
 use BeeperDesktop\Chats\ChatSearchParams;
+use BeeperDesktop\Chats\ChatStartParams;
+use BeeperDesktop\Chats\ChatStartResponse;
+use BeeperDesktop\Chats\ChatUpdateParams;
 use BeeperDesktop\Core\Contracts\BaseResponse;
 use BeeperDesktop\Core\Exceptions\APIException;
 use BeeperDesktop\CursorNoLimit;
@@ -41,7 +46,7 @@ interface ChatsRawContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array<string,mixed>|ChatRetrieveParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -52,6 +57,23 @@ interface ChatsRawContract
     public function retrieve(
         string $chatID,
         array|ChatRetrieveParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
+     * @param array<string,mixed>|ChatUpdateParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Chat>
+     *
+     * @throws APIException
+     */
+    public function update(
+        string $chatID,
+        array|ChatUpdateParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 
@@ -73,7 +95,7 @@ interface ChatsRawContract
     /**
      * @api
      *
-     * @param string $chatID unique identifier of the chat
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
      * @param array<string,mixed>|ChatArchiveParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -90,6 +112,55 @@ interface ChatsRawContract
     /**
      * @api
      *
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
+     * @param array<string,mixed>|ChatMarkReadParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Chat>
+     *
+     * @throws APIException
+     */
+    public function markRead(
+        string $chatID,
+        array|ChatMarkReadParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
+     * @param array<string,mixed>|ChatMarkUnreadParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Chat>
+     *
+     * @throws APIException
+     */
+    public function markUnread(
+        string $chatID,
+        array|ChatMarkUnreadParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param string $chatID Chat ID. Input routes also accept the local chat ID from this installation when available.
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<Chat>
+     *
+     * @throws APIException
+     */
+    public function notifyAnyway(
+        string $chatID,
+        RequestOptions|array|null $requestOptions = null
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
      * @param array<string,mixed>|ChatSearchParams $params
      * @param RequestOpts|null $requestOptions
      *
@@ -99,6 +170,21 @@ interface ChatsRawContract
      */
     public function search(
         array|ChatSearchParams $params,
+        RequestOptions|array|null $requestOptions = null,
+    ): BaseResponse;
+
+    /**
+     * @api
+     *
+     * @param array<string,mixed>|ChatStartParams $params
+     * @param RequestOpts|null $requestOptions
+     *
+     * @return BaseResponse<ChatStartResponse>
+     *
+     * @throws APIException
+     */
+    public function start(
+        array|ChatStartParams $params,
         RequestOptions|array|null $requestOptions = null,
     ): BaseResponse;
 }

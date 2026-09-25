@@ -14,7 +14,7 @@ use BeeperDesktop\Core\Concerns\SdkParams;
 use BeeperDesktop\Core\Contracts\BaseModel;
 
 /**
- * Search chats by title/network or participants using Beeper Desktop's renderer algorithm.
+ * Search chats by title, network, or participant names.
  *
  * @see BeeperDesktop\Services\ChatsService::search()
  *
@@ -24,6 +24,7 @@ use BeeperDesktop\Core\Contracts\BaseModel;
  *   direction?: null|Direction|value-of<Direction>,
  *   inbox?: null|Inbox|value-of<Inbox>,
  *   includeMuted?: bool|null,
+ *   labelID?: string|null,
  *   lastActivityAfter?: \DateTimeInterface|null,
  *   lastActivityBefore?: \DateTimeInterface|null,
  *   limit?: int|null,
@@ -40,7 +41,7 @@ final class ChatSearchParams implements BaseModel
     use SdkParams;
 
     /**
-     * Provide an array of account IDs to filter chats from specific messaging accounts only.
+     * Limit results to specific chat accounts.
      *
      * @var list<string>|null $accountIDs
      */
@@ -62,7 +63,7 @@ final class ChatSearchParams implements BaseModel
     public ?string $direction;
 
     /**
-     * Filter by inbox type: "primary" (non-archived, non-low-priority), "low-priority", or "archive". If not specified, shows all chats.
+     * Filter by inbox type: "primary" (the chats the Beeper inbox shows: non-archived, non-low-priority, honoring inbox visibility rules and labels), "low-priority", or "archive". If not specified, shows all chats.
      *
      * @var value-of<Inbox>|null $inbox
      */
@@ -76,13 +77,19 @@ final class ChatSearchParams implements BaseModel
     public ?bool $includeMuted;
 
     /**
-     * Provide an ISO datetime string to only retrieve chats with last activity after this time.
+     * Only include chats that carry this label. Label IDs come from GET /v1/labels.
+     */
+    #[Optional]
+    public ?string $labelID;
+
+    /**
+     * Only include chats with last activity after this ISO 8601 datetime.
      */
     #[Optional]
     public ?\DateTimeInterface $lastActivityAfter;
 
     /**
-     * Provide an ISO datetime string to only retrieve chats with last activity before this time.
+     * Only include chats with last activity before this ISO 8601 datetime.
      */
     #[Optional]
     public ?\DateTimeInterface $lastActivityBefore;
@@ -94,7 +101,7 @@ final class ChatSearchParams implements BaseModel
     public ?int $limit;
 
     /**
-     * Literal token search (non-semantic). Use single words users type (e.g., "dinner"). When multiple words provided, ALL must match. Case-insensitive.
+     * Literal chat search. Use words the user typed, such as "dinner". When multiple words are provided, all must match. Case-insensitive.
      */
     #[Optional]
     public ?string $query;
@@ -143,6 +150,7 @@ final class ChatSearchParams implements BaseModel
         Direction|string|null $direction = null,
         Inbox|string|null $inbox = null,
         ?bool $includeMuted = null,
+        ?string $labelID = null,
         ?\DateTimeInterface $lastActivityAfter = null,
         ?\DateTimeInterface $lastActivityBefore = null,
         ?int $limit = null,
@@ -158,6 +166,7 @@ final class ChatSearchParams implements BaseModel
         null !== $direction && $self['direction'] = $direction;
         null !== $inbox && $self['inbox'] = $inbox;
         null !== $includeMuted && $self['includeMuted'] = $includeMuted;
+        null !== $labelID && $self['labelID'] = $labelID;
         null !== $lastActivityAfter && $self['lastActivityAfter'] = $lastActivityAfter;
         null !== $lastActivityBefore && $self['lastActivityBefore'] = $lastActivityBefore;
         null !== $limit && $self['limit'] = $limit;
@@ -170,7 +179,7 @@ final class ChatSearchParams implements BaseModel
     }
 
     /**
-     * Provide an array of account IDs to filter chats from specific messaging accounts only.
+     * Limit results to specific chat accounts.
      *
      * @param list<string> $accountIDs
      */
@@ -207,7 +216,7 @@ final class ChatSearchParams implements BaseModel
     }
 
     /**
-     * Filter by inbox type: "primary" (non-archived, non-low-priority), "low-priority", or "archive". If not specified, shows all chats.
+     * Filter by inbox type: "primary" (the chats the Beeper inbox shows: non-archived, non-low-priority, honoring inbox visibility rules and labels), "low-priority", or "archive". If not specified, shows all chats.
      *
      * @param Inbox|value-of<Inbox> $inbox
      */
@@ -231,7 +240,18 @@ final class ChatSearchParams implements BaseModel
     }
 
     /**
-     * Provide an ISO datetime string to only retrieve chats with last activity after this time.
+     * Only include chats that carry this label. Label IDs come from GET /v1/labels.
+     */
+    public function withLabelID(string $labelID): self
+    {
+        $self = clone $this;
+        $self['labelID'] = $labelID;
+
+        return $self;
+    }
+
+    /**
+     * Only include chats with last activity after this ISO 8601 datetime.
      */
     public function withLastActivityAfter(
         \DateTimeInterface $lastActivityAfter
@@ -243,7 +263,7 @@ final class ChatSearchParams implements BaseModel
     }
 
     /**
-     * Provide an ISO datetime string to only retrieve chats with last activity before this time.
+     * Only include chats with last activity before this ISO 8601 datetime.
      */
     public function withLastActivityBefore(
         \DateTimeInterface $lastActivityBefore
@@ -266,7 +286,7 @@ final class ChatSearchParams implements BaseModel
     }
 
     /**
-     * Literal token search (non-semantic). Use single words users type (e.g., "dinner"). When multiple words provided, ALL must match. Case-insensitive.
+     * Literal chat search. Use words the user typed, such as "dinner". When multiple words are provided, all must match. Case-insensitive.
      */
     public function withQuery(string $query): self
     {

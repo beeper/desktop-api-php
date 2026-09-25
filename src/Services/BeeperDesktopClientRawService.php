@@ -15,6 +15,8 @@ use BeeperDesktop\RequestOptions;
 use BeeperDesktop\ServiceContracts\BeeperDesktopClientRawContract;
 
 /**
+ * Top-level actions: focus Beeper Desktop, jump to a chat, or run unified search across chats and messages.
+ *
  * @phpstan-import-type RequestOpts from \BeeperDesktop\RequestOptions
  */
 final class BeeperDesktopClientRawService implements BeeperDesktopClientRawContract
@@ -28,7 +30,7 @@ final class BeeperDesktopClientRawService implements BeeperDesktopClientRawContr
     /**
      * @api
      *
-     * Focus Beeper Desktop and optionally navigate to a specific chat, message, or pre-fill draft text and attachment.
+     * Focus Beeper Desktop and optionally open a specific chat, jump to a message, or pre-fill text and an image.
      *
      * @param array{
      *   chatID?: string,
@@ -64,7 +66,7 @@ final class BeeperDesktopClientRawService implements BeeperDesktopClientRawContr
     /**
      * @api
      *
-     * Returns matching chats, participant name matches in groups, and the first page of messages in one call. Paginate messages via search-messages. Paginate chats via search-chats.
+     * Return matching chats, participant matches in group chats, and the first page of message results in one call. Use the dedicated chat and message search endpoints for pagination.
      *
      * @param array{query: string}|BeeperDesktopSearchParams $params
      * @param RequestOpts|null $requestOptions
